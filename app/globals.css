@@ -840,8 +840,8 @@ textarea {
   overflow: hidden;
   background:
     linear-gradient(120deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.55)),
-    url("/assets/movie-card-refernce-scarymovie.png") center / contain no-repeat,
-    linear-gradient(135deg, #ffc100, #ff4b14 50%, #8b5cff);
+    url("/assets/log-in-banner.jpg") center / cover no-repeat,
+    linear-gradient(135deg, #151515, #3a3a3a);
 }
 
 .footer {

@@ -16,6 +16,17 @@ Minimal film reviewing app for `cova.quest`, built for Vercel with Next.js.
 2. Copy `.env.example` to `.env.local`
 3. Add Supabase and TMDB credentials
 4. Run the SQL in `supabase/schema.sql`
-5. `npm run dev`
+5. Run `supabase/20260614_real_app_migration.sql` if the old schema was already applied
+6. `npm run dev`
 
-The UI currently uses mock film data so the product surface can be tuned before live auth/data wiring.
+## Supabase Google Auth
+
+If Google sign-in shows `Unsupported provider: provider is not enabled`, enable it in Supabase:
+
+1. Supabase Dashboard → Authentication → Providers → Google → Enable
+2. Add the Google OAuth client ID and client secret
+3. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs:
+   - `http://localhost:3000/auth/callback`
+   - `https://cova.quest/auth/callback`
+
+The app route `/auth/google` already redirects to Supabase with `provider=google`.
