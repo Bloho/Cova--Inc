@@ -1,10 +1,21 @@
+import { redirect } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { getHomeMovies } from "@/lib/tmdb";
 
-export default async function Home() {
+export default async function Home({
+  searchParams
+}: {
+  searchParams?: Promise<{ code?: string; error?: string; error_description?: string }>;
+}) {
+  const params = await searchParams;
+
+  if (params?.code) {
+    redirect(`/auth/callback?code=${encodeURIComponent(params.code)}&next=/`);
+  }
+
   const { trending, popular, isLive } = await getHomeMovies();
   const { user, profile } = await getCurrentUserProfile();
   const allMovies = [...trending, ...popular];

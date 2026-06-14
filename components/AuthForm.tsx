@@ -6,6 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function AuthForm() {
   const supabase = createSupabaseBrowserClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +25,7 @@ export function AuthForm() {
             email,
             password,
             options: {
-              emailRedirectTo: `${window.location.origin}/auth/callback`,
+              emailRedirectTo: `${siteUrl || window.location.origin}/auth/callback`,
               data: {
                 full_name: displayName || email.split("@")[0]
               }
@@ -51,7 +52,7 @@ export function AuthForm() {
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/login`
+      redirectTo: `${siteUrl || window.location.origin}/login`
     });
 
     setMessage(error ? error.message : "Password reset email sent.");

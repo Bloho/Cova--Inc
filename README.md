@@ -30,3 +30,13 @@ If Google sign-in shows `Unsupported provider: provider is not enabled`, enable 
    - `https://cova.quest/auth/callback`
 
 The app route `/auth/google` already redirects to Supabase with `provider=google`.
+
+If Google returns to `localhost:3000` after granting permission on the deployed site:
+
+1. In Vercel, set `NEXT_PUBLIC_SITE_URL` to your real domain, for example `https://cova.quest`
+2. In Supabase Dashboard → Authentication → URL Configuration:
+   - Set **Site URL** to `https://cova.quest`
+   - Add **Redirect URL** `https://cova.quest/auth/callback`
+   - Keep `http://localhost:3000/auth/callback` only for local development
+3. In Google Cloud OAuth client, add Authorized redirect URI:
+   - `https://jhpmslnoaarvhvvmxnxg.supabase.co/auth/v1/callback`
