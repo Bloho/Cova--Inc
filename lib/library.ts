@@ -1,4 +1,5 @@
 import type { Movie } from "@/lib/data";
+import { ensureProfile } from "@/lib/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type UserMovieState = {
@@ -17,11 +18,21 @@ export async function getCurrentUserProfile() {
     return { user: null, profile: null };
   }
 
-  const { data: profile } = await supabase
+  let { data: profile } = await supabase
     .from("profiles")
     .select("id, username, display_name, avatar_url, bio")
     .eq("id", user.id)
     .maybeSingle();
+
+  if (!profile) {
+    await ensureProfile(supabase, user);
+    const { data: createdProfile } = await supabase
+      .from("profiles")
+      .select("id, username, display_name, avatar_url, bio")
+      .eq("id", user.id)
+      .maybeSingle();
+    profile = createdProfile;
+  }
 
   return { user, profile };
 }

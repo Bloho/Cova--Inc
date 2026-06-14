@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Plus, Search, UserCircle } from "lucide-react";
 import { useState } from "react";
 import { LogFilmDialog } from "@/components/LogFilmDialog";
@@ -18,8 +19,8 @@ export function HeaderClient({
 
   return (
     <header className="shell app-header">
-      <Link href="/" className="brand">
-        Cova
+      <Link href="/" className="brand brand-logo" aria-label="Cova home">
+        <Image src="/assets/Cova-logo-white.svg" alt="Cova" width={188} height={62} priority />
       </Link>
       <nav className="header-actions" aria-label="Primary">
         <button className="login-button" onClick={() => setLogOpen(true)} aria-label="Log a film">
@@ -29,7 +30,7 @@ export function HeaderClient({
         <Link className="icon-button glass" href="/?search=1" aria-label="Search movies">
           <Search size={23} strokeWidth={2.4} />
         </Link>
-        <Link className="icon-button glass" href={isSignedIn && username ? `/${username}` : "/login"} aria-label={displayName ?? "Account"}>
+        <Link className="icon-button glass" href={isSignedIn ? (username ? `/${username}` : "/") : "/login"} aria-label={displayName ?? "Account"}>
           <UserCircle size={25} strokeWidth={2.4} />
         </Link>
       </nav>

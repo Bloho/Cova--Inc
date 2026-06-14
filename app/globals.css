@@ -96,6 +96,17 @@ textarea {
   font-weight: 800;
 }
 
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo img {
+  width: 94px;
+  height: auto;
+  opacity: 0.46;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
