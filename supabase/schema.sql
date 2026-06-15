@@ -1,8 +1,13 @@
 create extension if not exists "pgcrypto";
 
-create type public.watch_status as enum ('watched', 'watchlist');
+do $$
+begin
+  if not exists (select 1 from pg_type where typname = 'watch_status' and typnamespace = 'public'::regnamespace) then
+    create type public.watch_status as enum ('watched', 'watchlist');
+  end if;
+end $$;
 
-create table public.profiles (
+create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   username text not null unique check (username ~ '^[a-zA-Z0-9_]{3,24}$'),
   display_name text not null,
@@ -11,7 +16,7 @@ create table public.profiles (
   created_at timestamptz not null default now()
 );
 
-create table public.follows (
+create table if not exists public.follows (
   follower_id uuid not null references public.profiles(id) on delete cascade,
   following_id uuid not null references public.profiles(id) on delete cascade,
   created_at timestamptz not null default now(),
@@ -19,7 +24,7 @@ create table public.follows (
   check (follower_id <> following_id)
 );
 
-create table public.movies (
+create table if not exists public.movies (
   tmdb_id integer primary key,
   title text not null,
   poster_path text,
@@ -29,7 +34,7 @@ create table public.movies (
   cached_at timestamptz not null default now()
 );
 
-create table public.user_movies (
+create table if not exists public.user_movies (
   user_id uuid not null references public.profiles(id) on delete cascade,
   tmdb_id integer not null references public.movies(tmdb_id) on delete cascade,
   status public.watch_status not null,
@@ -41,7 +46,7 @@ create table public.user_movies (
   primary key (user_id, tmdb_id)
 );
 
-create table public.reviews (
+create table if not exists public.reviews (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
   tmdb_id integer not null references public.movies(tmdb_id) on delete cascade,
@@ -52,14 +57,14 @@ create table public.reviews (
   updated_at timestamptz not null default now()
 );
 
-create table public.review_likes (
+create table if not exists public.review_likes (
   review_id uuid not null references public.reviews(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
   created_at timestamptz not null default now(),
   primary key (review_id, user_id)
 );
 
-create table public.card_presets (
+create table if not exists public.card_presets (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
   kind text not null check (kind in ('profile', 'movie')),
@@ -71,6 +76,60 @@ create table public.card_presets (
   created_at timestamptz not null default now()
 );
 
+create index if not exists follows_following_id_idx on public.follows(following_id);
+create index if not exists user_movies_user_id_idx on public.user_movies(user_id);
+create index if not exists reviews_user_id_created_at_idx on public.reviews(user_id, created_at desc);
+create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
+
+create or replace function public.generate_username(email text, user_id uuid)
+returns text
+language plpgsql
+as $$
+declare
+  base text;
+begin
+  base := lower(regexp_replace(split_part(coalesce(email, 'user'), '@', 1), '[^a-zA-Z0-9_]', '', 'g'));
+  if length(base) < 3 then
+    base := 'user';
+  end if;
+  return left(base, 18) || left(replace(user_id::text, '-', ''), 6);
+end;
+$$;
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, username, display_name, avatar_url)
+  values (
+    new.id,
+    public.generate_username(new.email, new.id),
+    coalesce(new.raw_user_meta_data->>'full_name', new.email, 'Cova user'),
+    new.raw_user_meta_data->>'avatar_url'
+  )
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+insert into public.profiles (id, username, display_name, avatar_url)
+select
+  users.id,
+  public.generate_username(users.email, users.id),
+  coalesce(users.raw_user_meta_data->>'full_name', users.email, 'Cova user'),
+  users.raw_user_meta_data->>'avatar_url'
+from auth.users
+left join public.profiles on profiles.id = users.id
+where profiles.id is null;
+
 alter table public.profiles enable row level security;
 alter table public.follows enable row level security;
 alter table public.movies enable row level security;
@@ -79,25 +138,43 @@ alter table public.reviews enable row level security;
 alter table public.review_likes enable row level security;
 alter table public.card_presets enable row level security;
 
+drop policy if exists "profiles are readable" on public.profiles;
+drop policy if exists "users update own profile" on public.profiles;
+drop policy if exists "users insert own profile" on public.profiles;
 create policy "profiles are readable" on public.profiles for select using (true);
 create policy "users update own profile" on public.profiles for update using (auth.uid() = id);
 create policy "users insert own profile" on public.profiles for insert with check (auth.uid() = id);
 
+drop policy if exists "follows are readable" on public.follows;
+drop policy if exists "users manage own follows" on public.follows;
 create policy "follows are readable" on public.follows for select using (true);
 create policy "users manage own follows" on public.follows for all using (auth.uid() = follower_id) with check (auth.uid() = follower_id);
 
+drop policy if exists "movies are readable" on public.movies;
+drop policy if exists "authenticated users can cache movies" on public.movies;
+drop policy if exists "authenticated users can update cached movies" on public.movies;
 create policy "movies are readable" on public.movies for select using (true);
 create policy "authenticated users can cache movies" on public.movies for insert with check (auth.role() = 'authenticated');
 create policy "authenticated users can update cached movies" on public.movies for update using (auth.role() = 'authenticated');
 
+drop policy if exists "public user movies readable" on public.user_movies;
+drop policy if exists "users manage own movies" on public.user_movies;
 create policy "public user movies readable" on public.user_movies for select using (true);
 create policy "users manage own movies" on public.user_movies for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "public reviews readable" on public.reviews;
+drop policy if exists "users manage own reviews" on public.reviews;
 create policy "public reviews readable" on public.reviews for select using (is_public = true or auth.uid() = user_id);
 create policy "users manage own reviews" on public.reviews for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "review likes are readable" on public.review_likes;
+drop policy if exists "users manage own review likes" on public.review_likes;
 create policy "review likes are readable" on public.review_likes for select using (true);
 create policy "users manage own review likes" on public.review_likes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+drop policy if exists "card presets readable by owner" on public.card_presets;
+drop policy if exists "users manage own card presets" on public.card_presets;
 create policy "card presets readable by owner" on public.card_presets for select using (auth.uid() = user_id);
 create policy "users manage own card presets" on public.card_presets for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+notify pgrst, 'reload schema';

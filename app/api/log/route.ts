@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   const profile = await ensureProfile(supabase, user);
   if (profile.error) {
-    return NextResponse.json({ error: profile.error.message }, { status: 500 });
+    return NextResponse.json({ error: databaseErrorMessage(profile.error.message) }, { status: 500 });
   }
 
   const movie = body.movie;
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   });
 
   if (movieError) {
-    return NextResponse.json({ error: movieError.message }, { status: 500 });
+    return NextResponse.json({ error: databaseErrorMessage(movieError.message) }, { status: 500 });
   }
 
   const { error: logError } = await supabase.from("user_movies").upsert(
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   );
 
   if (logError) {
-    return NextResponse.json({ error: logError.message }, { status: 500 });
+    return NextResponse.json({ error: databaseErrorMessage(logError.message) }, { status: 500 });
   }
 
   if (review) {
@@ -71,9 +71,17 @@ export async function POST(request: Request) {
     });
 
     if (reviewError) {
-      return NextResponse.json({ error: reviewError.message }, { status: 500 });
+      return NextResponse.json({ error: databaseErrorMessage(reviewError.message) }, { status: 500 });
     }
   }
 
   return NextResponse.json({ ok: true });
+}
+
+function databaseErrorMessage(message: string) {
+  if (message.includes("schema cache") || message.includes("public.profiles")) {
+    return "Database is not set up yet. Run supabase/schema.sql in the Supabase SQL Editor for the project connected to this deployment.";
+  }
+
+  return message;
 }
