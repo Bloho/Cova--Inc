@@ -83,7 +83,7 @@ export default async function ProfilePage({
         </section>
 
         <nav className="tabs" aria-label="Profile tabs">
-          <a className="active" href="#profile">Profile</a>
+          <a href="#profile">Profile</a>
           <a href="#films">Films</a>
           <a href="#reviews">Reviews</a>
         </nav>

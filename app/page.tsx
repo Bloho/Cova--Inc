@@ -31,13 +31,13 @@ export default async function Home({
       <main className="site-main">
         <section className="shell hero hero-compact" aria-labelledby="home-title">
           <h1 id="home-title">{user ? `Welcome, ${profile?.display_name ?? user.email}` : "Cova"}</h1>
-          <p>Find a film, log it, review it, and share the card when it actually exists.</p>
+          <p>Find a film, log it, review it, and share it with your friends!</p>
         </section>
 
         <section className="shell section" aria-labelledby="trending">
           <h2 id="trending" className="section-head">
             <span>Trending on Cova</span>
-            <small>{isLive ? "Live from TMDB" : "TMDB seed until key is added"}</small>
+            <small>{isLive ? "Hello" : "TMDB seed until key is added"}</small>
           </h2>
           <div className="poster-row">
             {trendingWithState.map((movie) => (
