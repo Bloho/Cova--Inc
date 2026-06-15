@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
+import { OnboardingModal } from "@/components/OnboardingModal";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { getHomeMovies } from "@/lib/tmdb";
 
@@ -22,6 +23,7 @@ export default async function Home({
   const states = await getUserMovieStates(allMovies.map((movie) => movie.tmdbId));
   const trendingWithState = trending.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
   const popularWithState = popular.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
+  const needsOnboarding = Boolean(user && profile && (!profile.username || !profile.onboarded_at));
 
   return (
     <>
@@ -56,6 +58,7 @@ export default async function Home({
         </section>
       </main>
       <Footer />
+      {needsOnboarding ? <OnboardingModal initialUsername={profile?.username} /> : null}
     </>
   );
 }

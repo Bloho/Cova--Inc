@@ -19,6 +19,8 @@ Minimal film reviewing app for `cova.quest`, built for Vercel with Next.js.
 5. Run `supabase/20260614_real_app_migration.sql` if the old schema was already applied
 6. `npm run dev`
 
+`supabase/schema.sql` is repeatable. Run it again after pulling onboarding changes so `profiles.username` can be empty until the user chooses one and `profiles.onboarded_at` exists.
+
 ## Supabase Google Auth
 
 If Google sign-in shows `Unsupported provider: provider is not enabled`, enable it in Supabase:

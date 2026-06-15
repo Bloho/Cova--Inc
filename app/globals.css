@@ -417,6 +417,118 @@ textarea {
   backdrop-filter: blur(8px);
 }
 
+.onboarding-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.onboarding-panel {
+  display: grid;
+  width: min(1060px, calc(100vw - 48px));
+  min-height: min(600px, calc(100vh - 48px));
+  place-items: center;
+  align-content: center;
+  gap: 22px;
+  padding: clamp(34px, 6vw, 78px);
+  text-align: center;
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: clamp(34px, 6vw, 76px);
+  box-shadow: 0 34px 120px rgba(0, 0, 0, 0.64);
+}
+
+.onboarding-panel h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 0;
+  font-size: clamp(2.3rem, 5vw, 4rem);
+  line-height: 1;
+}
+
+.onboarding-panel h2 img {
+  width: clamp(104px, 14vw, 164px);
+  height: auto;
+}
+
+.onboarding-panel p {
+  max-width: 700px;
+  margin: 12px 0 18px;
+  color: white;
+  font-size: clamp(1.7rem, 3.8vw, 3rem);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.username-field {
+  display: flex;
+  width: min(500px, 100%);
+  min-height: 80px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 0 24px;
+  color: rgba(255, 255, 255, 0.35);
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-weight: 800;
+}
+
+.username-field input {
+  width: 155px;
+  min-width: 0;
+  color: white;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font-weight: 800;
+}
+
+.username-status {
+  min-height: 28px;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.username-status.available {
+  color: #00ff73;
+}
+
+.username-status.taken,
+.username-status.invalid {
+  color: #ff5c5c;
+}
+
+.username-help {
+  margin-top: -14px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.onboarding-save,
+.onboarding-done {
+  min-width: 180px;
+  margin-top: 8px;
+}
+
+.profile-link {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: clamp(2rem, 4vw, 3.1rem);
+  font-weight: 800;
+}
+
 .log-dialog {
   display: grid;
   width: min(720px, 100%);

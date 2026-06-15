@@ -9,12 +9,21 @@ end $$;
 
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  username text not null unique check (username ~ '^[a-zA-Z0-9_]{3,24}$'),
+  username text unique,
   display_name text not null,
   avatar_url text,
   bio text,
+  onboarded_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+alter table public.profiles alter column username drop not null;
+alter table public.profiles add column if not exists onboarded_at timestamptz;
+alter table public.profiles drop constraint if exists profiles_username_check;
+alter table public.profiles drop constraint if exists profiles_username_format;
+alter table public.profiles
+  add constraint profiles_username_format
+  check (username is null or username ~ '^[a-z0-9-]{3,10}$') not valid;
 
 create table if not exists public.follows (
   follower_id uuid not null references public.profiles(id) on delete cascade,
@@ -81,21 +90,6 @@ create index if not exists user_movies_user_id_idx on public.user_movies(user_id
 create index if not exists reviews_user_id_created_at_idx on public.reviews(user_id, created_at desc);
 create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
 
-create or replace function public.generate_username(email text, user_id uuid)
-returns text
-language plpgsql
-as $$
-declare
-  base text;
-begin
-  base := lower(regexp_replace(split_part(coalesce(email, 'user'), '@', 1), '[^a-zA-Z0-9_]', '', 'g'));
-  if length(base) < 3 then
-    base := 'user';
-  end if;
-  return left(base, 18) || left(replace(user_id::text, '-', ''), 6);
-end;
-$$;
-
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
@@ -103,12 +97,13 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, username, display_name, avatar_url)
+  insert into public.profiles (id, username, display_name, avatar_url, onboarded_at)
   values (
     new.id,
-    public.generate_username(new.email, new.id),
+    null,
     coalesce(new.raw_user_meta_data->>'full_name', new.email, 'Cova user'),
-    new.raw_user_meta_data->>'avatar_url'
+    new.raw_user_meta_data->>'avatar_url',
+    null
   )
   on conflict (id) do nothing;
   return new;
@@ -123,7 +118,7 @@ create trigger on_auth_user_created
 insert into public.profiles (id, username, display_name, avatar_url)
 select
   users.id,
-  public.generate_username(users.email, users.id),
+  null,
   coalesce(users.raw_user_meta_data->>'full_name', users.email, 'Cova user'),
   users.raw_user_meta_data->>'avatar_url'
 from auth.users

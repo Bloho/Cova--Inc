@@ -20,7 +20,7 @@ export async function getCurrentUserProfile() {
 
   let { data: profile } = await supabase
     .from("profiles")
-    .select("id, username, display_name, avatar_url, bio")
+    .select("id, username, display_name, avatar_url, bio, onboarded_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -28,7 +28,7 @@ export async function getCurrentUserProfile() {
     await ensureProfile(supabase, user);
     const { data: createdProfile } = await supabase
       .from("profiles")
-      .select("id, username, display_name, avatar_url, bio")
+      .select("id, username, display_name, avatar_url, bio, onboarded_at")
       .eq("id", user.id)
       .maybeSingle();
     profile = createdProfile;
