@@ -60,7 +60,7 @@ export function AuthForm() {
 
   return (
     <div className="login-form">
-      <div className="segmented glass auth-mode">
+      <div className="segmented auth-mode">
         <button className={mode === "signin" ? "active" : ""} type="button" onClick={() => setMode("signin")}>
           Sign in
         </button>
@@ -74,7 +74,7 @@ export function AuthForm() {
       <form className="login-form" onSubmit={submitEmail}>
         {mode === "signup" ? (
           <input
-            className="input glass"
+            className="input"
             type="text"
             placeholder="Display name"
             autoComplete="name"
@@ -82,9 +82,9 @@ export function AuthForm() {
             onChange={(event) => setDisplayName(event.target.value)}
           />
         ) : null}
-        <input className="input glass" type="email" placeholder="Email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
+        <input className="input" type="email" placeholder="Email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
         <input
-          className="input glass"
+          className="input"
           type="password"
           placeholder="Password"
           autoComplete="current-password"

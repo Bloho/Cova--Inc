@@ -188,15 +188,6 @@ export const reviews: Review[] = [
   }
 ];
 
-export const cardPalettes = [
-  { name: "Cova Lime", bg: "#8F54FF", shape: "#AA6CFF", text: "#69FB88", accent: "#FFF000" },
-  { name: "Scary Gold", bg: "#FFC100", shape: "#FFCE35", text: "#111111", accent: "#FF1212" },
-  { name: "Pool Flash", bg: "#24D4FF", shape: "#167AFF", text: "#101010", accent: "#A8FF3D" },
-  { name: "Rose Punch", bg: "#FF4E91", shape: "#FF8ABF", text: "#FFF7FB", accent: "#B8FF41" },
-  { name: "Signal Green", bg: "#95EC3D", shape: "#56B237", text: "#101010", accent: "#FFFFFF" },
-  { name: "Night Violet", bg: "#21163F", shape: "#5F3FD5", text: "#FFFFFF", accent: "#A8FF3D" }
-];
-
 export function posterUrl(path: string, size = "w500") {
   if (path.startsWith("http") || path.startsWith("/assets")) {
     return path;

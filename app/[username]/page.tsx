@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { CardStudio } from "@/components/CardStudio";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
+import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
@@ -79,13 +79,13 @@ export default async function ProfilePage({
               <span>following</span>
             </div>
           </div>
+          {isOwnProfile ? <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} /> : null}
         </section>
 
-        <nav className="tabs glass" aria-label="Profile tabs">
+        <nav className="tabs" aria-label="Profile tabs">
           <a className="active" href="#profile">Profile</a>
           <a href="#films">Films</a>
           <a href="#reviews">Reviews</a>
-          {isOwnProfile ? <a href="#card">Card</a> : null}
         </nav>
 
         <section id="profile" className="section" aria-labelledby="activity">
@@ -97,7 +97,7 @@ export default async function ProfilePage({
               {(reviews ?? []).map((review) => {
                 const movie = fromReviewMovie(review);
                 return (
-                  <article className="review glass" key={review.id}>
+                  <article className="review" key={review.id}>
                     {movie ? <img className="mini-poster" src={posterUrl(movie.posterPath, "w185")} alt={`${movie.title} poster`} /> : null}
                     <div>
                       <h3>{movie?.title ?? "Film"}</h3>
@@ -109,7 +109,7 @@ export default async function ProfilePage({
               })}
             </div>
           ) : (
-            <div className="empty-state glass">No public reviews yet.</div>
+            <div className="empty-state">No public reviews yet.</div>
           )}
         </section>
 
@@ -124,15 +124,9 @@ export default async function ProfilePage({
               ))}
             </div>
           ) : (
-            <div className="empty-state glass">No films logged yet.</div>
+            <div className="empty-state">No films logged yet.</div>
           )}
         </section>
-
-        {isOwnProfile ? (
-          <section id="card">
-            <CardStudio filmsCount={filmsCount ?? 0} username={profile.username} />
-          </section>
-        ) : null}
       </main>
       <Footer />
     </>

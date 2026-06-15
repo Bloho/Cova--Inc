@@ -7,19 +7,19 @@
 @font-face {
   font-family: "PP Neue Montreal";
   src: url("/fonts/PPNeueMontreal-Semibold.otf") format("opentype");
-  font-weight: 700;
+  font-weight: 600;
 }
 
 @font-face {
   font-family: "PP Neue Montreal";
   src: url("/fonts/PPNeueMontreal-Extrabold.otf") format("opentype");
-  font-weight: 800;
+  font-weight: 700;
 }
 
 @font-face {
   font-family: "PP Mori";
   src: url("/fonts/PPMori-Semibold.otf") format("opentype");
-  font-weight: 700;
+  font-weight: 600;
 }
 
 :root {
@@ -28,9 +28,8 @@
   --text: #f3f3f3;
   --muted: rgba(255, 255, 255, 0.38);
   --line: rgba(255, 255, 255, 0.15);
-  --glass: rgba(255, 255, 255, 0.08);
-  --glass-strong: rgba(255, 255, 255, 0.13);
-  --glass-border: rgba(255, 255, 255, 0.2);
+  --surface: #151515;
+  --surface-border: #232121;
   --green: #99ec3f;
   --green-dark: #448735;
   --radius: 18px;
@@ -76,13 +75,6 @@ textarea {
   min-height: calc(100vh - 72px);
 }
 
-.glass {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.055));
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 46px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(18px);
-}
-
 .app-header {
   display: flex;
   align-items: center;
@@ -93,7 +85,7 @@ textarea {
 .brand {
   color: rgba(255, 255, 255, 0.42);
   font-size: clamp(1.7rem, 4vw, 2.05rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .brand-logo {
@@ -119,6 +111,8 @@ textarea {
   height: 44px;
   place-items: center;
   color: rgba(255, 255, 255, 0.68);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
 }
 
@@ -134,13 +128,13 @@ textarea {
   border-radius: 999px;
   color: white;
   background: var(--green-dark);
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .pill-button.secondary {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
 }
 
 .hero {
@@ -169,7 +163,7 @@ textarea {
   margin: 14px 0 0;
   color: rgba(255, 255, 255, 0.58);
   font-size: clamp(1.12rem, 2.4vw, 1.45rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .hero-title {
@@ -183,7 +177,7 @@ textarea {
   overflow: hidden;
   font-family: "PP Mori", "PP Neue Montreal", sans-serif;
   font-size: clamp(4.6rem, 12vw, 8rem);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 0.92;
   white-space: nowrap;
 }
@@ -197,20 +191,20 @@ textarea {
   color: var(--green);
   font-family: "PP Neue Montreal", Arial, sans-serif;
   font-size: clamp(5.5rem, 13vw, 9rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
 .hero-copy {
   margin: 16px 0 0;
   font-size: clamp(1.35rem, 3vw, 1.9rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .hero-kicker {
   margin: 38px 0 0;
   font-size: clamp(1.2rem, 2.5vw, 1.9rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .section {
@@ -224,7 +218,7 @@ textarea {
   border-bottom: 2px solid rgba(255, 255, 255, 0.13);
   color: rgba(255, 255, 255, 0.32);
   font-size: 1.25rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .section-head small {
@@ -299,7 +293,7 @@ textarea {
   text-align: center;
   color: white;
   font-size: clamp(1rem, 2vw, 1.55rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 0.95;
   text-transform: uppercase;
 }
@@ -330,11 +324,10 @@ textarea {
   justify-content: space-between;
   gap: 6px;
   padding: 5px 8px;
-  background: rgba(0, 0, 0, 0.28);
-  border-top: 1px solid rgba(255, 255, 255, 0.13);
-  backdrop-filter: blur(10px);
+  background: rgba(21, 21, 21, 0.92);
+  border-top: 1px solid var(--surface-border);
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .poster-actions {
@@ -347,6 +340,8 @@ textarea {
   align-items: center;
   gap: 2px;
   padding: 5px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
   opacity: 0;
   transform: translateY(-6px);
@@ -385,6 +380,8 @@ textarea {
   width: min(260px, calc(100% - 16px));
   gap: 8px;
   padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
 }
 
@@ -393,8 +390,8 @@ textarea {
   min-height: 82px;
   resize: vertical;
   color: white;
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #101010;
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   outline: none;
   padding: 10px;
@@ -414,7 +411,6 @@ textarea {
   place-items: center;
   padding: 20px;
   background: rgba(0, 0, 0, 0.58);
-  backdrop-filter: blur(8px);
 }
 
 .onboarding-backdrop {
@@ -425,7 +421,6 @@ textarea {
   place-items: center;
   padding: 24px;
   background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(6px);
 }
 
 .onboarding-panel {
@@ -464,7 +459,7 @@ textarea {
   margin: 12px 0 18px;
   color: white;
   font-size: clamp(1.7rem, 3.8vw, 3rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.08;
 }
 
@@ -481,7 +476,7 @@ textarea {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   font-size: clamp(1.7rem, 3vw, 2.35rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .username-field input {
@@ -491,14 +486,14 @@ textarea {
   background: transparent;
   border: 0;
   outline: 0;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .username-status {
   min-height: 28px;
   color: rgba(255, 255, 255, 0.52);
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .username-status.available {
@@ -514,7 +509,7 @@ textarea {
   margin-top: -14px;
   color: rgba(255, 255, 255, 0.78);
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .onboarding-save,
@@ -526,7 +521,7 @@ textarea {
 .profile-link {
   color: rgba(255, 255, 255, 0.45);
   font-size: clamp(2rem, 4vw, 3.1rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .log-dialog {
@@ -536,6 +531,8 @@ textarea {
   gap: 16px;
   overflow: auto;
   padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 12px;
 }
 
@@ -569,8 +566,8 @@ textarea {
   min-height: 78px;
   padding: 8px;
   color: white;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
@@ -595,7 +592,7 @@ textarea {
 
 .log-result small {
   color: rgba(255, 255, 255, 0.45);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .log-editor {
@@ -608,8 +605,8 @@ textarea {
   min-height: 110px;
   resize: vertical;
   color: white;
-  background: rgba(0, 0, 0, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #101010;
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   outline: none;
   padding: 12px;
@@ -626,8 +623,8 @@ textarea {
   height: 38px;
   place-items: center;
   color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
   cursor: pointer;
 }
@@ -655,21 +652,25 @@ textarea {
   flex-basis: min(100%, 520px);
   gap: 10px;
   padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
 }
 
 .empty-state {
   margin-top: 16px;
   padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   color: rgba(255, 255, 255, 0.54);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .form-message {
   margin: 0;
   color: rgba(255, 255, 255, 0.62);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .text-button {
@@ -678,7 +679,7 @@ textarea {
   background: transparent;
   border: 0;
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .auth-mode {
@@ -699,6 +700,10 @@ textarea {
   gap: 32px;
   align-items: center;
   padding: 48px 0 28px;
+}
+
+.profile-card-trigger {
+  justify-self: end;
 }
 
 .identity {
@@ -724,7 +729,7 @@ textarea {
 
 .handle {
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .stats {
@@ -746,13 +751,13 @@ textarea {
 .stat strong {
   display: block;
   font-size: clamp(2.2rem, 4vw, 2.7rem);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .stat span {
   color: var(--muted);
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .tabs {
@@ -761,6 +766,8 @@ textarea {
   margin: 0 auto 28px;
   align-items: center;
   overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
 }
 
@@ -768,7 +775,7 @@ textarea {
   padding: 10px 17px;
   color: rgba(255, 255, 255, 0.35);
   font-size: 1.15rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .tabs a.active {
@@ -788,6 +795,8 @@ textarea {
   gap: 14px;
   align-items: center;
   padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
 }
 
@@ -807,21 +816,13 @@ textarea {
   color: rgba(255, 255, 255, 0.54);
 }
 
-.card-studio {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 445px;
-  gap: 28px;
-  align-items: start;
-  margin: 34px 0 64px;
-}
-
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   margin-top: 12px;
   color: rgba(255, 255, 255, 0.48);
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .movie-detail {
@@ -868,38 +869,15 @@ textarea {
 
 .detail-rating span:last-child {
   color: rgba(255, 255, 255, 0.42);
-  font-weight: 800;
-}
-
-.studio-controls {
-  display: grid;
-  gap: 18px;
-}
-
-.swatches {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.swatch {
-  width: 42px;
-  height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--a), var(--b));
-  cursor: pointer;
-}
-
-.swatch.active {
-  outline: 2px solid white;
-  outline-offset: 3px;
+  font-weight: 700;
 }
 
 .segmented {
   display: flex;
   width: fit-content;
   overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
 }
 
@@ -910,7 +888,7 @@ textarea {
   background: transparent;
   border: 0;
   cursor: pointer;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .segmented button.active {
@@ -918,17 +896,105 @@ textarea {
   background: rgba(255, 255, 255, 0.14);
 }
 
-.share-preview {
-  width: min(445px, 100%);
-  overflow: hidden;
-  border-radius: 21px;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.4);
+.profile-card-backdrop {
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.68);
 }
 
-.share-preview svg {
-  display: block;
-  width: 100%;
+.profile-card-modal {
+  display: grid;
+  width: min(860px, calc(100vw - 40px));
+  min-height: min(510px, calc(100vh - 40px));
+  place-items: center;
+  align-content: center;
+  gap: 26px;
+  padding: clamp(32px, 6vw, 72px);
+  text-align: center;
+  background: #111111;
+  border: 1px solid #303030;
+  border-radius: clamp(26px, 5vw, 64px);
+  box-shadow: 0 34px 120px rgba(0, 0, 0, 0.72);
+}
+
+.profile-card-modal h2 {
+  max-width: 620px;
+  margin: 0;
+  color: white;
+  font-size: clamp(2rem, 4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.card-modal-button {
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0 30px;
+  color: white;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.card-stack-preview {
+  width: min(270px, 52vw);
   height: auto;
+}
+
+.card-loading {
+  display: grid;
+  place-items: center;
+  gap: 32px;
+}
+
+.card-loading span {
+  width: 54px;
+  height: 54px;
+  border: 6px solid rgba(255, 255, 255, 0.18);
+  border-top-color: white;
+  border-radius: 999px;
+  animation: spin 900ms linear infinite;
+}
+
+.card-ready {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
+  gap: clamp(28px, 6vw, 56px);
+  align-items: center;
+}
+
+.generated-profile-card {
+  width: min(220px, 34vw);
+  min-width: 180px;
+  justify-self: center;
+  border-radius: 12px;
+}
+
+.card-ready-copy {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+
+.icon-card-button {
+  min-width: 220px;
+}
+
+.icon-card-button img {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .login-page {
@@ -954,6 +1020,8 @@ textarea {
   height: 52px;
   padding: 0 16px;
   color: white;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
   border-radius: 999px;
   outline: none;
 }
@@ -974,8 +1042,9 @@ textarea {
   justify-content: space-between;
   margin-top: 70px;
   color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.035);
-  font-weight: 800;
+  background: #151515;
+  border-top: 1px solid var(--surface-border);
+  font-weight: 700;
 }
 
 @media (max-width: 900px) {
@@ -985,10 +1054,21 @@ textarea {
   }
 
   .profile-hero,
-  .card-studio,
   .login-page,
   .movie-detail {
     grid-template-columns: 1fr;
+  }
+
+  .profile-card-trigger {
+    justify-self: start;
+  }
+
+  .card-ready {
+    grid-template-columns: 1fr;
+  }
+
+  .generated-profile-card {
+    width: min(220px, 60vw);
   }
 
   .stats {
@@ -1059,5 +1139,19 @@ textarea {
 
   .review .stars {
     grid-column: 2;
+  }
+
+  .profile-card-modal {
+    min-height: min(560px, calc(100vh - 32px));
+    border-radius: 28px;
+  }
+
+  .profile-card-modal h2 {
+    font-size: 2rem;
+  }
+
+  .card-modal-button {
+    min-height: 52px;
+    font-size: 1.25rem;
   }
 }

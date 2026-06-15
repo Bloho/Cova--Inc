@@ -27,10 +27,10 @@ export function HeaderClient({
           <Plus size={18} />
           LOG
         </button>
-        <Link className="icon-button glass" href="/?search=1" aria-label="Search movies">
+        <Link className="icon-button" href="/?search=1" aria-label="Search movies">
           <Search size={23} strokeWidth={2.4} />
         </Link>
-        <Link className="icon-button glass" href={isSignedIn ? (username ? `/${username}` : "/") : "/login"} aria-label={displayName ?? "Account"}>
+        <Link className="icon-button" href={isSignedIn ? (username ? `/${username}` : "/") : "/login"} aria-label={displayName ?? "Account"}>
           <UserCircle size={25} strokeWidth={2.4} />
         </Link>
       </nav>

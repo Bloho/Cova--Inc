@@ -84,10 +84,10 @@ export function LogFilmDialog({
 
   return (
     <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Log a film">
-      <div className="log-dialog glass">
+      <div className="log-dialog">
         <div className="dialog-head">
           <strong>Log a film</strong>
-          <button className="icon-button glass" onClick={onClose} aria-label="Close">
+          <button className="icon-button" onClick={onClose} aria-label="Close">
             <X size={20} />
           </button>
         </div>
@@ -102,7 +102,7 @@ export function LogFilmDialog({
         ) : (
           <>
             <form className="search-form" onSubmit={search}>
-              <input className="input glass" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search TMDB" />
+              <input className="input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search TMDB" />
               <button className="pill-button" disabled={busy} type="submit">
                 <Search size={18} />
                 Search

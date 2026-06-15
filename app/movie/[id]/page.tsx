@@ -16,7 +16,7 @@ export default async function MoviePage({
 }) {
   const { id } = await params;
   const movie = await getMovie(Number(id));
-  const { user } = await getCurrentUserProfile();
+  const { user, profile } = await getCurrentUserProfile();
   const states = await getUserMovieStates([movie.tmdbId]);
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
   const related = seedMovies.filter((item) => item.tmdbId !== movie.tmdbId).slice(0, 5);
@@ -50,7 +50,13 @@ export default async function MoviePage({
               <span>{reviews?.length ?? 0} Cova reviews</span>
             </div>
             <p>{movie.overview}</p>
-            <MovieLogActions movie={movie} isSignedIn={Boolean(user)} initialRating={movieWithState.userRating ?? 0} />
+            <MovieLogActions
+              movie={movie}
+              isSignedIn={Boolean(user)}
+              initialRating={movieWithState.userRating ?? 0}
+              initialReviewed={Boolean(movieWithState.reviewed)}
+              username={profile?.username}
+            />
           </div>
         </section>
 
@@ -63,7 +69,7 @@ export default async function MoviePage({
               {(reviews ?? []).map((review: any) => {
                 const profile = Array.isArray(review.profiles) ? review.profiles[0] : review.profiles;
                 return (
-                  <article className="review glass" key={review.id}>
+                  <article className="review" key={review.id}>
                     {profile?.avatar_url ? <img className="mini-poster" src={profile.avatar_url} alt="" /> : <div className="mini-poster avatar-fallback" />}
                     <div>
                       <h3>{profile?.display_name ?? profile?.username ?? "Cova user"}</h3>
@@ -75,7 +81,7 @@ export default async function MoviePage({
               })}
             </div>
           ) : (
-            <div className="empty-state glass">No reviews for this film yet.</div>
+            <div className="empty-state">No reviews for this film yet.</div>
           )}
         </section>
 
