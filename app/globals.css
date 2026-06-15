@@ -135,6 +135,7 @@ textarea {
 .pill-button.secondary {
   background: var(--surface);
   border: 1px solid var(--surface-border);
+  margin-top:0.45rem;
 }
 
 .hero {
