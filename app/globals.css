@@ -546,14 +546,18 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  font-weight: 600;
 }
 
 .dialog-head strong {
   font-size: 1.4rem;
+  font-weight: 600;
+  color:#d0d0d0;
 }
 
 .search-form .input {
   flex: 1;
+  font-weight: 600;
 }
 
 .log-results {
@@ -707,7 +711,9 @@ textarea {
 }
 
 .profile-card-trigger {
-  justify-self: end;
+  grid-column: 1 / -1;
+  justify-self: center;
+  align-self: center;
 }
 
 .identity {
