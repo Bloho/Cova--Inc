@@ -48,7 +48,7 @@ export default async function ProfilePage({
   ]);
 
   const movies = (logs ?? []).map((row) => fromLoggedMovie(row)).filter(Boolean) as Movie[];
-  const viewerStates = await getUserMovieStates(movies.map((movie) => movie.tmdbId));
+  const viewerStates = await getUserMovieStates(movies.map((movie) => movie.tmdbId), viewer?.id);
   const displayMovies = movies.map((movie) => applyUserState(movie, viewerStates.get(movie.tmdbId)));
   const isOwnProfile = viewer?.id === profile.id;
 

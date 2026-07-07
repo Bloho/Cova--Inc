@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Movie } from "@/lib/data";
 import { ensureProfile } from "@/lib/profile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -8,7 +9,7 @@ export type UserMovieState = {
   reviewed: boolean;
 };
 
-export async function getCurrentUserProfile() {
+export const getCurrentUserProfile = cache(async function getCurrentUserProfile() {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user }
@@ -35,12 +36,17 @@ export async function getCurrentUserProfile() {
   }
 
   return { user, profile };
-}
+});
 
-export async function getUserMovieStates(tmdbIds: number[]) {
-  const { user } = await getCurrentUserProfile();
+export async function getUserMovieStates(tmdbIds: number[], userId?: string | null) {
+  let resolvedUserId = userId;
 
-  if (!user || tmdbIds.length === 0) {
+  if (resolvedUserId === undefined) {
+    const { user } = await getCurrentUserProfile();
+    resolvedUserId = user?.id;
+  }
+
+  if (!resolvedUserId || tmdbIds.length === 0) {
     return new Map<number, UserMovieState>();
   }
 
@@ -49,12 +55,12 @@ export async function getUserMovieStates(tmdbIds: number[]) {
     supabase
       .from("user_movies")
       .select("tmdb_id, status, rating")
-      .eq("user_id", user.id)
+      .eq("user_id", resolvedUserId)
       .in("tmdb_id", tmdbIds),
     supabase
       .from("reviews")
       .select("tmdb_id")
-      .eq("user_id", user.id)
+      .eq("user_id", resolvedUserId)
       .in("tmdb_id", tmdbIds)
   ]);
 

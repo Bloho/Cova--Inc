@@ -17,12 +17,10 @@ export default async function Home({
     redirect(`/auth/callback?code=${encodeURIComponent(params.code)}&next=/`);
   }
 
-  const { trending, popular, isLive } = await getHomeMovies();
+  const { trending, isLive } = await getHomeMovies();
   const { user, profile } = await getCurrentUserProfile();
-  const allMovies = [...trending, ...popular];
-  const states = await getUserMovieStates(allMovies.map((movie) => movie.tmdbId));
+  const states = await getUserMovieStates(trending.map((movie) => movie.tmdbId), user?.id);
   const trendingWithState = trending.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
-  const popularWithState = popular.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
   const needsOnboarding = Boolean(user && profile && (!profile.username || !profile.onboarded_at));
 
   return (
@@ -46,16 +44,6 @@ export default async function Home({
           </div>
         </section>
 
-        <section className="shell section" aria-labelledby="popular">
-          <h2 id="popular" className="section-head">
-            <span>Popular reviews</span>
-          </h2>
-          <div className="poster-row">
-            {popularWithState.map((movie) => (
-              <MoviePoster key={movie.tmdbId} movie={movie} isSignedIn={Boolean(user)} />
-            ))}
-          </div>
-        </section>
       </main>
       <Footer />
       {needsOnboarding ? <OnboardingModal initialUsername={profile?.username} /> : null}

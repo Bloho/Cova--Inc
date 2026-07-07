@@ -19,15 +19,11 @@ type TmdbListResponse = {
 const TMDB_URL = "https://api.themoviedb.org/3";
 
 export async function getHomeMovies() {
-  const [trending, popular] = await Promise.all([
-    fetchTmdbList("/trending/movie/day"),
-    fetchTmdbList("/movie/popular")
-  ]);
+  const trending = await fetchTmdbList("/trending/movie/day");
   const hasKey = Boolean(process.env.TMDB_API_KEY);
 
   return {
-    trending: hasKey ? trending.slice(0, 5) : seedMovies.slice(0, 5),
-    popular: hasKey ? popular.slice(0, 5) : seedMovies.slice(5, 10),
+    trending: hasKey && trending.length ? trending.slice(0, 5) : seedMovies.slice(0, 5),
     isLive: hasKey
   };
 }
@@ -61,9 +57,9 @@ async function fetchTmdbList(path: string): Promise<Movie[]> {
   const response = await fetch(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 30 }
-  });
+  }).catch(() => null);
 
-  if (!response.ok) {
+  if (!response?.ok) {
     return [];
   }
 
@@ -81,9 +77,9 @@ async function fetchTmdbMovie(path: string): Promise<Movie | null> {
   const response = await fetch(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 60 }
-  });
+  }).catch(() => null);
 
-  if (!response.ok) {
+  if (!response?.ok) {
     return null;
   }
 

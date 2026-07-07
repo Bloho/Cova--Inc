@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function LogFilmDialog({
   open,
@@ -110,19 +111,29 @@ export function LogFilmDialog({
             </form>
 
             <div className="log-results">
-              {movies.map((movie) => (
-                <button
-                  key={movie.tmdbId}
-                  className={`log-result${selected?.tmdbId === movie.tmdbId ? " active" : ""}`}
-                  onClick={() => setSelected(movie)}
-                >
-                  <img src={posterUrl(movie.posterPath, "w185")} alt="" />
-                  <span>
-                    <strong>{movie.title}</strong>
-                    <small>{movie.releaseYear}</small>
-                  </span>
-                </button>
-              ))}
+              {busy && query.trim()
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <div className="log-result skeleton-log-result" key={index}>
+                      <Skeleton className="skeleton-log-poster" />
+                      <span>
+                        <Skeleton className="skeleton-line medium" />
+                        <Skeleton className="skeleton-line short" />
+                      </span>
+                    </div>
+                  ))
+                : movies.map((movie) => (
+                    <button
+                      key={movie.tmdbId}
+                      className={`log-result${selected?.tmdbId === movie.tmdbId ? " active" : ""}`}
+                      onClick={() => setSelected(movie)}
+                    >
+                      <img src={posterUrl(movie.posterPath, "w185")} alt="" />
+                      <span>
+                        <strong>{movie.title}</strong>
+                        <small>{movie.releaseYear}</small>
+                      </span>
+                    </button>
+                  ))}
             </div>
 
             {selected ? (

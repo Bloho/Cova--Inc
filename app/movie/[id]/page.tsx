@@ -3,8 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MovieLogActions } from "@/components/MovieLogActions";
-import { MoviePoster } from "@/components/MoviePoster";
-import { posterUrl, seedMovies } from "@/lib/data";
+import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getMovie } from "@/lib/tmdb";
@@ -17,9 +16,8 @@ export default async function MoviePage({
   const { id } = await params;
   const movie = await getMovie(Number(id));
   const { user, profile } = await getCurrentUserProfile();
-  const states = await getUserMovieStates([movie.tmdbId]);
+  const states = await getUserMovieStates([movie.tmdbId], user?.id);
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
-  const related = seedMovies.filter((item) => item.tmdbId !== movie.tmdbId).slice(0, 5);
   const supabase = await createSupabaseServerClient();
   const { data: reviews } = await supabase
     .from("reviews")
@@ -85,16 +83,6 @@ export default async function MoviePage({
           )}
         </section>
 
-        <section className="section" aria-labelledby="related">
-          <h2 id="related" className="section-head">
-            <span>More to watch</span>
-          </h2>
-          <div className="poster-row">
-            {related.map((item) => (
-              <MoviePoster key={item.tmdbId} movie={item} isSignedIn={Boolean(user)} />
-            ))}
-          </div>
-        </section>
       </main>
       <Footer />
     </>

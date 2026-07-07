@@ -1037,6 +1037,169 @@ textarea {
   outline: none;
 }
 
+.skeleton {
+  display: block;
+  background: #151515;
+  border: 1px solid #232121;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-brand {
+  width: 94px;
+  height: 32px;
+}
+
+.skeleton-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeleton-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+.skeleton-pill {
+  width: 96px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+.skeleton-button {
+  width: 132px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+.skeleton-hero-title {
+  width: min(420px, 78vw);
+  height: clamp(52px, 9vw, 86px);
+  border-radius: 12px;
+}
+
+.skeleton-hero-copy {
+  width: min(620px, 86vw);
+  height: 28px;
+}
+
+.skeleton-section-head {
+  min-height: 42px;
+  padding-bottom: 8px;
+}
+
+.skeleton-section-title {
+  width: min(220px, 60vw);
+  height: 24px;
+}
+
+.skeleton-section-title.wide {
+  width: min(360px, 72vw);
+}
+
+.skeleton-section-small {
+  width: 86px;
+  height: 18px;
+}
+
+.skeleton-poster-card {
+  min-height: 178px;
+  aspect-ratio: 2 / 2.86;
+}
+
+.skeleton-copy-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-title {
+  width: min(240px, 52vw);
+  height: 46px;
+}
+
+.skeleton-line {
+  width: min(440px, 100%);
+  height: 18px;
+}
+
+.skeleton-line.short {
+  width: 120px;
+}
+
+.skeleton-line.medium {
+  width: min(240px, 70%);
+}
+
+.skeleton-stat-number {
+  width: 78px;
+  height: 48px;
+  margin: 0 auto 8px;
+}
+
+.skeleton-stat-label {
+  width: 82px;
+  height: 22px;
+  margin: 0 auto;
+}
+
+.skeleton-tabs {
+  width: 320px;
+  max-width: 100%;
+  height: 46px;
+  margin: 0 auto 28px;
+  border-radius: 999px;
+}
+
+.skeleton-back-link {
+  width: 92px;
+  height: 22px;
+  margin-top: 12px;
+}
+
+.skeleton-movie-title {
+  width: min(560px, 82vw);
+  height: clamp(78px, 13vw, 120px);
+}
+
+.skeleton-paragraph {
+  width: min(640px, 100%);
+  height: 96px;
+}
+
+.skeleton-rating {
+  width: 232px;
+  height: 42px;
+  border-radius: 999px;
+}
+
+.skeleton-stars {
+  width: 82px;
+  height: 18px;
+}
+
+.skeleton-log-result {
+  pointer-events: none;
+}
+
+.skeleton-log-poster {
+  width: 48px;
+  aspect-ratio: 2 / 3;
+  border-radius: 5px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
 .login-media {
   position: relative;
   overflow: hidden;
