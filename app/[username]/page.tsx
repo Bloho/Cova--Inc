@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileEditor } from "@/components/ProfileEditor";
+import { Separator } from "@/components/ui/separator";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
@@ -83,6 +84,7 @@ export default async function ProfilePage({
           <h2 id="activity" className="section-head">
             <span>Recent activity</span>
           </h2>
+          <Separator />
           {(reviews ?? []).length ? (
             <div className="review-list">
               {(reviews ?? []).map((review) => {
@@ -108,6 +110,7 @@ export default async function ProfilePage({
           <h2 id="seen" className="section-head">
             <span>{profile.display_name} has seen {filmsCount ?? 0} films</span>
           </h2>
+          <Separator />
           {displayMovies.length ? (
             <div className="poster-grid">
               {displayMovies.map((movie) => (

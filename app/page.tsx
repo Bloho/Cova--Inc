@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import { Separator } from "@/components/ui/separator";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { getHomeMovies } from "@/lib/tmdb";
 
@@ -37,6 +38,7 @@ export default async function Home({
             <span>Trending on Cova</span>
             <small>{isLive ? "Hello" : "TMDB seed until key is added"}</small>
           </h2>
+          <Separator />
           <div className="poster-row">
             {trendingWithState.map((movie) => (
               <MoviePoster key={movie.tmdbId} movie={movie} isSignedIn={Boolean(user)} />

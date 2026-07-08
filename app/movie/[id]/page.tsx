@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MovieLogActions } from "@/components/MovieLogActions";
+import { Separator } from "@/components/ui/separator";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { getMovie } from "@/lib/tmdb";
@@ -56,6 +57,7 @@ export default async function MoviePage({
             </div>
           </div>
         </section>
+        <Separator />
       </main>
       <Footer />
     </>

@@ -4,6 +4,7 @@ import { ArrowLeft, MessageCircle, Share2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RatingInput } from "@/components/RatingInput";
+import { Badge } from "@/components/ui/badge";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { normalizeRating } from "@/lib/ratings";
@@ -116,7 +117,7 @@ export function MovieLogActions({
           <Share2 size={18} />
           Share card
         </button>
-        {reviewed ? <span className="movie-reviewed-label">Logged</span> : null}
+        {reviewed ? <Badge variant="sky">Watched</Badge> : null}
       </div>
 
       {dialogOpen ? (

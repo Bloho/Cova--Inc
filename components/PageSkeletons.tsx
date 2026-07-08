@@ -1,5 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
 const posterSlots = Array.from({ length: 5 });
 const reviewSlots = Array.from({ length: 3 });
@@ -32,6 +33,7 @@ export function HomePageSkeleton() {
             <Skeleton className="skeleton-section-title" />
             <Skeleton className="skeleton-section-small" />
           </div>
+          <Separator />
           <PosterRowSkeleton />
         </section>
       </main>
@@ -69,6 +71,7 @@ export function ProfilePageSkeleton() {
           <div className="section-head skeleton-section-head">
             <Skeleton className="skeleton-section-title" />
           </div>
+          <Separator />
           <ReviewListSkeleton />
         </section>
 
@@ -76,6 +79,7 @@ export function ProfilePageSkeleton() {
           <div className="section-head skeleton-section-head">
             <Skeleton className="skeleton-section-title wide" />
           </div>
+          <Separator />
           <PosterGridSkeleton />
         </section>
       </main>
@@ -107,6 +111,7 @@ export function MoviePageSkeleton() {
             </div>
           </div>
         </section>
+        <Separator />
       </main>
       <Footer />
     </>
