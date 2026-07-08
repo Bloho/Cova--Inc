@@ -1,10 +1,12 @@
 "use client";
 
-import { MessageCircle, Share2, Star } from "lucide-react";
+import { MessageCircle, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { RatingInput } from "@/components/RatingInput";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { formatRatingStars, normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 export function MovieLogActions({
@@ -21,7 +23,7 @@ export function MovieLogActions({
   username?: string | null;
 }) {
   const router = useRouter();
-  const [rating, setRating] = useState(initialRating);
+  const [rating, setRating] = useState(normalizeRating(initialRating));
   const [review, setReview] = useState("");
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -43,10 +45,11 @@ export function MovieLogActions({
 
     setBusy(true);
     setShareMessage("");
+    const savedRating = normalizeRating(nextRating);
     const response = await fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ movie, rating: nextRating, review: nextReview.trim() })
+      body: JSON.stringify({ movie, rating: savedRating, review: nextReview.trim() })
     });
 
     if (response.ok) {
@@ -95,21 +98,17 @@ export function MovieLogActions({
 
   return (
     <div className="movie-log-panel">
-      <div className="rating-picker compact" aria-label="Your rating">
-        {[1, 2, 3, 4, 5].map((value) => (
-          <button
-            key={value}
-            className={value <= rating ? "active" : ""}
-            disabled={busy}
-            onClick={() => {
-              setRating(value);
-              void save(value, "");
-            }}
-          >
-            <Star size={18} fill={value <= rating ? "currentColor" : "none"} />
-          </button>
-        ))}
-      </div>
+      <RatingInput
+        value={rating}
+        compact
+        disabled={busy}
+        label="Your rating"
+        onChange={(value) => {
+          const nextRating = normalizeRating(value);
+          setRating(nextRating);
+          void save(nextRating, "");
+        }}
+      />
       <button className="pill-button secondary" disabled={busy} onClick={() => setOpen((current) => !current)}>
         <MessageCircle size={18} />
         Review
@@ -167,7 +166,7 @@ async function renderMovieCard({ movie, rating, username }: { movie: Movie; rati
 
   ctx.fillStyle = "#111111";
   ctx.font = '700 44px "PP Neue Montreal", Arial, sans-serif';
-  ctx.fillText("★".repeat(Math.max(0, Math.min(5, rating))) + "☆".repeat(5 - Math.max(0, Math.min(5, rating))), 222, 620);
+  ctx.fillText(formatRatingStars(rating), 222, 620);
 
   ctx.fillStyle = "white";
   ctx.font = '700 18px "PP Neue Montreal", Arial, sans-serif';

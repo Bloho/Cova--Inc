@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { MovieLogActions } from "@/components/MovieLogActions";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
+import { formatRatingStars } from "@/lib/ratings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getMovie } from "@/lib/tmdb";
 
@@ -44,7 +45,7 @@ export default async function MoviePage({
             <p className="handle">{movie.releaseYear}</p>
             <h1>{movie.title}</h1>
             <div className="detail-rating">
-              <span className="stars">{"★".repeat(movieWithState.userRating || movie.rating)}{"☆".repeat(5 - (movieWithState.userRating || movie.rating))}</span>
+              <span className="stars">{formatRatingStars(movieWithState.userRating || movie.rating)}</span>
               <span>{reviews?.length ?? 0} Cova reviews</span>
             </div>
             <p>{movie.overview}</p>
@@ -73,7 +74,7 @@ export default async function MoviePage({
                       <h3>{profile?.display_name ?? profile?.username ?? "Cova user"}</h3>
                       <p>{review.body}</p>
                     </div>
-                    <span className="stars">{"★".repeat(review.rating ?? 0)}{"☆".repeat(5 - (review.rating ?? 0))}</span>
+                    <span className="stars">{formatRatingStars(review.rating ?? 0)}</span>
                   </article>
                 );
               })}

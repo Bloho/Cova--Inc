@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Movie } from "@/lib/data";
 import { ensureProfile } from "@/lib/profile";
+import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing movie." }, { status: 400 });
   }
 
-  const rating = Math.max(0, Math.min(5, Number(body.rating ?? 0)));
+  const rating = normalizeRating(body.rating);
   const review = body.review?.trim() ?? "";
 
   if (countReviewWords(review) > MAX_REVIEW_WORDS) {

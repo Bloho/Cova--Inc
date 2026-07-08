@@ -6,6 +6,7 @@ import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
+import { formatRatingStars } from "@/lib/ratings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function ProfilePage({
@@ -92,7 +93,7 @@ export default async function ProfilePage({
                       <h3>{movie?.title ?? "Film"}</h3>
                       <p>{review.body}</p>
                     </div>
-                    <span className="stars">{"★".repeat(review.rating ?? 0)}{"☆".repeat(5 - (review.rating ?? 0))}</span>
+                    <span className="stars">{formatRatingStars(review.rating ?? 0)}</span>
                   </article>
                 );
               })}
