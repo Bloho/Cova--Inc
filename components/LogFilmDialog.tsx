@@ -12,6 +12,7 @@ import { RatingInput } from "@/components/RatingInput";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type LogStep = "search" | "results" | "review";
+type LogStatus = "idle" | "saving" | "success" | "closing";
 
 export function LogFilmDialog({
   open,
@@ -31,6 +32,7 @@ export function LogFilmDialog({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [step, setStep] = useState<LogStep>("search");
+  const [status, setStatus] = useState<LogStatus>("idle");
 
   const canSave = useMemo(() => Boolean(selected && isSignedIn), [selected, isSignedIn]);
   const reviewWordCount = countReviewWords(review);
@@ -75,6 +77,7 @@ export function LogFilmDialog({
     setMessage("");
     setBusy(false);
     setStep("search");
+    setStatus("idle");
   }
 
   async function save() {
@@ -96,6 +99,7 @@ export function LogFilmDialog({
       return;
     }
 
+    setStatus("saving");
     const response = await fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -107,18 +111,23 @@ export function LogFilmDialog({
     });
 
     if (response.ok) {
-      setMessage("Logged.");
       router.refresh();
+      window.setTimeout(() => {
+        setStatus("success");
+      }, 650);
+      window.setTimeout(() => {
+        setStatus("closing");
+      }, 1450);
       window.setTimeout(() => {
         resetDialog();
         onClose();
-      }, 350);
+      }, 1750);
     } else {
       const data = await response.json().catch(() => ({}));
       setMessage(data.error ?? "Could not log this film.");
+      setStatus("idle");
+      setBusy(false);
     }
-
-    setBusy(false);
   }
 
   function closeDialog() {
@@ -127,10 +136,10 @@ export function LogFilmDialog({
   }
 
   return (
-    <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="Log a film">
-      <div className={`log-dialog log-dialog-${step}`}>
+    <div className={`modal-backdrop log-modal-backdrop${status === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" aria-label="Log a film">
+      <div className={`log-dialog log-dialog-${status === "saving" || status === "success" ? status : step}`}>
         <div className="dialog-head">
-          {step === "review" ? (
+          {status === "saving" || status === "success" ? null : step === "review" ? (
             <button className="text-button log-back" onClick={() => setStep(movies.length ? "results" : "search")} type="button">
               <ArrowLeft size={18} />
               Back
@@ -138,9 +147,11 @@ export function LogFilmDialog({
           ) : (
             <strong>{step === "results" ? query.trim().toUpperCase() : "Add your film!"}</strong>
           )}
-          <button className="icon-button" onClick={closeDialog} aria-label="Close">
-            <X size={20} />
-          </button>
+          {status === "idle" ? (
+            <button className="icon-button" onClick={closeDialog} aria-label="Close">
+              <X size={20} />
+            </button>
+          ) : null}
         </div>
 
         {!isSignedIn ? (
@@ -152,27 +163,43 @@ export function LogFilmDialog({
           </div>
         ) : (
           <div className="log-stage-shell">
-            <form className="search-form" onSubmit={search}>
-              <input
-                className="input log-search-input"
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setMessage("");
-                  if (!event.target.value.trim()) {
-                    setMovies([]);
-                    setStep("search");
-                  }
-                }}
-                placeholder="Search your film here..."
-              />
-              <button className="log-search-submit" disabled={busy || !query.trim()} type="submit" aria-label="Search films">
-                <Search size={18} />
-              </button>
-            </form>
+            {status === "idle" ? (
+              <form className="search-form" onSubmit={search}>
+                <input
+                  className="input log-search-input"
+                  value={query}
+                  onChange={(event) => {
+                    setQuery(event.target.value);
+                    setMessage("");
+                    if (!event.target.value.trim()) {
+                      setMovies([]);
+                      setStep("search");
+                    }
+                  }}
+                  placeholder="Search your film here..."
+                />
+                <button className="log-search-submit" disabled={busy || !query.trim()} type="submit" aria-label="Search films">
+                  <Search size={18} />
+                </button>
+              </form>
+            ) : null}
 
-            <div className={`log-stage log-stage-${step}`}>
-              {step === "results" ? (
+            <div className={`log-stage log-stage-${status === "idle" ? step : status}`}>
+              {status === "saving" ? (
+                <div className="log-feedback">
+                  <h2>Your movie is being added</h2>
+                  <span className="log-spinner" aria-label="Adding movie" />
+                </div>
+              ) : null}
+
+              {status === "success" ? (
+                <div className="log-feedback">
+                  <h2>Your movie has been added!</h2>
+                  <img className="log-success-mark" src="/utilities/checkmark.png" alt="" />
+                </div>
+              ) : null}
+
+              {status === "idle" && step === "results" ? (
                 <div className="log-results">
                   {busy && query.trim()
                     ? Array.from({ length: 4 }).map((_, index) => (
@@ -194,7 +221,7 @@ export function LogFilmDialog({
                 </div>
               ) : null}
 
-              {step === "review" && selected ? (
+              {status === "idle" && step === "review" && selected ? (
                 <div className="log-editor">
                   <div className="selected-film">
                     <img src={posterUrl(selected.posterPath, "w185")} alt={`${selected.title} poster`} />

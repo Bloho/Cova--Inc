@@ -561,6 +561,23 @@ textarea {
   min-height: min(670px, calc(100vh - 40px));
 }
 
+.log-dialog-saving,
+.log-dialog-success {
+  width: min(730px, calc(100vw - 36px));
+  min-height: 330px;
+  align-content: center;
+  place-items: center;
+  padding: 64px;
+}
+
+.log-modal-backdrop.closing {
+  animation: log-backdrop-out 260ms ease forwards;
+}
+
+.log-modal-backdrop.closing .log-dialog {
+  animation: log-dialog-out 260ms ease forwards;
+}
+
 .dialog-head,
 .search-form {
   display: flex;
@@ -616,6 +633,48 @@ textarea {
 
 .log-stage {
   animation: log-stage-in 260ms ease both;
+}
+
+.log-dialog-saving .dialog-head,
+.log-dialog-success .dialog-head {
+  display: none;
+}
+
+.log-dialog-saving .log-stage-shell,
+.log-dialog-success .log-stage-shell {
+  width: 100%;
+}
+
+.log-feedback {
+  display: grid;
+  place-items: center;
+  gap: 34px;
+  min-height: 190px;
+  text-align: center;
+}
+
+.log-feedback h2 {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.log-spinner {
+  width: 54px;
+  height: 54px;
+  border: 6px solid rgba(255, 255, 255, 0.14);
+  border-top-color: rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  animation: spin 900ms linear infinite;
+}
+
+.log-success-mark {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  animation: check-pop 300ms ease both;
 }
 
 .search-form {
@@ -850,6 +909,31 @@ textarea {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes check-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes log-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes log-dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
   }
 }
 
