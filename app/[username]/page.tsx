@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
+import { ProfileEditor } from "@/components/ProfileEditor";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
@@ -59,7 +60,7 @@ export default async function ProfilePage({
           <div className="identity">
             {profile.avatar_url ? <img className="avatar" src={profile.avatar_url} alt="" /> : <div className="avatar" aria-hidden />}
             <div>
-              <h1>{profile.display_name}</h1>
+              {isOwnProfile ? <ProfileEditor displayName={profile.display_name} username={profile.username} avatarUrl={profile.avatar_url} /> : <h1>{profile.display_name}</h1>}
               <div className="handle">@{profile.username}</div>
             </div>
           </div>
