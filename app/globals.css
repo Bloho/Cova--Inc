@@ -1,25 +1,29 @@
 @font-face {
-  font-family: "PP Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-Regular.otf") format("opentype");
+  font-family: "SF Pro Display";
+  src: url("/fonts/SFPRODISPLAYREGULAR.OTF") format("opentype");
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "PP Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-Semibold.otf") format("opentype");
+  font-family: "SF Pro Display";
+  src: url("/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SF Pro Display";
+  src: url("/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
   font-weight: 600;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "PP Neue Montreal";
-  src: url("/fonts/PPNeueMontreal-Extrabold.otf") format("opentype");
+  font-family: "SF Pro Display";
+  src: url("/fonts/SFPRODISPLAYBOLD.OTF") format("opentype");
   font-weight: 700;
-}
-
-@font-face {
-  font-family: "PP Mori";
-  src: url("/fonts/PPMori-Semibold.otf") format("opentype");
-  font-weight: 600;
+  font-display: swap;
 }
 
 :root {
@@ -51,7 +55,7 @@ body {
   background:
     radial-gradient(circle at 12% 4%, rgba(0, 0, 0, 0.08), transparent 19rem),
     linear-gradient(180deg, #110d10 0%, #0d0f0f 60%, #111 100%);
-  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-family: "SF Pro Display", Arial, sans-serif;
   letter-spacing: 0;
 }
 
@@ -178,7 +182,7 @@ textarea {
   justify-content: center;
   gap: clamp(20px, 6vw, 80px);
   overflow: hidden;
-  font-family: "PP Mori", "PP Neue Montreal", sans-serif;
+  font-family: "SF Pro Display", Arial, sans-serif;
   font-size: clamp(4.6rem, 12vw, 8rem);
   font-weight: 300;
   line-height: 0.92;
@@ -192,7 +196,7 @@ textarea {
 
 .hero-title strong {
   color: var(--green);
-  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-family: "SF Pro Display", Arial, sans-serif;
   font-size: clamp(5.5rem, 13vw, 9rem);
   font-weight: 400;
   letter-spacing: 0;
@@ -877,7 +881,11 @@ textarea {
 
 .log-review-box textarea {
   display: block;
+  height: 152px;
   min-height: 152px;
+  max-height: 152px;
+  overflow-y: auto;
+  resize: none;
   padding: 14px 16px 34px;
   color: #f5f5f5;
   background: #151515;
@@ -891,6 +899,9 @@ textarea {
   position: absolute;
   right: 15px;
   bottom: 10px;
+  z-index: 1;
+  padding-left: 12px;
+  background: #151515;
 }
 
 .log-complete-button {
@@ -1270,6 +1281,7 @@ textarea {
 .movie-review-dialog-review {
   position: relative;
   gap: 34px;
+  align-content: start;
 }
 
 .movie-review-dialog-saving,
@@ -1313,11 +1325,17 @@ textarea {
 }
 
 .movie-review-box {
-  width: min(440px, 100%);
+  width: min(560px, 100%);
 }
 
 .movie-review-box textarea {
-  min-height: 170px;
+  height: 210px;
+  min-height: 210px;
+  max-height: 210px;
+  padding: 22px 26px 42px;
+  overflow-y: auto;
+  border-radius: 18px;
+  font-size: 1.05rem;
 }
 
 .movie-beta-dialog {

@@ -157,23 +157,23 @@ async function renderProfileCard({ username, filmsCount }: { username: string; f
   ctx.textBaseline = "middle";
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
-  ctx.font = '700 28px "PP Neue Montreal", Arial, sans-serif';
+  ctx.font = '700 28px "SF Pro Display", Arial, sans-serif';
   ctx.fillText(getCinephileTier(filmsCount), CARD_WIDTH / 2, 170);
 
   ctx.fillStyle = "#9066ff";
-  ctx.font = '700 104px "PP Neue Montreal", Arial, sans-serif';
+  ctx.font = '700 104px "SF Pro Display", Arial, sans-serif';
   ctx.fillText(String(filmsCount), CARD_WIDTH / 2, 352);
 
-  ctx.font = '700 30px "PP Neue Montreal", Arial, sans-serif';
+  ctx.font = '700 30px "SF Pro Display", Arial, sans-serif';
   ctx.fillText("Films", CARD_WIDTH / 2, 402);
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-  ctx.font = '600 21px "PP Neue Montreal", Arial, sans-serif';
+  ctx.font = '600 21px "SF Pro Display", Arial, sans-serif';
   ctx.fillText(new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date()), CARD_WIDTH / 2, 438);
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#ff6048";
-  ctx.font = '700 34px "PP Neue Montreal", Arial, sans-serif';
+  ctx.font = '700 34px "SF Pro Display", Arial, sans-serif';
   ctx.fillText(`cova.quest/${username}`, 35, 637, 375);
 
   return canvas.toDataURL("image/png");
