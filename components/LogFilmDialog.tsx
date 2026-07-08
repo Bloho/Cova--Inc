@@ -131,12 +131,29 @@ export function LogFilmDialog({
   }
 
   function closeDialog() {
-    resetDialog();
-    onClose();
+    if (status !== "idle") {
+      return;
+    }
+
+    setStatus("closing");
+    window.setTimeout(() => {
+      resetDialog();
+      onClose();
+    }, 240);
   }
 
   return (
-    <div className={`modal-backdrop log-modal-backdrop${status === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" aria-label="Log a film">
+    <div
+      className={`modal-backdrop log-modal-backdrop${status === "closing" ? " closing" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Log a film"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          closeDialog();
+        }
+      }}
+    >
       <div className={`log-dialog log-dialog-${status === "saving" || status === "success" ? status : step}`}>
         <div className="dialog-head">
           {status === "saving" || status === "success" ? null : step === "review" ? (
