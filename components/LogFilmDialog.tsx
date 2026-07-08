@@ -195,7 +195,7 @@ export function LogFilmDialog({
               {status === "success" ? (
                 <div className="log-feedback">
                   <h2>Your movie has been added!</h2>
-                  <img className="log-success-mark" src="/utilities/checkmark.png" alt="" />
+                  <img className="log-success-mark" src="/utilities/Checkmark.png" alt="" />
                 </div>
               ) : null}
 
