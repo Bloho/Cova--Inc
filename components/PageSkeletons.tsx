@@ -107,14 +107,6 @@ export function MoviePageSkeleton() {
             </div>
           </div>
         </section>
-
-        <section className="section">
-          <div className="movie-reviews-head skeleton-section-head">
-            <Skeleton className="skeleton-section-title" />
-            <Skeleton className="skeleton-section-small" />
-          </div>
-          <ReviewListSkeleton />
-        </section>
       </main>
       <Footer />
     </>

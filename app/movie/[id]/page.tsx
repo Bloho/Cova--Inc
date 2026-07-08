@@ -5,8 +5,6 @@ import { Header } from "@/components/Header";
 import { MovieLogActions } from "@/components/MovieLogActions";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
-import { formatRatingStars } from "@/lib/ratings";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getMovie } from "@/lib/tmdb";
 
 export default async function MoviePage({
@@ -21,14 +19,6 @@ export default async function MoviePage({
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
   const averageRating = movie.averageRating ?? movie.rating;
   const averagePercent = Math.max(0, Math.min(100, (averageRating / 5) * 100));
-  const supabase = await createSupabaseServerClient();
-  const { data: reviews } = await supabase
-    .from("reviews")
-    .select("id, body, rating, created_at, profiles(username, display_name, avatar_url)")
-    .eq("tmdb_id", movie.tmdbId)
-    .eq("is_public", true)
-    .order("created_at", { ascending: false })
-    .limit(12);
 
   return (
     <>
@@ -66,32 +56,6 @@ export default async function MoviePage({
             </div>
           </div>
         </section>
-
-        <section className="section" aria-labelledby="film-reviews">
-          <div id="film-reviews" className="movie-reviews-head">
-            <strong>{reviews?.length ?? 0} Reviews</strong>
-          </div>
-          {(reviews ?? []).length ? (
-            <div className="review-list">
-              {(reviews ?? []).map((review: any) => {
-                const profile = Array.isArray(review.profiles) ? review.profiles[0] : review.profiles;
-                return (
-                  <article className="review" key={review.id}>
-                    {profile?.avatar_url ? <img className="mini-poster" src={profile.avatar_url} alt="" /> : <div className="mini-poster avatar-fallback" />}
-                    <div>
-                      <h3>{profile?.display_name ?? profile?.username ?? "Cova user"}</h3>
-                      <p>{review.body}</p>
-                    </div>
-                    <span className="stars">{formatRatingStars(review.rating ?? 0)}</span>
-                  </article>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="empty-state">No reviews for this film yet.</div>
-          )}
-        </section>
-
       </main>
       <Footer />
     </>
