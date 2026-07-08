@@ -27,10 +27,8 @@ export default async function ProfilePage({
     notFound();
   }
 
-  const [{ count: filmsCount }, { count: followersCount }, { count: followingCount }, { data: logs }, { data: reviews }] = await Promise.all([
+  const [{ count: filmsCount }, { data: logs }, { data: reviews }] = await Promise.all([
     supabase.from("user_movies").select("*", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
-    supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profile.id),
-    supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profile.id),
     supabase
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
@@ -44,7 +42,7 @@ export default async function ProfilePage({
       .eq("user_id", profile.id)
       .eq("is_public", true)
       .order("created_at", { ascending: false })
-      .limit(8)
+      .limit(3)
   ]);
 
   const movies = (logs ?? []).map((row) => fromLoggedMovie(row)).filter(Boolean) as Movie[];
@@ -62,21 +60,12 @@ export default async function ProfilePage({
             <div>
               <h1>{profile.display_name}</h1>
               <div className="handle">@{profile.username}</div>
-              {!isOwnProfile ? <button className="pill-button secondary">Follow</button> : null}
             </div>
           </div>
           <div className="stats" aria-label="Profile stats">
             <div className="stat">
               <strong>{filmsCount ?? 0}</strong>
               <span>films</span>
-            </div>
-            <div className="stat">
-              <strong>{followersCount ?? 0}</strong>
-              <span>followers</span>
-            </div>
-            <div className="stat">
-              <strong>{followingCount ?? 0}</strong>
-              <span>following</span>
             </div>
           </div>
           {isOwnProfile ? <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} /> : null}

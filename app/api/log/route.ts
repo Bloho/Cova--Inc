@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { Movie } from "@/lib/data";
 import { ensureProfile } from "@/lib/profile";
+import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -25,6 +26,10 @@ export async function POST(request: Request) {
 
   const rating = Math.max(0, Math.min(5, Number(body.rating ?? 0)));
   const review = body.review?.trim() ?? "";
+
+  if (countReviewWords(review) > MAX_REVIEW_WORDS) {
+    return NextResponse.json({ error: `Reviews can be up to ${MAX_REVIEW_WORDS} words.` }, { status: 400 });
+  }
 
   const profile = await ensureProfile(supabase, user);
   if (profile.error) {

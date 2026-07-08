@@ -55,12 +55,10 @@ export function ProfilePageSkeleton() {
             </div>
           </div>
           <div className="stats" aria-hidden>
-            {[0, 1, 2].map((item) => (
-              <div className="stat" key={item}>
-                <Skeleton className="skeleton-stat-number" />
-                <Skeleton className="skeleton-stat-label" />
-              </div>
-            ))}
+            <div className="stat">
+              <Skeleton className="skeleton-stat-number" />
+              <Skeleton className="skeleton-stat-label" />
+            </div>
           </div>
           <Skeleton className="skeleton-button profile-card-trigger" />
         </section>

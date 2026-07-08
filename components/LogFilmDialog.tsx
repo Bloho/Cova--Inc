@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function LogFilmDialog({
@@ -27,6 +28,8 @@ export function LogFilmDialog({
   const [message, setMessage] = useState("");
 
   const canSave = useMemo(() => Boolean(selected && isSignedIn), [selected, isSignedIn]);
+  const reviewWordCount = countReviewWords(review);
+  const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
 
   if (!open) {
     return null;
@@ -60,6 +63,12 @@ export function LogFilmDialog({
 
     setBusy(true);
     setMessage("");
+
+    if (reviewTooLong) {
+      setMessage(`Reviews can be up to ${MAX_REVIEW_WORDS} words.`);
+      setBusy(false);
+      return;
+    }
 
     const response = await fetch("/api/log", {
       method: "POST",
@@ -146,7 +155,10 @@ export function LogFilmDialog({
                   ))}
                 </div>
                 <textarea value={review} onChange={(event) => setReview(event.target.value)} placeholder="Review, optional" />
-                <button className="pill-button" disabled={!canSave || busy} onClick={save}>
+                <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
+                  {reviewWordCount}/{MAX_REVIEW_WORDS} words
+                </div>
+                <button className="pill-button" disabled={!canSave || busy || reviewTooLong} onClick={save}>
                   Save log
                 </button>
               </div>

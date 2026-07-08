@@ -6,6 +6,7 @@ import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movie: Movie; dense?: boolean; isSignedIn?: boolean }) {
   const router = useRouter();
@@ -13,10 +14,16 @@ export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movi
   const [reviewOpen, setReviewOpen] = useState(false);
   const [review, setReview] = useState("");
   const [busy, setBusy] = useState(false);
+  const reviewWordCount = countReviewWords(review);
+  const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
 
   async function log(nextReview = review) {
     if (!isSignedIn) {
       router.push("/login");
+      return;
+    }
+
+    if (countReviewWords(nextReview) > MAX_REVIEW_WORDS) {
       return;
     }
 
@@ -59,9 +66,12 @@ export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movi
         <div className="review-popover">
           <strong>{movie.title}</strong>
           <textarea value={review} placeholder="Write a review..." onChange={(event) => setReview(event.target.value)} />
+          <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
+            {reviewWordCount}/{MAX_REVIEW_WORDS} words
+          </div>
           <button
             className="pill-button"
-            disabled={busy || !review.trim()}
+            disabled={busy || !review.trim() || reviewTooLong}
             onClick={async () => {
               await log(review);
               setReviewOpen(false);

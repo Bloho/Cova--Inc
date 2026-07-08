@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { seedMovies, type Movie } from "@/lib/data";
 
 type TmdbMovie = {
@@ -19,7 +20,7 @@ type TmdbListResponse = {
 const TMDB_URL = "https://api.themoviedb.org/3";
 
 export async function getHomeMovies() {
-  const trending = await fetchTmdbList("/trending/movie/day");
+  const trending = await getCachedTmdbList("/trending/movie/day");
   const hasKey = Boolean(process.env.TMDB_API_KEY);
 
   return {
@@ -29,7 +30,7 @@ export async function getHomeMovies() {
 }
 
 export async function getMovie(tmdbId: number) {
-  const live = await fetchTmdbMovie(`/movie/${tmdbId}`);
+  const live = await getCachedTmdbMovie(tmdbId);
   return live ?? seedMovies.find((movie) => movie.tmdbId === tmdbId) ?? seedMovies[0];
 }
 
@@ -38,13 +39,31 @@ export async function searchMovies(query: string) {
     return [];
   }
 
-  const live = await fetchTmdbList(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false`);
+  const live = await getCachedTmdbSearch(query.trim().toLowerCase());
   if (process.env.TMDB_API_KEY) {
     return live;
   }
 
   return seedMovies.filter((movie) => movie.title.toLowerCase().includes(query.toLowerCase()));
 }
+
+const getCachedTmdbList = unstable_cache(
+  async (path: string) => fetchTmdbList(path),
+  ["tmdb-list"],
+  { revalidate: 60 * 30 }
+);
+
+const getCachedTmdbMovie = unstable_cache(
+  async (tmdbId: number) => fetchTmdbMovie(`/movie/${tmdbId}`),
+  ["tmdb-movie"],
+  { revalidate: 60 * 60 }
+);
+
+const getCachedTmdbSearch = unstable_cache(
+  async (query: string) => fetchTmdbList(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false`),
+  ["tmdb-search"],
+  { revalidate: 60 * 10 }
+);
 
 async function fetchTmdbList(path: string): Promise<Movie[]> {
   const token = process.env.TMDB_API_KEY;

@@ -14,11 +14,13 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
   const [step, setStep] = useState<CardStep>("intro");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [confirmCancel, setConfirmCancel] = useState(false);
 
   async function generateCard() {
     setOpen(true);
     setStep("loading");
     setError("");
+    setConfirmCancel(false);
 
     try {
       const [url] = await Promise.all([renderProfileCard({ username, filmsCount }), holdLoadingFrame()]);
@@ -41,6 +43,22 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
     link.click();
   }
 
+  function requestClose() {
+    setConfirmCancel(true);
+  }
+
+  function cancelClose() {
+    setConfirmCancel(false);
+  }
+
+  function confirmClose() {
+    setOpen(false);
+    setStep("intro");
+    setCardUrl(null);
+    setError("");
+    setConfirmCancel(false);
+  }
+
   return (
     <>
       <button className="pill-button profile-card-trigger" onClick={() => setOpen(true)}>
@@ -48,8 +66,18 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
       </button>
 
       {open ? (
-        <div className="modal-backdrop profile-card-backdrop" role="dialog" aria-modal="true" aria-label="Generate profile card">
-          <div className="profile-card-modal">
+        <div
+          className="modal-backdrop profile-card-backdrop"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Generate profile card"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              requestClose();
+            }
+          }}
+        >
+          <div className="profile-card-modal" onMouseDown={(event) => event.stopPropagation()}>
             {step === "intro" ? (
               <>
                 <h2>You can now get your own personalised card to share with your friends!</h2>
@@ -80,6 +108,23 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
                   <button className="card-modal-button icon-card-button" onClick={generateCard}>
                     <img src="/icons/redo.svg" alt="" />
                     Regenerate
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {confirmCancel ? (
+              <div className="card-cancel-confirm" role="alertdialog" aria-modal="true" aria-label="Cancel card generation">
+                <div>
+                  <h3>Cancel card?</h3>
+                  <p>Your generated card will be discarded if you close this.</p>
+                </div>
+                <div className="card-confirm-actions">
+                  <button className="card-modal-button compact" onClick={confirmClose}>
+                    Cancel card
+                  </button>
+                  <button className="card-modal-button compact primary" onClick={cancelClose}>
+                    Keep going
                   </button>
                 </div>
               </div>

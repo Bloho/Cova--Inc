@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 export function MovieLogActions({
   movie,
@@ -26,6 +27,8 @@ export function MovieLogActions({
   const [busy, setBusy] = useState(false);
   const [reviewed, setReviewed] = useState(initialReviewed);
   const [shareMessage, setShareMessage] = useState("");
+  const reviewWordCount = countReviewWords(review);
+  const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
 
   async function save(nextRating = rating, nextReview = review) {
     if (!isSignedIn) {
@@ -33,7 +36,13 @@ export function MovieLogActions({
       return;
     }
 
+    if (countReviewWords(nextReview) > MAX_REVIEW_WORDS) {
+      setShareMessage(`Reviews can be up to ${MAX_REVIEW_WORDS} words.`);
+      return;
+    }
+
     setBusy(true);
+    setShareMessage("");
     const response = await fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -114,7 +123,10 @@ export function MovieLogActions({
       {open ? (
         <div className="inline-review">
           <textarea value={review} onChange={(event) => setReview(event.target.value)} placeholder="Write a review..." />
-          <button className="pill-button" disabled={busy || !review.trim()} onClick={() => save(rating, review)}>
+          <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
+            {reviewWordCount}/{MAX_REVIEW_WORDS} words
+          </div>
+          <button className="pill-button" disabled={busy || !review.trim() || reviewTooLong} onClick={() => save(rating, review)}>
             Save review
           </button>
         </div>

@@ -400,6 +400,17 @@ textarea {
   padding: 10px;
 }
 
+.review-limit {
+  justify-self: end;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.review-limit.over {
+  color: #ff5c5c;
+}
+
 .stars {
   color: white;
   letter-spacing: 0;
@@ -913,6 +924,7 @@ textarea {
 }
 
 .profile-card-modal {
+  position: relative;
   display: grid;
   width: min(860px, calc(100vw - 40px));
   min-height: min(510px, calc(100vh - 40px));
@@ -950,6 +962,16 @@ textarea {
   cursor: pointer;
   font-size: 1.5rem;
   font-weight: 600;
+}
+
+.card-modal-button.compact {
+  min-height: 48px;
+  padding: 0 22px;
+  font-size: 1rem;
+}
+
+.card-modal-button.primary {
+  border-color: rgba(153, 236, 63, 0.45);
 }
 
 .card-stack-preview {
@@ -1000,6 +1022,41 @@ textarea {
 .icon-card-button img {
   width: 24px;
   height: 24px;
+}
+
+.card-cancel-confirm {
+  position: absolute;
+  inset: auto 28px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  text-align: left;
+  background: #111111;
+  border: 1px solid #303030;
+  border-radius: 18px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.58);
+}
+
+.card-cancel-confirm h3,
+.card-cancel-confirm p {
+  margin: 0;
+}
+
+.card-cancel-confirm h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-cancel-confirm p {
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.card-confirm-actions {
+  display: flex;
+  gap: 10px;
 }
 
 @keyframes spin {
@@ -1327,5 +1384,14 @@ textarea {
   .card-modal-button {
     min-height: 52px;
     font-size: 1.25rem;
+  }
+
+  .card-cancel-confirm {
+    inset: auto 16px 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .card-confirm-actions {
+    flex-direction: column;
   }
 }
