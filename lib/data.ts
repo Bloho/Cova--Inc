@@ -3,6 +3,7 @@ export type Movie = {
   title: string;
   releaseYear: string;
   rating: number;
+  averageRating?: number;
   watched: boolean;
   posterPath: string;
   backdropPath?: string;

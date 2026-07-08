@@ -1,20 +1,21 @@
 "use client";
 
-import { MessageCircle, Share2 } from "lucide-react";
+import { ArrowLeft, MessageCircle, Share2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RatingInput } from "@/components/RatingInput";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
-import { formatRatingStars, normalizeRating } from "@/lib/ratings";
+import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
+
+type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "closing";
 
 export function MovieLogActions({
   movie,
   isSignedIn,
   initialRating = 0,
-  initialReviewed = false,
-  username
+  initialReviewed = false
 }: {
   movie: Movie;
   isSignedIn: boolean;
@@ -25,175 +26,166 @@ export function MovieLogActions({
   const router = useRouter();
   const [rating, setRating] = useState(normalizeRating(initialRating));
   const [review, setReview] = useState("");
-  const [open, setOpen] = useState(false);
+  const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
   const [busy, setBusy] = useState(false);
   const [reviewed, setReviewed] = useState(initialReviewed);
-  const [shareMessage, setShareMessage] = useState("");
+  const [message, setMessage] = useState("");
   const reviewWordCount = countReviewWords(review);
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
+  const dialogOpen = dialogState !== "closed";
 
-  async function save(nextRating = rating, nextReview = review) {
+  function openReview(nextRating = rating) {
     if (!isSignedIn) {
       router.push("/login");
       return;
     }
 
-    if (countReviewWords(nextReview) > MAX_REVIEW_WORDS) {
-      setShareMessage(`Reviews can be up to ${MAX_REVIEW_WORDS} words.`);
+    setRating(normalizeRating(nextRating));
+    setMessage("");
+    setDialogState("review");
+  }
+
+  function closeDialog() {
+    if (busy) {
+      return;
+    }
+
+    setDialogState("closing");
+    window.setTimeout(() => {
+      setDialogState("closed");
+      setMessage("");
+    }, 240);
+  }
+
+  async function save() {
+    if (!isSignedIn) {
+      router.push("/login");
+      return;
+    }
+
+    if (reviewTooLong) {
+      setMessage(`Reviews can be up to ${MAX_REVIEW_WORDS} words.`);
       return;
     }
 
     setBusy(true);
-    setShareMessage("");
-    const savedRating = normalizeRating(nextRating);
+    setMessage("");
+    setDialogState("saving");
+    const savedRating = normalizeRating(rating);
     const response = await fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ movie, rating: savedRating, review: nextReview.trim() })
+      body: JSON.stringify({ movie, rating: savedRating, review: review.trim() })
     });
 
     if (response.ok) {
-      if (nextReview.trim()) {
-        setReviewed(true);
-      }
+      setRating(savedRating);
+      setReviewed(true);
       router.refresh();
-      setOpen(false);
-    }
-
-    setBusy(false);
-  }
-
-  async function shareMovieCard() {
-    if (!reviewed || !username) {
+      window.setTimeout(() => setDialogState("success"), 650);
+      window.setTimeout(() => setDialogState("closing"), 1450);
+      window.setTimeout(() => {
+        setDialogState("closed");
+        setBusy(false);
+        setReview("");
+      }, 1750);
       return;
     }
 
-    setBusy(true);
-    setShareMessage("");
-
-    try {
-      const blob = await renderMovieCard({ movie, rating: rating || initialRating || 0, username });
-      const file = new File([blob], `cova-${movie.tmdbId}-movie-card.png`, { type: "image/png" });
-
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          title: movie.title,
-          text: `I reviewed ${movie.title} on Cova.`,
-          files: [file]
-        });
-      } else {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file.name;
-        link.click();
-        URL.revokeObjectURL(url);
-      }
-    } catch {
-      setShareMessage("Could not generate the movie card.");
-    }
-
+    const data = await response.json().catch(() => ({}));
+    setMessage(data.error ?? "Could not log this film.");
+    setDialogState("review");
     setBusy(false);
   }
 
   return (
-    <div className="movie-log-panel">
-      <RatingInput
-        value={rating}
-        compact
-        disabled={busy}
-        label="Your rating"
-        onChange={(value) => {
-          const nextRating = normalizeRating(value);
-          setRating(nextRating);
-          void save(nextRating, "");
-        }}
-      />
-      <button className="pill-button secondary" disabled={busy} onClick={() => setOpen((current) => !current)}>
-        <MessageCircle size={18} />
-        Review
-      </button>
-      {reviewed ? (
-        <button className="pill-button secondary" disabled={busy} onClick={shareMovieCard}>
+    <>
+      <div className="movie-log-panel">
+        <RatingInput
+          value={rating}
+          compact
+          disabled={busy}
+          label="Your rating"
+          onChange={(value) => openReview(value)}
+        />
+        <button className="pill-button secondary" disabled={busy} onClick={() => openReview()} type="button">
+          <MessageCircle size={18} />
+          Review
+        </button>
+        <button className="pill-button secondary" disabled={busy} onClick={() => setDialogState("share")} type="button">
           <Share2 size={18} />
           Share card
         </button>
-      ) : null}
-      {open ? (
-        <div className="inline-review">
-          <textarea value={review} onChange={(event) => setReview(event.target.value)} placeholder="Write a review..." />
-          <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
-            {reviewWordCount}/{MAX_REVIEW_WORDS} words
-          </div>
-          <button className="pill-button" disabled={busy || !review.trim() || reviewTooLong} onClick={() => save(rating, review)}>
-            Save review
-          </button>
+        {reviewed ? <span className="movie-reviewed-label">Logged</span> : null}
+      </div>
+
+      {dialogOpen ? (
+        <div className={`modal-backdrop movie-modal-backdrop${dialogState === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) {
+            closeDialog();
+          }
+        }}>
+          {dialogState === "share" ? (
+            <div className="movie-beta-dialog">
+              <h2>Movie cards will be introduced in the next beta. Stay tuned!</h2>
+              <button className="movie-beta-close" onClick={closeDialog} aria-label="Close movie card notice" type="button">
+                <X size={34} />
+              </button>
+            </div>
+          ) : (
+            <div className={`movie-review-dialog movie-review-dialog-${dialogState}`}>
+              {dialogState === "review" ? (
+                <>
+                  <button className="text-button log-back movie-dialog-back" onClick={closeDialog} type="button">
+                    <ArrowLeft size={18} />
+                    Back
+                  </button>
+                  <div className="movie-review-head">
+                    <img src={posterUrl(movie.posterPath, "w185")} alt={`${movie.title} poster`} />
+                    <div>
+                      <strong>{movie.title}</strong>
+                      <span>{movie.releaseYear}</span>
+                    </div>
+                  </div>
+                  <RatingInput value={rating} onChange={(value) => setRating(normalizeRating(value))} disabled={busy} label={`Rate ${movie.title}`} />
+                  <div className="log-review-box movie-review-box">
+                    <textarea
+                      value={review}
+                      onChange={(event) => {
+                        setReview(event.target.value);
+                        setMessage("");
+                      }}
+                      placeholder="Write your review..."
+                      maxLength={5000}
+                    />
+                    <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
+                      {reviewWordCount}/{MAX_REVIEW_WORDS}
+                    </div>
+                  </div>
+                  <button className="pill-button log-complete-button" disabled={busy || reviewTooLong} onClick={save} type="button">
+                    Complete
+                  </button>
+                  {message ? <p className="form-message">{message}</p> : null}
+                </>
+              ) : null}
+
+              {dialogState === "saving" ? (
+                <div className="log-feedback">
+                  <h2>Your movie is being added</h2>
+                  <span className="log-spinner" aria-label="Adding movie" />
+                </div>
+              ) : null}
+
+              {dialogState === "success" ? (
+                <div className="log-feedback">
+                  <h2>Your movie has been added!</h2>
+                  <img className="log-success-mark" src="/utilities/Checkmark.png" alt="" />
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
       ) : null}
-      {shareMessage ? <p className="form-message">{shareMessage}</p> : null}
-    </div>
+    </>
   );
-}
-
-async function renderMovieCard({ movie, rating, username }: { movie: Movie; rating: number; username: string }) {
-  const variantIndex = Math.floor(Math.random() * 10) + 1;
-  const [background, poster] = await Promise.all([
-    loadImage(`/movie-card-variants/${encodeURIComponent(`Variant ${variantIndex}.svg`)}`),
-    loadImage(posterUrl(movie.posterPath, "w500"))
-  ]);
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 445;
-  canvas.height = 668;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) {
-    throw new Error("Canvas is unavailable");
-  }
-
-  ctx.drawImage(background, 0, 0, 445, 668);
-  drawCoveredImage(ctx, poster, 28, 25, 390, 504);
-
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = "#111111";
-  ctx.font = '700 27px "PP Neue Montreal", Arial, sans-serif';
-  ctx.fillText("I scored", 118, 576);
-  ctx.fillText("a", 329, 576);
-
-  ctx.fillStyle = "#ff1212";
-  ctx.fillText(movie.title, 224, 576, 190);
-
-  ctx.fillStyle = "#111111";
-  ctx.font = '700 44px "PP Neue Montreal", Arial, sans-serif';
-  ctx.fillText(formatRatingStars(rating), 222, 620);
-
-  ctx.fillStyle = "white";
-  ctx.font = '700 18px "PP Neue Montreal", Arial, sans-serif';
-  ctx.fillText(`cova.quest/${username}`, 222, 648, 350);
-
-  return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Could not export card"))), "image/png");
-  });
-}
-
-function loadImage(src: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new window.Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-    image.src = src;
-  });
-}
-
-function drawCoveredImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, width: number, height: number) {
-  const imageRatio = image.width / image.height;
-  const frameRatio = width / height;
-  const sourceWidth = imageRatio > frameRatio ? image.height * frameRatio : image.width;
-  const sourceHeight = imageRatio > frameRatio ? image.height : image.width / frameRatio;
-  const sourceX = (image.width - sourceWidth) / 2;
-  const sourceY = (image.height - sourceHeight) / 2;
-
-  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, x, y, width, height);
 }

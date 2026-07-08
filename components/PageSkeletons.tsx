@@ -95,19 +95,23 @@ export function MoviePageSkeleton() {
           <div className="movie-detail-copy skeleton-copy-stack">
             <Skeleton className="skeleton-line short" />
             <Skeleton className="skeleton-movie-title" />
-            <Skeleton className="skeleton-line medium" />
             <Skeleton className="skeleton-paragraph" />
             <div className="movie-log-panel" aria-hidden>
               <Skeleton className="skeleton-rating" />
               <Skeleton className="skeleton-button" />
               <Skeleton className="skeleton-button" />
             </div>
+            <div className="movie-average-rating" aria-hidden>
+              <Skeleton className="skeleton-average-ring" />
+              <strong>Average rating by users</strong>
+            </div>
           </div>
         </section>
 
         <section className="section">
-          <div className="section-head skeleton-section-head">
+          <div className="movie-reviews-head skeleton-section-head">
             <Skeleton className="skeleton-section-title" />
+            <Skeleton className="skeleton-section-small" />
           </div>
           <ReviewListSkeleton />
         </section>

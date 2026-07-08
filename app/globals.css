@@ -1128,10 +1128,11 @@ textarea {
 
 .movie-detail {
   display: grid;
-  grid-template-columns: minmax(220px, 310px) minmax(0, 1fr);
-  gap: clamp(28px, 6vw, 72px);
+  grid-template-columns: minmax(240px, 330px) minmax(0, 1fr);
+  gap: clamp(42px, 7vw, 82px);
   align-items: center;
-  padding: 42px 0 24px;
+  padding: 42px 0 52px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.26);
 }
 
 .movie-detail-poster {
@@ -1152,7 +1153,7 @@ textarea {
   line-height: 0.88;
 }
 
-.movie-detail-copy p {
+.movie-overview {
   max-width: 660px;
   color: rgba(255, 255, 255, 0.6);
   font-size: 1.12rem;
@@ -1171,6 +1172,202 @@ textarea {
 .detail-rating span:last-child {
   color: rgba(255, 255, 255, 0.42);
   font-weight: 700;
+}
+
+.movie-average-rating {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.15rem;
+}
+
+.radial-score {
+  position: relative;
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+}
+
+.radial-score svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.score-ring-track,
+.score-ring-value {
+  fill: none;
+  stroke-width: 9;
+}
+
+.score-ring-track {
+  stroke: #1e1e1e;
+}
+
+.score-ring-value {
+  stroke: #1079f3;
+  stroke-linecap: round;
+}
+
+.radial-score span {
+  position: relative;
+  color: white;
+  font-weight: 700;
+}
+
+.movie-reviewed-label {
+  align-self: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.movie-reviews-head {
+  display: flex;
+  align-items: center;
+  gap: 46px;
+  padding: 20px 0 6px;
+}
+
+.movie-reviews-head strong {
+  color: white;
+  font-size: 1.3rem;
+}
+
+.movie-modal-backdrop {
+  background: rgba(0, 0, 0, 0.62);
+  animation: modal-backdrop-in 220ms ease both;
+}
+
+.movie-modal-backdrop.closing {
+  animation: log-backdrop-out 240ms ease forwards;
+}
+
+.movie-review-dialog,
+.movie-beta-dialog {
+  display: grid;
+  place-items: center;
+  width: min(760px, calc(100vw - 36px));
+  min-height: min(720px, calc(100vh - 40px));
+  padding: 58px 64px;
+  background: #050505;
+  border: 1px solid #2a2a2a;
+  border-radius: 64px;
+  box-shadow: 0 36px 110px rgba(0, 0, 0, 0.72);
+  animation: movie-dialog-in 260ms ease both;
+}
+
+.movie-modal-backdrop.closing .movie-review-dialog,
+.movie-modal-backdrop.closing .movie-beta-dialog {
+  animation: log-dialog-out 240ms ease forwards;
+}
+
+.movie-review-dialog-review {
+  position: relative;
+  gap: 34px;
+}
+
+.movie-review-dialog-saving,
+.movie-review-dialog-success {
+  min-height: 330px;
+}
+
+.movie-dialog-back {
+  position: absolute;
+  top: 54px;
+  left: 58px;
+}
+
+.movie-review-head {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+
+.movie-review-head img {
+  width: 170px;
+  aspect-ratio: 2 / 2.85;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.movie-review-head strong {
+  display: block;
+  margin-top: 8px;
+  color: #f4f4f4;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.03;
+}
+
+.movie-review-head span {
+  color: rgba(255, 255, 255, 0.32);
+  font-size: 1.65rem;
+  font-weight: 600;
+}
+
+.movie-review-box {
+  width: min(440px, 100%);
+}
+
+.movie-review-box textarea {
+  min-height: 170px;
+}
+
+.movie-beta-dialog {
+  width: min(720px, calc(100vw - 36px));
+  min-height: 320px;
+  gap: 28px;
+  text-align: center;
+}
+
+.movie-beta-dialog h2 {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(2rem, 4vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.movie-beta-close {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  color: #050505;
+  background: rgba(255, 255, 255, 0.78);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes movie-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .segmented {
@@ -1507,6 +1704,12 @@ textarea {
 .skeleton-rating {
   width: 232px;
   height: 42px;
+  border-radius: 999px;
+}
+
+.skeleton-average-ring {
+  width: 72px;
+  height: 72px;
   border-radius: 999px;
 }
 

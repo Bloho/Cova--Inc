@@ -131,6 +131,7 @@ function fromTmdb(movie: TmdbMovie): Movie {
     title: movie.title ?? movie.name ?? "Untitled",
     releaseYear: date ? date.slice(0, 4) : "Film",
     rating: Math.max(1, Math.min(5, Math.round((movie.vote_average ?? 7) / 2))),
+    averageRating: Math.max(0, Math.min(5, Number(((movie.vote_average ?? 0) / 2).toFixed(1)))),
     watched: false,
     posterPath: movie.poster_path ?? "",
     backdropPath: movie.backdrop_path ?? undefined,

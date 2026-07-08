@@ -19,6 +19,8 @@ export default async function MoviePage({
   const { user, profile } = await getCurrentUserProfile();
   const states = await getUserMovieStates([movie.tmdbId], user?.id);
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
+  const averageRating = movie.averageRating ?? movie.rating;
+  const averagePercent = Math.max(0, Math.min(100, (averageRating / 5) * 100));
   const supabase = await createSupabaseServerClient();
   const { data: reviews } = await supabase
     .from("reviews")
@@ -44,11 +46,7 @@ export default async function MoviePage({
           <div className="movie-detail-copy">
             <p className="handle">{movie.releaseYear}</p>
             <h1>{movie.title}</h1>
-            <div className="detail-rating">
-              <span className="stars">{formatRatingStars(movieWithState.userRating || movie.rating)}</span>
-              <span>{reviews?.length ?? 0} Cova reviews</span>
-            </div>
-            <p>{movie.overview}</p>
+            <p className="movie-overview">{movie.overview}</p>
             <MovieLogActions
               movie={movie}
               isSignedIn={Boolean(user)}
@@ -56,13 +54,23 @@ export default async function MoviePage({
               initialReviewed={Boolean(movieWithState.reviewed)}
               username={profile?.username}
             />
+            <div className="movie-average-rating">
+              <div className="radial-score" aria-label={`Average rating ${averageRating.toFixed(1)} out of 5`}>
+                <svg viewBox="0 0 64 64" aria-hidden>
+                  <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
+                  <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${averagePercent} 100`} />
+                </svg>
+                <span>{averageRating.toFixed(1)}</span>
+              </div>
+              <strong>Average rating by users</strong>
+            </div>
           </div>
         </section>
 
         <section className="section" aria-labelledby="film-reviews">
-          <h2 id="film-reviews" className="section-head">
-            <span>Friend reviews</span>
-          </h2>
+          <div id="film-reviews" className="movie-reviews-head">
+            <strong>{reviews?.length ?? 0} Reviews</strong>
+          </div>
           {(reviews ?? []).length ? (
             <div className="review-list">
               {(reviews ?? []).map((review: any) => {
