@@ -2514,7 +2514,7 @@ textarea {
 @keyframes skeleton-pulse {
   0%,
   100% {
-    opacity: 0.55;
+    opacity: 1;
   }
 
   50% {
