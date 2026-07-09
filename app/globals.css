@@ -1081,6 +1081,113 @@ textarea {
   margin-top: 20px;
 }
 
+.movie-log-panel .badge {
+  align-self: center;
+  margin-top: 0.45rem;
+}
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.12);
+  animation: modal-backdrop-in 180ms ease both;
+}
+
+.drawer-content {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  width: min(390px, calc(100vw - 16px));
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 18px;
+  padding: 18px 12px 12px;
+  background: #101010;
+  border: 1px solid #232121;
+  border-radius: 28px;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.58);
+  animation: drawer-slide-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 0;
+}
+
+.drawer-title {
+  margin: 0;
+  color: #f4f4f4;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.drawer-edit-button {
+  min-height: 36px;
+  padding: 0 16px;
+  color: #f2f2f2;
+  background: #151515;
+  border: 1px solid #292929;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.drawer-review-body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 22px;
+  color: rgba(255, 255, 255, 0.62);
+  background: #1c1c1c;
+  border-radius: 22px;
+}
+
+.drawer-review-body p {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.drawer-stars {
+  padding: 0 18px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 3.35rem;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.drawer-close-button {
+  min-height: 42px;
+  color: #151515;
+  background: #eeeeee;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes drawer-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .inline-review {
   display: grid;
   flex-basis: min(100%, 520px);
