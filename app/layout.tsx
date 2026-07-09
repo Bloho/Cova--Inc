@@ -7,7 +7,18 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Cova",
   description: "Watch, review, and share films with your people.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://cova.quest")
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://cova.quest"),
+  icons: {
+    icon: "/assets/favicon.png"
+  },
+  openGraph: {
+    images: [{
+      url: "/assets/BANNER.jpg",
+      width: 1200,
+      height: 630,
+      alt: "Cova - Watch, review, and share films"
+    }]
+  }
 };
 
 export default function RootLayout({
