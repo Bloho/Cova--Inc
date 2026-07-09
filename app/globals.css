@@ -1976,8 +1976,9 @@ textarea {
   text-align: left;
   background: #111111;
   border: 1px solid #303030;
-  border-radius: 18px;
+  border-radius: 28px;
   box-shadow: 0 22px 70px rgba(0, 0, 0, 0.58);
+  animation: modal-backdrop-in 240ms ease both;
 }
 
 .card-cancel-confirm h3,
