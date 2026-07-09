@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type CardStep = "intro" | "loading" | "ready";
 
@@ -15,6 +15,20 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [confirmCancel, setConfirmCancel] = useState(false);
+
+  useEffect(() => {
+    function openCardGenerator() {
+      setOpen(true);
+    }
+
+    window.addEventListener("cova-open-profile-card", openCardGenerator);
+    if (window.sessionStorage.getItem("cova-open-profile-card") === "1") {
+      window.sessionStorage.removeItem("cova-open-profile-card");
+      window.setTimeout(openCardGenerator, 260);
+    }
+
+    return () => window.removeEventListener("cova-open-profile-card", openCardGenerator);
+  }, []);
 
   async function generateCard() {
     setOpen(true);

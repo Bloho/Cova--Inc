@@ -11,7 +11,7 @@ import { posterUrl } from "@/lib/data";
 import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
-type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "closing";
+type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "watchConfirm" | "watchRemoving" | "closing";
 type ExistingReview = {
   id: string;
   body: string;
@@ -176,6 +176,38 @@ export function MovieLogActions({
     setDrawerDeleting(false);
   }
 
+  async function removeFromWatchlist() {
+    if (!isSignedIn) {
+      router.push("/login");
+      return;
+    }
+
+    setMessage("");
+    setDialogState("watchRemoving");
+    const response = await fetch("/api/watchlist", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tmdbId: movie.tmdbId })
+    });
+
+    if (response.ok) {
+      setReviewed(false);
+      setExistingReview(null);
+      setReview("");
+      setRating(0);
+      router.refresh();
+      window.setTimeout(() => setDialogState("closing"), 620);
+      window.setTimeout(() => {
+        setDialogState("closed");
+      }, 900);
+      return;
+    }
+
+    const data = await response.json().catch(() => ({}));
+    setMessage(data.error ?? "Could not remove this movie.");
+    setDialogState("watchConfirm");
+  }
+
   return (
     <>
       <div className="movie-log-panel">
@@ -197,7 +229,9 @@ export function MovieLogActions({
       </div>
       {reviewed ? (
         <div className="movie-status-row">
-          <Badge variant="sky">Watched</Badge>
+          <button className="watched-badge-button" onClick={() => setDialogState("watchConfirm")} type="button">
+            <Badge variant="sky">Watched</Badge>
+          </button>
         </div>
       ) : null}
 
@@ -258,6 +292,28 @@ export function MovieLogActions({
               <button className="movie-beta-close" onClick={closeDialog} aria-label="Close movie card notice" type="button">
                 <X size={34} />
               </button>
+            </div>
+          ) : dialogState === "watchConfirm" || dialogState === "watchRemoving" ? (
+            <div className="watchlist-remove-dialog">
+              {dialogState === "watchRemoving" ? (
+                <div className="log-feedback">
+                  <h2>Removing movie</h2>
+                  <span className="log-spinner" aria-label="Removing movie" />
+                </div>
+              ) : (
+                <>
+                  <h2>Are you sure you want to remove this movie from your watchlist?</h2>
+                  <div className="watchlist-remove-actions">
+                    <button className="card-modal-button compact" onClick={closeDialog} type="button">
+                      Cancel
+                    </button>
+                    <button className="card-modal-button compact primary" onClick={removeFromWatchlist} type="button">
+                      Confirm
+                    </button>
+                  </div>
+                  {message ? <p className="form-message">{message}</p> : null}
+                </>
+              )}
             </div>
           ) : (
             <div className={`movie-review-dialog movie-review-dialog-${dialogState}`}>

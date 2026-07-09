@@ -17,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function HeaderClient({
   isSignedIn,
@@ -39,15 +38,23 @@ export function HeaderClient({
   const initials = getInitials(displayName ?? username ?? "Cova");
 
   function navigateTo(path: string) {
-    window.covaProgressStart?.();
+    window.covaProgressRouteStart?.();
     router.push(path);
-    window.setTimeout(() => window.covaProgressDone?.(), 900);
+  }
+
+  function openCards() {
+    if (isProfilePage) {
+      window.dispatchEvent(new CustomEvent("cova-open-profile-card"));
+      return;
+    }
+
+    window.sessionStorage.setItem("cova-open-profile-card", "1");
+    navigateTo(`${profilePath}#cards`);
   }
 
   async function signOut() {
     window.covaProgressStart?.();
-    const supabase = createSupabaseBrowserClient();
-    await supabase.auth.signOut();
+    await fetch("/api/auth/signout", { method: "POST" });
     router.refresh();
     router.push("/");
     window.setTimeout(() => window.covaProgressDone?.(), 900);
@@ -84,7 +91,7 @@ export function HeaderClient({
                   {isProfilePage ? <HomeIcon /> : <BadgeCheckIcon />}
                   {isProfilePage ? "Home" : "Profile"}
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => navigateTo(`${profilePath}#cards`)}>
+                <DropdownMenuItem onSelect={openCards}>
                   <CreditCardIcon />
                   Cards
                 </DropdownMenuItem>

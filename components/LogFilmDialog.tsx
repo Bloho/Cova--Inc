@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Search, X } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -156,19 +156,9 @@ export function LogFilmDialog({
     >
       <div className={`log-dialog log-dialog-${status === "saving" || status === "success" ? status : step}`}>
         <div className="dialog-head">
-          {status === "saving" || status === "success" ? null : step === "review" ? (
-            <button className="text-button log-back" onClick={() => setStep(movies.length ? "results" : "search")} type="button">
-              <ArrowLeft size={18} />
-              Back
-            </button>
-          ) : (
+          {status === "saving" || status === "success" || step === "review" ? null : (
             <strong>{step === "results" ? query.trim().toUpperCase() : "Add your film!"}</strong>
           )}
-          {status === "idle" ? (
-            <button className="icon-button" onClick={closeDialog} aria-label="Close">
-              <X size={20} />
-            </button>
-          ) : null}
         </div>
 
         {!isSignedIn ? (
@@ -181,24 +171,32 @@ export function LogFilmDialog({
         ) : (
           <div className="log-stage-shell">
             {status === "idle" ? (
-              <form className="search-form" onSubmit={search}>
-                <input
-                  className="input log-search-input"
-                  value={query}
-                  onChange={(event) => {
-                    setQuery(event.target.value);
-                    setMessage("");
-                    if (!event.target.value.trim()) {
-                      setMovies([]);
-                      setStep("search");
-                    }
-                  }}
-                  placeholder="Search your film here..."
-                />
-                <button className="log-search-submit" disabled={busy || !query.trim()} type="submit" aria-label="Search films">
-                  <Search size={18} />
-                </button>
-              </form>
+              <div className={`log-search-row${step === "review" ? " with-back" : ""}`}>
+                {step === "review" ? (
+                  <button className="text-button log-back" onClick={() => setStep(movies.length ? "results" : "search")} type="button">
+                    <ArrowLeft size={18} />
+                    Back
+                  </button>
+                ) : null}
+                <form className="search-form" onSubmit={search}>
+                  <input
+                    className="input log-search-input"
+                    value={query}
+                    onChange={(event) => {
+                      setQuery(event.target.value);
+                      setMessage("");
+                      if (!event.target.value.trim()) {
+                        setMovies([]);
+                        setStep("search");
+                      }
+                    }}
+                    placeholder="Search your film here..."
+                  />
+                  <button className="log-search-submit" disabled={busy || !query.trim()} type="submit" aria-label="Search films">
+                    <Search size={18} />
+                  </button>
+                </form>
+              </div>
             ) : null}
 
             <div className={`log-stage log-stage-${status === "idle" ? step : status}`}>

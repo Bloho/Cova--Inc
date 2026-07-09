@@ -62,7 +62,7 @@ export function SearchMovieDialog({
 
   function openMovie(movie: Movie) {
     setStatus("routing");
-    window.covaProgressStart?.();
+    window.covaProgressRouteStart?.();
     window.setTimeout(() => {
       router.push(`/movie/${movie.tmdbId}`);
       onClose();

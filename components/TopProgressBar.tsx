@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 declare global {
   interface Window {
     covaProgressStart?: () => void;
+    covaProgressRouteStart?: () => void;
     covaProgressDone?: () => void;
   }
 }
@@ -14,12 +15,11 @@ export function TopProgressBar() {
   const pathname = usePathname();
   const [active, setActive] = useState(false);
   const [finishing, setFinishing] = useState(false);
-  const activeCount = useRef(0);
+  const pendingRoute = useRef(false);
   const finishTimer = useRef<number | null>(null);
 
   useEffect(() => {
     function start() {
-      activeCount.current += 1;
       if (finishTimer.current) {
         window.clearTimeout(finishTimer.current);
       }
@@ -27,12 +27,12 @@ export function TopProgressBar() {
       setActive(true);
     }
 
-    function done() {
-      activeCount.current = Math.max(0, activeCount.current - 1);
-      if (activeCount.current > 0) {
-        return;
-      }
+    function routeStart() {
+      pendingRoute.current = true;
+      start();
+    }
 
+    function done() {
       setFinishing(true);
       finishTimer.current = window.setTimeout(() => {
         setActive(false);
@@ -43,13 +43,18 @@ export function TopProgressBar() {
     const originalFetch = window.fetch.bind(window);
 
     window.covaProgressStart = start;
+    window.covaProgressRouteStart = routeStart;
     window.covaProgressDone = done;
     window.fetch = async (...args) => {
-      start();
+      if (!pendingRoute.current) {
+        start();
+      }
       try {
         return await originalFetch(...args);
       } finally {
-        done();
+        if (!pendingRoute.current) {
+          done();
+        }
       }
     };
 
@@ -62,7 +67,7 @@ export function TopProgressBar() {
 
       const url = new URL(anchor.href, window.location.href);
       if (url.origin === window.location.origin && url.pathname + url.search !== window.location.pathname + window.location.search) {
-        start();
+        routeStart();
       }
     }
 
@@ -71,6 +76,7 @@ export function TopProgressBar() {
       document.removeEventListener("click", handleClick, true);
       window.fetch = originalFetch;
       window.covaProgressStart = undefined;
+      window.covaProgressRouteStart = undefined;
       window.covaProgressDone = undefined;
       if (finishTimer.current) {
         window.clearTimeout(finishTimer.current);
@@ -79,8 +85,8 @@ export function TopProgressBar() {
   }, []);
 
   useEffect(() => {
-    if (activeCount.current > 0) {
-      activeCount.current = 1;
+    if (pendingRoute.current) {
+      pendingRoute.current = false;
       window.covaProgressDone?.();
     }
   }, [pathname]);
