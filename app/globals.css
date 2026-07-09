@@ -1878,6 +1878,7 @@ textarea {
   border: 1px solid #303030;
   border-radius: clamp(26px, 5vw, 64px);
   box-shadow: 0 34px 120px rgba(0, 0, 0, 0.72);
+  animation: modal-backdrop-in 240ms ease both;
 }
 
 .profile-card-modal h2 {
