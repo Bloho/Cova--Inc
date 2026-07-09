@@ -5,8 +5,8 @@ export default function LoginPage() {
   return (
     <main className="login-page">
       <section className="login-panel">
-        <Link href="/" className="brand">
-          Cova
+        <Link href="/" className="brand" aria-label="Cova home">
+          <img src="/assets/Cova-logo-white.svg" alt="Cova logo" className="h-8 w-auto" />
         </Link>
         <div>
           <h1>Sign in to Cova</h1>
