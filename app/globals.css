@@ -253,8 +253,8 @@ textarea {
 }
 
 .badge-default {
-  color: rgba(255, 255, 255, 0.82);
-  background: #151515;
+  color: rgb(70, 215, 255);
+  background: #00304C;
   border: 1px solid #232121;
 }
 
