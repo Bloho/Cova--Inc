@@ -70,7 +70,11 @@ export default async function ProfilePage({
               <span>films</span>
             </div>
           </div>
-          {isOwnProfile ? <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} /> : null}
+          {isOwnProfile ? (
+            <div id="cards">
+              <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} />
+            </div>
+          ) : null}
         </section>
 
         <nav className="tabs" aria-label="Profile tabs">

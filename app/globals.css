@@ -59,6 +59,39 @@ body {
   letter-spacing: 0;
 }
 
+.top-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.top-progress::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  content: "";
+  background: linear-gradient(90deg, transparent, var(--green), #1079f3, transparent);
+  transform: translateX(-100%);
+}
+
+.top-progress.active {
+  opacity: 1;
+}
+
+.top-progress.active::before {
+  animation: top-progress-run 950ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.top-progress.finishing::before {
+  animation: top-progress-finish 260ms ease forwards;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -118,6 +151,120 @@ textarea {
   background: var(--surface);
   border: 1px solid var(--surface-border);
   border-radius: 999px;
+  cursor: pointer;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--surface-border);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button-ghost {
+  background: transparent;
+}
+
+.button-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.account-trigger {
+  color: rgba(255, 255, 255, 0.68);
+  background: var(--surface);
+}
+
+.ui-avatar {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 999px;
+}
+
+.ui-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ui-avatar-fallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.72);
+  background: #1f1f1f;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.dropdown-menu-root {
+  position: relative;
+}
+
+.dropdown-menu-content {
+  position: absolute;
+  top: calc(100% + 10px);
+  z-index: 70;
+  min-width: 190px;
+  padding: 10px 0;
+  color: #f6f6f6;
+  background: #151515;
+  border: 1px solid #303030;
+  border-radius: 18px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.52);
+  animation: dropdown-menu-in 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dropdown-menu-align-end {
+  right: 0;
+}
+
+.dropdown-menu-align-start {
+  left: 0;
+}
+
+.dropdown-menu-item {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  color: rgba(255, 255, 255, 0.88);
+  background: transparent;
+  border: 0;
+  font-size: 1.02rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-menu-item:hover,
+.dropdown-menu-item:focus-visible {
+  color: white;
+  background: rgba(255, 255, 255, 0.06);
+  outline: 0;
+}
+
+.dropdown-menu-item svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.dropdown-menu-separator {
+  height: 1px;
+  margin: 8px 0;
+  background: #303030;
 }
 
 .login-button,
@@ -599,6 +746,17 @@ textarea {
   min-height: min(670px, calc(100vh - 40px));
 }
 
+.search-dialog {
+  width: min(600px, calc(100vw - 36px));
+  min-height: min(560px, calc(100vh - 40px));
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.search-dialog-routing {
+  opacity: 0.72;
+  transform: scale(0.985);
+}
+
 .log-dialog-review {
   width: min(860px, calc(100vw - 36px));
   min-height: min(920px, calc(100vh - 40px));
@@ -1065,6 +1223,22 @@ textarea {
   to {
     opacity: 0;
     transform: translateY(14px) scale(0.97);
+  }
+}
+
+@keyframes top-progress-run {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes top-progress-finish {
+  to {
+    transform: translateX(100%);
   }
 }
 

@@ -9,6 +9,7 @@ export async function Header() {
       isSignedIn={Boolean(user)}
       username={profile?.username ?? null}
       displayName={profile?.display_name ?? user?.email ?? null}
+      avatarUrl={profile?.avatar_url ?? null}
     />
   );
 }
