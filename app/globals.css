@@ -258,9 +258,8 @@ textarea {
 }
 
 .badge-sky {
-  color: #e8f7ff;
-  background: rgba(14, 165, 233, 0.2);
-  border: 1px solid rgba(125, 211, 252, 0.34);
+  color: rgb(70, 215, 255);
+  background: #00304C;
 }
 
 .section-head small {
