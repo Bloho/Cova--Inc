@@ -5,35 +5,48 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RatingInput } from "@/components/RatingInput";
 import { Badge } from "@/components/ui/badge";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
-import { normalizeRating } from "@/lib/ratings";
+import { formatRatingStars, normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "closing";
+type ExistingReview = {
+  id: string;
+  body: string;
+  rating: number | null;
+  created_at: string;
+  updated_at?: string | null;
+};
 
 export function MovieLogActions({
   movie,
   isSignedIn,
   initialRating = 0,
-  initialReviewed = false
+  initialReviewed = false,
+  initialReview = null
 }: {
   movie: Movie;
   isSignedIn: boolean;
   initialRating?: number;
   initialReviewed?: boolean;
+  initialReview?: ExistingReview | null;
   username?: string | null;
 }) {
   const router = useRouter();
   const [rating, setRating] = useState(normalizeRating(initialRating));
   const [review, setReview] = useState("");
   const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [reviewed, setReviewed] = useState(initialReviewed);
+  const [existingReview, setExistingReview] = useState<ExistingReview | null>(initialReview);
+  const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview));
   const [message, setMessage] = useState("");
   const reviewWordCount = countReviewWords(review);
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
   const dialogOpen = dialogState !== "closed";
+  const reviewedOn = existingReview ? formatReviewDate(existingReview.updated_at ?? existingReview.created_at) : "";
 
   function openReview(nextRating = rating) {
     if (!isSignedIn) {
@@ -41,7 +54,25 @@ export function MovieLogActions({
       return;
     }
 
+    if (existingReview) {
+      setDrawerOpen(true);
+      return;
+    }
+
     setRating(normalizeRating(nextRating));
+    setReview("");
+    setMessage("");
+    setDialogState("review");
+  }
+
+  function editReview() {
+    if (!existingReview) {
+      return;
+    }
+
+    setDrawerOpen(false);
+    setRating(normalizeRating(Number(existingReview.rating ?? rating)));
+    setReview(existingReview.body);
     setMessage("");
     setDialogState("review");
   }
@@ -80,8 +111,18 @@ export function MovieLogActions({
     });
 
     if (response.ok) {
+      const now = new Date().toISOString();
       setRating(savedRating);
       setReviewed(true);
+      if (review.trim()) {
+        setExistingReview({
+          id: existingReview?.id ?? "current-review",
+          body: review.trim(),
+          rating: savedRating || null,
+          created_at: existingReview?.created_at ?? now,
+          updated_at: now
+        });
+      }
       router.refresh();
       window.setTimeout(() => setDialogState("success"), 650);
       window.setTimeout(() => setDialogState("closing"), 1450);
@@ -119,6 +160,26 @@ export function MovieLogActions({
         </button>
         {reviewed ? <Badge variant="sky">Watched</Badge> : null}
       </div>
+
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent onOpenChange={setDrawerOpen}>
+          <DrawerHeader>
+            <DrawerTitle>{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
+            <button className="drawer-edit-button" onClick={editReview} type="button">
+              Edit
+            </button>
+          </DrawerHeader>
+          <div className="drawer-review-body">
+            <p>{existingReview?.body}</p>
+          </div>
+          <div className="drawer-stars" aria-label={`Your rating ${existingReview?.rating ?? rating} out of 5`}>
+            {formatRatingStars(Number(existingReview?.rating ?? rating ?? 0))}
+          </div>
+          <button className="drawer-close-button" onClick={() => setDrawerOpen(false)} type="button">
+            Close
+          </button>
+        </DrawerContent>
+      </Drawer>
 
       {dialogOpen ? (
         <div className={`modal-backdrop movie-modal-backdrop${dialogState === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => {
@@ -189,4 +250,12 @@ export function MovieLogActions({
       ) : null}
     </>
   );
+}
+
+function formatReviewDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(new Date(value));
 }

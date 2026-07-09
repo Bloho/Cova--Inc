@@ -6,6 +6,7 @@ import { MovieLogActions } from "@/components/MovieLogActions";
 import { Separator } from "@/components/ui/separator";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getMovie } from "@/lib/tmdb";
 
 export default async function MoviePage({
@@ -20,6 +21,17 @@ export default async function MoviePage({
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
   const averageRating = movie.averageRating ?? movie.rating;
   const averagePercent = Math.max(0, Math.min(100, (averageRating / 5) * 100));
+  const supabase = await createSupabaseServerClient();
+  const { data: currentReview } = user
+    ? await supabase
+        .from("reviews")
+        .select("id, body, rating, created_at, updated_at")
+        .eq("user_id", user.id)
+        .eq("tmdb_id", movie.tmdbId)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
 
   return (
     <>
@@ -43,6 +55,7 @@ export default async function MoviePage({
               isSignedIn={Boolean(user)}
               initialRating={movieWithState.userRating ?? 0}
               initialReviewed={Boolean(movieWithState.reviewed)}
+              initialReview={currentReview}
               username={profile?.username}
             />
             <div className="movie-average-rating">

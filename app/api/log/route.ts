@@ -68,16 +68,51 @@ export async function POST(request: Request) {
   }
 
   if (review) {
-    const { error: reviewError } = await supabase.from("reviews").insert({
-      user_id: user.id,
-      tmdb_id: movie.tmdbId,
-      rating: rating || null,
-      body: review,
-      is_public: true
-    });
+    const { data: existingReviews, error: existingReviewError } = await supabase
+      .from("reviews")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("tmdb_id", movie.tmdbId)
+      .order("updated_at", { ascending: false });
 
-    if (reviewError) {
-      return NextResponse.json({ error: databaseErrorMessage(reviewError.message) }, { status: 500 });
+    if (existingReviewError) {
+      return NextResponse.json({ error: databaseErrorMessage(existingReviewError.message) }, { status: 500 });
+    }
+
+    const existingReviewId = existingReviews?.[0]?.id;
+    const duplicateIds = (existingReviews ?? []).slice(1).map((row) => row.id);
+
+    if (existingReviewId) {
+      const { error: reviewError } = await supabase
+        .from("reviews")
+        .update({
+          rating: rating || null,
+          body: review,
+          is_public: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", existingReviewId)
+        .eq("user_id", user.id);
+
+      if (reviewError) {
+        return NextResponse.json({ error: databaseErrorMessage(reviewError.message) }, { status: 500 });
+      }
+    } else {
+      const { error: reviewError } = await supabase.from("reviews").insert({
+        user_id: user.id,
+        tmdb_id: movie.tmdbId,
+        rating: rating || null,
+        body: review,
+        is_public: true
+      });
+
+      if (reviewError) {
+        return NextResponse.json({ error: databaseErrorMessage(reviewError.message) }, { status: 500 });
+      }
+    }
+
+    if (duplicateIds.length) {
+      await supabase.from("reviews").delete().in("id", duplicateIds).eq("user_id", user.id);
     }
   }
 
