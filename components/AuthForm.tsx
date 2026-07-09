@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function AuthForm() {
@@ -13,29 +14,42 @@ export function AuthForm() {
   const [displayName, setDisplayName] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const onTurnstileVerify = useCallback((token: string) => setTurnstileToken(token), []);
+  const onTurnstileExpire = useCallback(() => setTurnstileToken(""), []);
 
   async function submitEmail(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage("");
 
-    const result =
-      mode === "signup"
-        ? await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              emailRedirectTo: `${siteUrl || window.location.origin}/auth/callback`,
-              data: {
-                full_name: displayName || email.split("@")[0]
-              }
-            }
-          })
-        : await supabase.auth.signInWithPassword({ email, password });
+    if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setMessage("Complete the Turnstile check before continuing.");
+      setBusy(false);
+      return;
+    }
 
-    if (result.error) {
-      setMessage(result.error.message);
-    } else if (mode === "signup" && !result.data.session) {
+    const result = await fetch("/api/auth/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        mode,
+        email,
+        password,
+        displayName,
+        turnstileToken
+      })
+    });
+    const data = (await result.json().catch(() => ({}))) as {
+      error?: string;
+      needsEmailConfirmation?: boolean;
+    };
+
+    if (!result.ok) {
+      setTurnstileToken("");
+      window.turnstile?.reset();
+      setMessage(data.error ?? "Could not sign in.");
+    } else if (data.needsEmailConfirmation) {
       setMessage("Check your email to confirm your account.");
     } else {
       await fetch("/api/profile/ensure", { method: "POST" });
@@ -92,6 +106,7 @@ export function AuthForm() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
         />
+        <TurnstileWidget onVerify={onTurnstileVerify} onExpire={onTurnstileExpire} />
         <button className="pill-button" type="submit" disabled={busy}>
           {mode === "signup" ? "Create account" : "Sign in"}
         </button>
