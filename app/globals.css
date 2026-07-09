@@ -2345,11 +2345,10 @@ textarea {
 .turnstile-frame {
   display: grid;
   min-height: 65px;
-  place-items: center;
+  place-items: left;
   overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  border-radius: 18px;
+  border: 0px solid var(--surface-border);
+  border-radius: 0px;
 }
 
 .input {
