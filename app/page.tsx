@@ -36,7 +36,7 @@ export default async function Home({
         <section className="shell section" aria-labelledby="trending">
           <h2 id="trending" className="section-head">
             <span>Trending on Cova</span>
-            <small>{isLive ? "Hello" : "TMDB seed until key is added"}</small>
+            <small>{isLive ? "Popular" : "TMDB seed until key is added"}</small>
           </h2>
           <Separator />
           <div className="poster-row">
