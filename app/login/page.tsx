@@ -9,7 +9,7 @@ export default function LoginPage() {
           Cova
         </Link>
         <div>
-          <h1>Welcome back</h1>
+          <h1>Sign in to Cova</h1>
           <p className="handle">cova.bloho.xyz</p>
         </div>
         <AuthForm />
