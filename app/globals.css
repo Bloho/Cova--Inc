@@ -2535,7 +2535,7 @@ textarea {
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(120deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.55)),
+    linear-gradient(120deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.35)),
     url("/assets/log-in-banner.jpg") center / cover no-repeat,
     linear-gradient(135deg, #151515, #3a3a3a);
 }
