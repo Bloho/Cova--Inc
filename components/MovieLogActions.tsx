@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
-import { formatRatingStars, normalizeRating } from "@/lib/ratings";
+import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "closing";
@@ -39,14 +39,17 @@ export function MovieLogActions({
   const [review, setReview] = useState("");
   const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerDeleting, setDrawerDeleting] = useState(false);
   const [busy, setBusy] = useState(false);
   const [existingReview, setExistingReview] = useState<ExistingReview | null>(initialReview);
-  const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview));
+  const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview) || initialRating > 0);
   const [message, setMessage] = useState("");
   const reviewWordCount = countReviewWords(review);
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
   const dialogOpen = dialogState !== "closed";
   const reviewedOn = existingReview ? formatReviewDate(existingReview.updated_at ?? existingReview.created_at) : "";
+  const drawerRating = normalizeRating(Number(existingReview?.rating ?? rating ?? 0));
+  const drawerRatingPercent = (drawerRating / 5) * 100;
 
   function openReview(nextRating = rating) {
     if (!isSignedIn) {
@@ -140,6 +143,39 @@ export function MovieLogActions({
     setBusy(false);
   }
 
+  async function deleteReview() {
+    if (!existingReview || drawerDeleting) {
+      return;
+    }
+
+    setDrawerDeleting(true);
+    setMessage("");
+
+    const response = await fetch("/api/review", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tmdbId: movie.tmdbId })
+    });
+
+    if (response.ok) {
+      setExistingReview(null);
+      setReview("");
+      setReviewed(Boolean(rating));
+      router.refresh();
+      window.setTimeout(() => {
+        setDrawerOpen(false);
+      }, 520);
+      window.setTimeout(() => {
+        setDrawerDeleting(false);
+      }, 820);
+      return;
+    }
+
+    const data = await response.json().catch(() => ({}));
+    setMessage(data.error ?? "Could not delete this review.");
+    setDrawerDeleting(false);
+  }
+
   return (
     <>
       <div className="movie-log-panel">
@@ -158,26 +194,55 @@ export function MovieLogActions({
           <Share2 size={18} />
           Share card
         </button>
-        {reviewed ? <Badge variant="sky">Watched</Badge> : null}
       </div>
+      {reviewed ? (
+        <div className="movie-status-row">
+          <Badge variant="sky">Watched</Badge>
+        </div>
+      ) : null}
 
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent onOpenChange={setDrawerOpen}>
+      <Drawer open={drawerOpen} onOpenChange={(open) => {
+        if (!drawerDeleting) {
+          setDrawerOpen(open);
+        }
+      }}>
+        <DrawerContent className={drawerDeleting ? "deleting" : ""} onOpenChange={(open) => {
+          if (!drawerDeleting) {
+            setDrawerOpen(open);
+          }
+        }}>
           <DrawerHeader>
             <DrawerTitle>{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
-            <button className="drawer-edit-button" onClick={editReview} type="button">
+            <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">
               Edit
             </button>
           </DrawerHeader>
           <div className="drawer-review-body">
+            <div className="drawer-rating-summary">
+              <strong>You rated this movie:</strong>
+              <div className="radial-score drawer-rating-score user-score" aria-label={`Your rating ${drawerRating.toFixed(1)} out of 5`}>
+                <svg viewBox="0 0 64 64" aria-hidden>
+                  <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
+                  <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${drawerRatingPercent} 100`} />
+                </svg>
+                <span>{drawerRating.toFixed(1)}</span>
+              </div>
+            </div>
             <p>{existingReview?.body}</p>
           </div>
-          <div className="drawer-stars" aria-label={`Your rating ${existingReview?.rating ?? rating} out of 5`}>
-            {formatRatingStars(Number(existingReview?.rating ?? rating ?? 0))}
+          <div className="drawer-footer">
+            <button className="drawer-close-button" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
+              Close
+            </button>
+            <button className="drawer-delete-button" disabled={drawerDeleting} onClick={deleteReview} aria-label="Delete review" type="button">
+              <img src="/utilities/bin.svg" alt="" />
+            </button>
           </div>
-          <button className="drawer-close-button" onClick={() => setDrawerOpen(false)} type="button">
-            Close
-          </button>
+          {drawerDeleting ? (
+            <div className="drawer-loading-state" aria-live="polite" aria-label="Deleting review">
+              <span className="log-spinner" />
+            </div>
+          ) : null}
         </DrawerContent>
       </Drawer>
 

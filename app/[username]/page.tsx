@@ -97,7 +97,7 @@ export default async function ProfilePage({
                       <h3>{movie?.title ?? "Film"}</h3>
                       <p>{review.body}</p>
                     </div>
-                    <div className="radial-score activity-score" aria-label={`Rating ${reviewRating.toFixed(1)} out of 5`}>
+                    <div className="radial-score activity-score user-score" aria-label={`Rating ${reviewRating.toFixed(1)} out of 5`}>
                       <svg viewBox="0 0 64 64" aria-hidden>
                         <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
                         <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${reviewPercent} 100`} />
