@@ -107,7 +107,7 @@ export function AuthForm() {
           onChange={(event) => setPassword(event.target.value)}
         />
         <TurnstileWidget onVerify={onTurnstileVerify} onExpire={onTurnstileExpire} />
-        <button className="pill-button" type="submit" disabled={busy}>
+        <button className="pill-button" type="submit" disabled={busy} style={{ backgroundColor: "#00AF1F", color: "white" }}>
           {mode === "signup" ? "Create account" : "Sign in"}
         </button>
       </form>
