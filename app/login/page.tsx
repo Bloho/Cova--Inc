@@ -10,7 +10,7 @@ export default function LoginPage() {
         </Link>
         <div>
           <h1>Welcome back</h1>
-          <p className="handle">cova.quest</p>
+          <p className="handle">cova.bloho.xyz</p>
         </div>
         <AuthForm />
       </section>

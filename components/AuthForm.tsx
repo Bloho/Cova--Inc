@@ -69,7 +69,8 @@ export function AuthForm() {
         </button>
       </div>
       <Link className="pill-button secondary" href="/auth/google">
-        Continue with Google
+        <img src="/utilities/logo-google.svg" alt="Google logo" className="mr-2 h-4 w-4" />
+        <span>Continue with Google</span>
       </Link>
       <form className="login-form" onSubmit={submitEmail}>
         {mode === "signup" ? (
