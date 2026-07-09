@@ -1,3 +1,4 @@
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -6,16 +7,7 @@ const posterSlots = Array.from({ length: 5 });
 const reviewSlots = Array.from({ length: 3 });
 
 export function HeaderSkeleton() {
-  return (
-    <header className="shell app-header">
-      <Skeleton className="skeleton-brand" />
-      <div className="skeleton-actions" aria-hidden>
-        <Skeleton className="skeleton-pill" />
-        <Skeleton className="skeleton-circle" />
-        <Skeleton className="skeleton-circle" />
-      </div>
-    </header>
-  );
+  return <Header />;
 }
 
 export function HomePageSkeleton() {

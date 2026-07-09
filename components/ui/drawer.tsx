@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+
+const DrawerClosingContext = createContext(false);
 
 export function Drawer({
   open,
@@ -12,8 +14,25 @@ export function Drawer({
   onOpenChange: (open: boolean) => void;
   children: ReactNode;
 }) {
+  const [mounted, setMounted] = useState(open);
+  const [closing, setClosing] = useState(false);
+
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      setMounted(true);
+      setClosing(false);
+    } else if (mounted) {
+      setClosing(true);
+      const timeout = window.setTimeout(() => {
+        setMounted(false);
+        setClosing(false);
+      }, 280);
+      return () => window.clearTimeout(timeout);
+    }
+  }, [mounted, open]);
+
+  useEffect(() => {
+    if (!mounted || closing) {
       return;
     }
 
@@ -25,13 +44,13 @@ export function Drawer({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onOpenChange, open]);
+  }, [closing, mounted, onOpenChange]);
 
-  if (!open) {
+  if (!mounted) {
     return null;
   }
 
-  return <>{children}</>;
+  return <DrawerClosingContext.Provider value={closing}>{children}</DrawerClosingContext.Provider>;
 }
 
 export function DrawerContent({
@@ -43,9 +62,11 @@ export function DrawerContent({
   className?: string;
   onOpenChange: (open: boolean) => void;
 }) {
+  const closing = useContext(DrawerClosingContext);
+
   return (
     <div
-      className="drawer-overlay"
+      className={`drawer-overlay${closing ? " closing" : ""}`}
       role="presentation"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {

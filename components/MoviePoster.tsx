@@ -1,50 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Eye, MessageCircle } from "lucide-react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 
 export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movie: Movie; dense?: boolean; isSignedIn?: boolean }) {
-  const router = useRouter();
-  const [watched, setWatched] = useState(Boolean(movie.watched));
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [review, setReview] = useState("");
-  const [busy, setBusy] = useState(false);
-  const reviewWordCount = countReviewWords(review);
-  const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
-
-  async function log(nextReview = review) {
-    if (!isSignedIn) {
-      router.push("/login");
-      return;
-    }
-
-    if (countReviewWords(nextReview) > MAX_REVIEW_WORDS) {
-      return;
-    }
-
-    setBusy(true);
-    const response = await fetch("/api/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        movie,
-        rating: movie.userRating ?? 0,
-        review: nextReview.trim()
-      })
-    });
-
-    if (response.ok) {
-      setWatched(true);
-      router.refresh();
-    }
-
-    setBusy(false);
-  }
+  const watched = Boolean(movie.watched);
 
   return (
     <article className={`poster-card${watched ? " watched" : ""}`} title={movie.title} style={{ minHeight: dense ? 188 : undefined }}>
@@ -54,33 +15,6 @@ export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movi
       <div className="poster-meta">
         <span>{movie.reviewer ?? movie.releaseYear}</span>
       </div>
-      <div className="poster-actions">
-        <button aria-label={`Log ${movie.title}`} className={watched ? "active" : ""} disabled={busy} onClick={() => log("")}>
-          {watched ? <Check size={16} /> : <Eye size={16} />}
-        </button>
-        <button aria-label={`Review ${movie.title}`} className={movie.reviewed ? "active" : ""} disabled={busy} onClick={() => setReviewOpen(true)}>
-          <MessageCircle size={16} />
-        </button>
-      </div>
-      {reviewOpen ? (
-        <div className="review-popover">
-          <strong>{movie.title}</strong>
-          <textarea value={review} placeholder="Write a review..." onChange={(event) => setReview(event.target.value)} />
-          <div className={`review-limit${reviewTooLong ? " over" : ""}`}>
-            {reviewWordCount}/{MAX_REVIEW_WORDS} words
-          </div>
-          <button
-            className="pill-button"
-            disabled={busy || !review.trim() || reviewTooLong}
-            onClick={async () => {
-              await log(review);
-              setReviewOpen(false);
-            }}
-          >
-            Save review
-          </button>
-        </div>
-      ) : null}
     </article>
   );
 }

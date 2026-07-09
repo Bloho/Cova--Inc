@@ -372,6 +372,7 @@ textarea {
 }
 
 .poster-actions {
+  display: none;
   position: absolute;
   top: 10px;
   right: 10px;
@@ -387,12 +388,6 @@ textarea {
   opacity: 0;
   transform: translateY(-6px);
   transition: opacity 180ms ease, transform 180ms ease;
-}
-
-.poster-card:hover .poster-actions,
-.poster-card:focus-within .poster-actions {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .poster-actions button {
@@ -1075,15 +1070,22 @@ textarea {
 
 .movie-log-panel {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
   margin-top: 20px;
 }
 
 .movie-log-panel .badge {
   align-self: center;
-  margin-top: 0.45rem;
+}
+
+.movie-log-panel .pill-button.secondary {
+  margin-top: 0;
+}
+
+.movie-log-panel .rating-picker {
+  align-items: center;
 }
 
 .drawer-overlay {
@@ -1091,7 +1093,11 @@ textarea {
   inset: 0;
   z-index: 40;
   background: rgba(0, 0, 0, 0.12);
-  animation: modal-backdrop-in 180ms ease both;
+  animation: modal-backdrop-in 240ms ease both;
+}
+
+.drawer-overlay.closing {
+  animation: drawer-backdrop-out 280ms ease forwards;
 }
 
 .drawer-content {
@@ -1108,7 +1114,12 @@ textarea {
   border: 1px solid #232121;
   border-radius: 28px;
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.58);
-  animation: drawer-slide-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: drawer-slide-in 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+}
+
+.drawer-overlay.closing .drawer-content {
+  animation: drawer-slide-out 280ms cubic-bezier(0.7, 0, 0.84, 0) forwards;
 }
 
 .drawer-header {
@@ -1179,12 +1190,30 @@ textarea {
 @keyframes drawer-slide-in {
   from {
     opacity: 0;
-    transform: translateX(24px);
+    transform: translateX(42px);
   }
 
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes drawer-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(42px);
+  }
+}
+
+@keyframes drawer-backdrop-out {
+  to {
+    opacity: 0;
   }
 }
 
@@ -1480,6 +1509,21 @@ textarea {
   position: relative;
   color: white;
   font-weight: 700;
+}
+
+.activity-score {
+  width: 56px;
+  height: 56px;
+  justify-self: end;
+}
+
+.activity-score .score-ring-track,
+.activity-score .score-ring-value {
+  stroke-width: 8;
+}
+
+.activity-score span {
+  font-size: 0.9rem;
 }
 
 .movie-reviews-head {

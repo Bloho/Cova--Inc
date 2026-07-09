@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
-import { formatRatingStars } from "@/lib/ratings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function ProfilePage({
@@ -89,6 +88,8 @@ export default async function ProfilePage({
             <div className="review-list">
               {(reviews ?? []).map((review) => {
                 const movie = fromReviewMovie(review);
+                const reviewRating = Math.max(0, Math.min(5, Number(review.rating ?? 0)));
+                const reviewPercent = (reviewRating / 5) * 100;
                 return (
                   <article className="review" key={review.id}>
                     {movie ? <img className="mini-poster" src={posterUrl(movie.posterPath, "w185")} alt={`${movie.title} poster`} /> : null}
@@ -96,7 +97,13 @@ export default async function ProfilePage({
                       <h3>{movie?.title ?? "Film"}</h3>
                       <p>{review.body}</p>
                     </div>
-                    <span className="stars">{formatRatingStars(review.rating ?? 0)}</span>
+                    <div className="radial-score activity-score" aria-label={`Rating ${reviewRating.toFixed(1)} out of 5`}>
+                      <svg viewBox="0 0 64 64" aria-hidden>
+                        <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
+                        <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${reviewPercent} 100`} />
+                      </svg>
+                      <span>{reviewRating.toFixed(1)}</span>
+                    </div>
                   </article>
                 );
               })}
