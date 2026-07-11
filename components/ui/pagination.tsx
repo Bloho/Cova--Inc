@@ -8,7 +8,13 @@ const Pagination = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) 
   <nav
     role="navigation"
     aria-label="Pagination Navigation"
-    className={cn("mx-auto flex w-full justify-center", className)}
+    style={{
+      display: "flex",
+      justifyContent: "center",
+      width: "100%",
+      margin: "0 auto"
+    }}
+    className={className}
     {...props}
   />
 )
@@ -20,7 +26,16 @@ const PaginationContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     ref={ref}
-    className={cn("flex flex-row items-center gap-1", className)}
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: "8px",
+      listStyle: "none",
+      padding: 0,
+      margin: 0
+    }}
+    className={className}
     {...props}
   />
 ))
@@ -30,7 +45,7 @@ const PaginationItem = React.forwardRef<
   HTMLLIElement,
   React.HTMLAttributes<HTMLLIElement>
 >(({ className, ...props }, ref) => (
-  <li ref={ref} className={cn("", className)} {...props} />
+  <li ref={ref} style={{ listStyle: "none" }} className={className} {...props} />
 ))
 PaginationItem.displayName = "PaginationItem"
 
@@ -47,13 +62,23 @@ const PaginationLink = ({
 }: PaginationLinkProps) => (
   <button
     aria-current={isActive ? "page" : undefined}
-    className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-      size === "icon" ? "h-10 w-10" : "h-10 px-3",
-      isActive
-        ? "bg-primary text-primary-foreground"
-        : "border border-input bg-background hover:bg-accent hover:text-accent-foreground"
-    )}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      whiteSpace: "nowrap",
+      borderRadius: "6px",
+      fontSize: "14px",
+      fontWeight: 500,
+      fontFamily: "SF Pro Display, Arial, sans-serif",
+      transition: "all 0.2s ease",
+      border: isActive ? "none" : "1px solid rgba(255, 255, 255, 0.1)",
+      backgroundColor: isActive ? "#00AF1F" : "transparent",
+      color: isActive ? "white" : "rgba(255, 255, 255, 0.7)",
+      cursor: "pointer",
+      ...(size === "icon" ? { width: "40px", height: "40px" } : { padding: "8px 12px" })
+    }}
+    className={className}
     {...props}
   />
 )
@@ -66,7 +91,15 @@ const PaginationPrevious = ({
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+      paddingRight: "12px",
+      paddingLeft: "12px"
+    }}
+    className={className}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
@@ -82,7 +115,15 @@ const PaginationNext = ({
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px",
+      paddingLeft: "12px",
+      paddingRight: "12px"
+    }}
+    className={className}
     {...props}
   >
     <span>Next</span>
@@ -97,7 +138,14 @@ const PaginationEllipsis = ({
 }: React.HTMLAttributes<HTMLSpanElement>) => (
   <span
     aria-hidden
-    className={cn("flex h-10 w-10 items-center justify-center", className)}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "40px",
+      height: "40px"
+    }}
+    className={className}
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
