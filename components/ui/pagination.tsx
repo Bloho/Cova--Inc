@@ -73,8 +73,8 @@ const PaginationLink = ({
       fontFamily: "SF Pro Display, Arial, sans-serif",
       transition: "all 0.2s ease",
       border: isActive ? "none" : "1px solid rgba(255, 255, 255, 0.1)",
-      backgroundColor: isActive ? "#00AF1F" : "transparent",
-      color: isActive ? "white" : "rgba(255, 255, 255, 0.7)",
+      backgroundColor: isActive ? "#000000" : "transparent",
+      color: isActive ? "white" : "rgba(65, 65, 65, 0.7)",
       cursor: "pointer",
       ...(size === "icon" ? { width: "40px", height: "40px" } : { padding: "8px 12px" })
     }}

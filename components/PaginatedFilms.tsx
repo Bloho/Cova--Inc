@@ -19,7 +19,7 @@ interface PaginatedFilmsProps {
   itemsPerPage?: number;
 }
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 16;
 
 export function PaginatedFilms({
   movies,
@@ -96,7 +96,7 @@ export function PaginatedFilms({
   };
 
   return (
-    <div className="space-y-6">
+    <div style={{ display: "flex", flexDirection: "column", gap: "48px" }}>
       {paginatedMovies.length ? (
         <div className="poster-grid">
           {paginatedMovies.map((movie) => (
