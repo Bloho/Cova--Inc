@@ -1,0 +1,138 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import type { Movie } from "@/lib/data";
+import { MoviePoster } from "@/components/MoviePoster";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+interface PaginatedFilmsProps {
+  movies: Movie[];
+  isSignedIn: boolean;
+  itemsPerPage?: number;
+}
+
+const ITEMS_PER_PAGE = 12;
+
+export function PaginatedFilms({
+  movies,
+  isSignedIn,
+  itemsPerPage = ITEMS_PER_PAGE,
+}: PaginatedFilmsProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(movies.length / itemsPerPage);
+
+  const paginatedMovies = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return movies.slice(startIndex, startIndex + itemsPerPage);
+  }, [currentPage, movies, itemsPerPage]);
+
+  const getPaginationItems = () => {
+    const items = [];
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    if (start > 1) {
+      items.push(
+        <PaginationItem key="first">
+          <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+        </PaginationItem>
+      );
+
+      if (start > 2) {
+        items.push(
+          <PaginationItem key="ellipsis-start">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+    }
+
+    for (let i = start; i <= end; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            isActive={i === currentPage}
+            onClick={() => setCurrentPage(i)}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) {
+        items.push(
+          <PaginationItem key="ellipsis-end">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return items;
+  };
+
+  return (
+    <div className="space-y-6">
+      {paginatedMovies.length ? (
+        <div className="poster-grid">
+          {paginatedMovies.map((movie) => (
+            <MoviePoster
+              key={movie.tmdbId}
+              movie={movie}
+              dense
+              isSignedIn={isSignedIn}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">No films logged yet.</div>
+      )}
+
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              />
+            </PaginationItem>
+
+            {getPaginationItems()}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
+    </div>
+  );
+}

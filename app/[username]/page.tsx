@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { MoviePoster } from "@/components/MoviePoster";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileEditor } from "@/components/ProfileEditor";
+import { PaginatedFilms } from "@/components/PaginatedFilms";
 import { Separator } from "@/components/ui/separator";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
@@ -36,8 +37,7 @@ export default async function ProfilePage({
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
       .eq("user_id", profile.id)
       .eq("status", "watched")
-      .order("watched_at", { ascending: false })
-      .limit(28),
+      .order("watched_at", { ascending: false }),
     supabase
       .from("reviews")
       .select("id, body, rating, created_at, movies(tmdb_id, title, poster_path, overview, release_date)")
@@ -122,15 +122,10 @@ export default async function ProfilePage({
             <span>{profile.display_name} has seen {filmsCount ?? 0} films</span>
           </h2>
           <Separator />
-          {displayMovies.length ? (
-            <div className="poster-grid">
-              {displayMovies.map((movie) => (
-                <MoviePoster key={movie.tmdbId} movie={movie} dense isSignedIn={Boolean(viewer)} />
-              ))}
-            </div>
-          ) : (
-            <div className="empty-state">No films logged yet.</div>
-          )}
+          <PaginatedFilms
+            movies={displayMovies}
+            isSignedIn={Boolean(viewer)}
+          />
         </section>
       </main>
       <Footer />
