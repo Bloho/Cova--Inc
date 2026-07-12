@@ -126,7 +126,7 @@ const PaginationNext = ({
       paddingLeft: "12px",
       paddingRight: "12px",
       borderRadius: "12px",
-      backgroundColor: "#000000",
+      backgroundColor: "#505050",
       border: "1px solid rgba(255, 255, 255, 0.1)"
     }}
     className={className}
