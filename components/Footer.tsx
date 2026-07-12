@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer style={{ display: "flex", flexDirection: "column", minHeight: "76px", marginTop: "70px", backgroundColor: "#151515", color: "rgba(255, 255, 255, 0.35)", fontWeight: "700" }}>
       <Separator />
-      <div className="shell" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", flex: 1, whiteSpace: "nowrap" }}>
+      <div className="shell" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", flex: 1, whiteSpace: "nowrap", paddingTop: "16px", paddingBottom: "16px" }}>
         <span>© Cova, film data from TMDB</span>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" }}>
           <span>A product of</span>
