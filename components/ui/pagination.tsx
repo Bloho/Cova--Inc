@@ -97,7 +97,10 @@ const PaginationPrevious = ({
       justifyContent: "center",
       gap: "8px",
       paddingRight: "12px",
-      paddingLeft: "12px"
+      paddingLeft: "12px",
+      borderRadius: "12px",
+      backgroundColor: "#000000",
+      border: "1px solid rgba(255, 255, 255, 0.1)"
     }}
     className={className}
     {...props}
@@ -121,7 +124,10 @@ const PaginationNext = ({
       justifyContent: "center",
       gap: "8px",
       paddingLeft: "12px",
-      paddingRight: "12px"
+      paddingRight: "12px",
+      borderRadius: "12px",
+      backgroundColor: "#000000",
+      border: "1px solid rgba(255, 255, 255, 0.1)"
     }}
     className={className}
     {...props}
