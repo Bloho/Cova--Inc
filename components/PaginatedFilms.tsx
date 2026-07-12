@@ -19,7 +19,7 @@ interface PaginatedFilmsProps {
   itemsPerPage?: number;
 }
 
-const ITEMS_PER_PAGE = 16;
+const ITEMS_PER_PAGE = 28;
 
 export function PaginatedFilms({
   movies,
