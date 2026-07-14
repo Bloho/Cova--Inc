@@ -48,7 +48,7 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     maskOffset: { x: 14, y: 14 },
     quote: { x: 31, y: 621, width: 620, lines: 3 },
     stars: { x: 31, y: 807 },
-    link: { x: 15, y: 886, color: "rgba(255, 255, 255, 0.5)" }
+    link: { x: 15, y: 860, color: "rgba(255, 255, 255, 0.5)" }
   },
   vertical: {
     label: "Vertical layout",
