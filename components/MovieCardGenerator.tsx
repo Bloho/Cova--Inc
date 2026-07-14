@@ -209,32 +209,54 @@ async function renderMovieCard({
   scale?: number;
 }) {
   const config = LAYOUTS[layout];
-  const [background, poster, star] = await Promise.all([
-    loadImage(config.variantPath(variant)),
-    loadImage(posterUrl(movie.posterPath, "w780"), true),
-    loadImage("/assets/star.svg")
-  ]);
-  const mask = await loadImage(config.maskPath).catch(() => null);
+  console.log(`[Cova Card] Generating ${layout} card, variant ${variant}`);
 
-  await document.fonts.load('700 48px "Cova Card"');
+  try {
+    const [background, poster, star] = await Promise.all([
+      loadImage(config.variantPath(variant)).catch(err => {
+        console.error(`[Cova Card] Failed to load background: ${config.variantPath(variant)}`, err);
+        throw err;
+      }),
+      loadImage(posterUrl(movie.posterPath, "w780"), true).catch(err => {
+        console.error(`[Cova Card] Failed to load poster`, err);
+        throw err;
+      }),
+      loadImage("/assets/star.svg").catch(err => {
+        console.error(`[Cova Card] Failed to load star`, err);
+        throw err;
+      })
+    ]);
+    console.log(`[Cova Card] Images loaded successfully`);
 
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(config.width * scale);
-  canvas.height = Math.round(config.height * scale);
-  const ctx = canvas.getContext("2d");
+    const mask = await loadImage(config.maskPath).catch(err => {
+      console.warn(`[Cova Card] Mask failed to load, using fallback: ${config.maskPath}`, err);
+      return null;
+    });
 
-  if (!ctx) {
-    throw new Error("Canvas is unavailable");
+    await document.fonts.load('700 48px "Cova Card"');
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(config.width * scale);
+    canvas.height = Math.round(config.height * scale);
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("Canvas is unavailable");
+    }
+
+    ctx.scale(scale, scale);
+    ctx.drawImage(background, 0, 0, config.width, config.height);
+    drawMaskedPoster(ctx, poster, mask, config);
+    drawQuote(ctx, review, config.quote);
+    drawRating(ctx, star, rating, config.stars);
+    drawProfileLink(ctx, username, config.link, config.width);
+
+    console.log(`[Cova Card] ${layout} card generated successfully`);
+    return canvas.toDataURL("image/png");
+  } catch (error) {
+    console.error(`[Cova Card] Error generating ${layout} card:`, error);
+    throw error;
   }
-
-  ctx.scale(scale, scale);
-  ctx.drawImage(background, 0, 0, config.width, config.height);
-  drawMaskedPoster(ctx, poster, mask, config);
-  drawQuote(ctx, review, config.quote);
-  drawRating(ctx, star, rating, config.stars);
-  drawProfileLink(ctx, username, config.link, config.width);
-
-  return canvas.toDataURL("image/png");
 }
 
 function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, mask: HTMLImageElement | null, config: LayoutConfig) {
