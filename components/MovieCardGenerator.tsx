@@ -277,7 +277,15 @@ function drawFallbackMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLIma
     ctx.lineTo(10, 22);
     ctx.quadraticCurveTo(10, 10, 22, 10);
   } else if (config.width === 600) {
-    ctx.roundRect(16, 15, 568, 581, 12);
+    ctx.moveTo(28, 15);
+    ctx.lineTo(572, 15);
+    ctx.quadraticCurveTo(584, 15, 584, 27);
+    ctx.lineTo(584, 873);
+    ctx.quadraticCurveTo(584, 885, 572, 885);
+    ctx.lineTo(28, 885);
+    ctx.quadraticCurveTo(16, 885, 16, 873);
+    ctx.lineTo(16, 27);
+    ctx.quadraticCurveTo(16, 15, 28, 15);
   } else {
     ctx.moveTo(26, 14);
     ctx.lineTo(874, 14);
