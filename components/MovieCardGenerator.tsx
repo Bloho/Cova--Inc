@@ -97,7 +97,8 @@ export function MovieCardGenerator({
       setCardUrl(url);
       setCardVariant(variant);
       setStep("ready");
-    } catch {
+    } catch (cause) {
+      console.error("Cova movie card generation failed", cause);
       setError("Could not generate your card. Try again.");
       setStep("select");
     }
@@ -208,12 +209,12 @@ async function renderMovieCard({
   scale?: number;
 }) {
   const config = LAYOUTS[layout];
-  const [background, poster, star, mask] = await Promise.all([
+  const [background, poster, star] = await Promise.all([
     loadImage(config.variantPath(variant)),
     loadImage(posterUrl(movie.posterPath, "w780"), true),
-    loadImage("/assets/star.svg"),
-    loadImage(config.maskPath)
+    loadImage("/assets/star.svg")
   ]);
+  const mask = await loadImage(config.maskPath).catch(() => null);
 
   await document.fonts.load('700 48px "Cova Card"');
 
@@ -236,7 +237,12 @@ async function renderMovieCard({
   return canvas.toDataURL("image/png");
 }
 
-function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, mask: HTMLImageElement, config: LayoutConfig) {
+function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, mask: HTMLImageElement | null, config: LayoutConfig) {
+  if (!mask) {
+    drawFallbackMaskedPoster(ctx, poster, config);
+    return;
+  }
+
   const maskedPoster = document.createElement("canvas");
   maskedPoster.width = config.width;
   maskedPoster.height = config.height;
@@ -250,6 +256,48 @@ function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElemen
   maskedContext.globalCompositeOperation = "destination-in";
   maskedContext.drawImage(mask, config.maskOffset.x, config.maskOffset.y);
   ctx.drawImage(maskedPoster, 0, 0, config.width, config.height);
+}
+
+function drawFallbackMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, config: LayoutConfig) {
+  ctx.save();
+  ctx.beginPath();
+
+  if (config.width === 900 && config.height === 600) {
+    ctx.moveTo(22, 10);
+    ctx.lineTo(879, 10);
+    ctx.quadraticCurveTo(891, 10, 891, 22);
+    ctx.lineTo(891, 222);
+    ctx.quadraticCurveTo(891, 234, 879, 234);
+    ctx.lineTo(452, 234);
+    ctx.quadraticCurveTo(440, 234, 440, 246);
+    ctx.lineTo(440, 579);
+    ctx.quadraticCurveTo(440, 591, 428, 591);
+    ctx.lineTo(22, 591);
+    ctx.quadraticCurveTo(10, 591, 10, 579);
+    ctx.lineTo(10, 22);
+    ctx.quadraticCurveTo(10, 10, 22, 10);
+  } else if (config.width === 600) {
+    ctx.roundRect(16, 15, 568, 581, 12);
+  } else {
+    ctx.moveTo(26, 14);
+    ctx.lineTo(874, 14);
+    ctx.quadraticCurveTo(886, 14, 886, 26);
+    ctx.lineTo(886, 873);
+    ctx.quadraticCurveTo(886, 885, 874, 885);
+    ctx.lineTo(679, 885);
+    ctx.quadraticCurveTo(667, 885, 667, 873);
+    ctx.lineTo(667, 607);
+    ctx.quadraticCurveTo(667, 595, 655, 595);
+    ctx.lineTo(26, 595);
+    ctx.quadraticCurveTo(14, 595, 14, 583);
+    ctx.lineTo(14, 26);
+    ctx.quadraticCurveTo(14, 14, 26, 14);
+  }
+
+  ctx.closePath();
+  ctx.clip();
+  drawCover(ctx, poster, 0, 0, config.width, config.height);
+  ctx.restore();
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, width: number, height: number) {
