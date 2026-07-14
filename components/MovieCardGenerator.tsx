@@ -35,8 +35,8 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     maskPath: "/movie-card-variants/masks/horizontal-variant-mask.svg",
     maskOffset: { x: 10, y: 10 },
     quote: { x: 485, y: 282, width: 390, lines: 4 },
-    stars: { x: 485, y: 506 },
-    link: { x: 485, y: 566 }
+    stars: { x: 510, y: 485 },
+    link: { x: 485, y: 580 }
   },
   square: {
     label: "Square layout",
@@ -47,8 +47,8 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     maskPath: "/movie-card-variants/masks/square-variant-mask.svg",
     maskOffset: { x: 14, y: 14 },
     quote: { x: 31, y: 621, width: 620, lines: 3 },
-    stars: { x: 31, y: 807 },
-    link: { x: 20, y: 847, color: "rgba(255, 255, 255, 0.5)" }
+    stars: { x: 31, y: 785 },
+    link: { x: 37, y: 880, color: "rgba(255, 255, 255, 0.5)" }
   },
   vertical: {
     label: "Vertical layout",
@@ -58,7 +58,7 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     variantPath: (variant) => `/movie-card-variants/Potrait/movie-card-variant-potrait-${variant}.svg`,
     maskPath: "/movie-card-variants/masks/potrait-variant-mask.svg",
     maskOffset: { x: 16, y: 15 },
-    quote: { x: 25, y: 630, width: 550, lines: 2 },
+    quote: { x: 25, y: 630, width: 550, lines: 3 },
     stars: { x: 25, y: 756 },
     link: { x: 25, y: 858 }
   }
@@ -342,7 +342,7 @@ function drawQuote(ctx: CanvasRenderingContext2D, review: string, box: LayoutCon
   ctx.font = '700 48px "Cova Card", "SF Pro Display", Arial, sans-serif';
   ctx.textBaseline = "top";
   const lines = wrapQuote(ctx, review, box.width, box.lines);
-  lines.forEach((line, index) => ctx.fillText(line, box.x, box.y + index * 50));
+  lines.forEach((line, index) => ctx.fillText(line, box.x, box.y + index * 40));
 }
 
 function wrapQuote(ctx: CanvasRenderingContext2D, review: string, maxWidth: number, maxLines: number) {
