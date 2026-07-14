@@ -17,7 +17,7 @@ type LayoutConfig = {
   maskOffset: { x: number; y: number };
   quote: { x: number; y: number; width: number; lines: number };
   stars: { x: number; y: number };
-  link: { x: number; y: number };
+  link: { x: number; y: number; color?: string };
 };
 
 const VARIANT_COUNT = 15;
@@ -48,7 +48,7 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     maskOffset: { x: 14, y: 14 },
     quote: { x: 31, y: 621, width: 620, lines: 3 },
     stars: { x: 31, y: 807 },
-    link: { x: 31, y: 887 }
+    link: { x: 15, y: 886, color: "rgba(255, 255, 255, 0.5)" }
   },
   vertical: {
     label: "Vertical layout",
@@ -379,7 +379,7 @@ function drawRating(ctx: CanvasRenderingContext2D, star: HTMLImageElement, ratin
 
 function drawProfileLink(ctx: CanvasRenderingContext2D, username: string | null | undefined, point: LayoutConfig["link"], width: number) {
   const profileLink = username ? `cova.quest/${username}` : "cova.quest";
-  ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+  ctx.fillStyle = point.color ?? "rgba(0, 0, 0, 0.35)";
   ctx.font = '700 30px "Cova Card", "SF Pro Display", Arial, sans-serif';
   ctx.textBaseline = "alphabetic";
   ctx.textAlign = point.x > width / 2 ? "right" : "left";
