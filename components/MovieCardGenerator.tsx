@@ -48,7 +48,7 @@ const LAYOUTS: Record<CardLayout, LayoutConfig> = {
     maskOffset: { x: 14, y: 14 },
     quote: { x: 31, y: 621, width: 620, lines: 3 },
     stars: { x: 31, y: 807 },
-    link: { x: 654, y: 844 }
+    link: { x: 31, y: 887 }
   },
   vertical: {
     label: "Vertical layout",
@@ -80,6 +80,8 @@ export function MovieCardGenerator({
   const [layout, setLayout] = useState<CardLayout>("square");
   const [step, setStep] = useState<CardStep>("select");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
+  const [cardVariant, setCardVariant] = useState<number | null>(null);
+  const [downloadingScale, setDownloadingScale] = useState<number | null>(null);
   const [error, setError] = useState("");
 
   async function generateCard() {
@@ -87,11 +89,13 @@ export function MovieCardGenerator({
     setError("");
 
     try {
+      const variant = Math.floor(Math.random() * VARIANT_COUNT) + 1;
       const [url] = await Promise.all([
-        renderMovieCard({ movie, review, rating, username, layout }),
+        renderMovieCard({ movie, review, rating, username, layout, variant }),
         holdLoadingFrame()
       ]);
       setCardUrl(url);
+      setCardVariant(variant);
       setStep("ready");
     } catch {
       setError("Could not generate your card. Try again.");
@@ -99,15 +103,25 @@ export function MovieCardGenerator({
     }
   }
 
-  function downloadCard() {
-    if (!cardUrl) {
+  async function downloadCard(scale: number) {
+    if (!cardUrl || !cardVariant || downloadingScale) {
       return;
     }
 
-    const link = document.createElement("a");
-    link.href = cardUrl;
-    link.download = `cova-${slugify(movie.title)}-${layout}-card.png`;
-    link.click();
+    setDownloadingScale(scale);
+    try {
+      const image = scale === 1
+        ? cardUrl
+        : await renderMovieCard({ movie, review, rating, username, layout, variant: cardVariant, scale });
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = `cova-${slugify(movie.title)}-${layout}-${scale === 1 ? "1x" : "1-5x"}-card.png`;
+      link.click();
+    } catch {
+      setError("Could not prepare that download. Try again.");
+    } finally {
+      setDownloadingScale(null);
+    }
   }
 
   return (
@@ -154,9 +168,13 @@ export function MovieCardGenerator({
         <div className="movie-card-ready">
           <img className={`generated-movie-card ${layout}`} src={cardUrl} alt={`Generated ${movie.title} card`} />
           <h2>Your card is generated!</h2>
-          <button className="card-modal-button compact icon-card-button" onClick={downloadCard} type="button">
+          <button className="card-modal-button compact icon-card-button" disabled={Boolean(downloadingScale)} onClick={() => downloadCard(1)} type="button">
             <img src="/icons/download.svg" alt="" />
-            Download
+            {downloadingScale === 1 ? "Preparing..." : "Download 1x"}
+          </button>
+          <button className="card-modal-button compact icon-card-button" disabled={Boolean(downloadingScale)} onClick={() => downloadCard(1.5)} type="button">
+            <img src="/icons/download.svg" alt="" />
+            {downloadingScale === 1.5 ? "Preparing..." : "Download 1.5x"}
           </button>
           <button className="card-modal-button compact icon-card-button" onClick={generateCard} type="button">
             <img src="/icons/redo.svg" alt="" />
@@ -165,6 +183,7 @@ export function MovieCardGenerator({
           <button className="movie-card-close" onClick={onClose} type="button">
             Done
           </button>
+          {error ? <p className="form-message">{error}</p> : null}
         </div>
       ) : null}
     </div>
@@ -176,41 +195,40 @@ async function renderMovieCard({
   review,
   rating,
   username,
-  layout
+  layout,
+  variant,
+  scale = 1
 }: {
   movie: Movie;
   review: string;
   rating: number;
   username?: string | null;
   layout: CardLayout;
+  variant: number;
+  scale?: number;
 }) {
   const config = LAYOUTS[layout];
-  const variant = Math.floor(Math.random() * VARIANT_COUNT) + 1;
-  const [background, poster, star, maskMarkup] = await Promise.all([
+  const [background, poster, star, mask] = await Promise.all([
     loadImage(config.variantPath(variant)),
     loadImage(posterUrl(movie.posterPath, "w780"), true),
     loadImage("/assets/star.svg"),
-    fetch(config.maskPath).then(async (response) => {
-      if (!response.ok) {
-        throw new Error("Could not load movie card mask");
-      }
-      return response.text();
-    })
+    loadImage(config.maskPath)
   ]);
 
   await document.fonts.load('700 48px "Cova Card"');
 
   const canvas = document.createElement("canvas");
-  canvas.width = config.width;
-  canvas.height = config.height;
+  canvas.width = Math.round(config.width * scale);
+  canvas.height = Math.round(config.height * scale);
   const ctx = canvas.getContext("2d");
 
   if (!ctx) {
     throw new Error("Canvas is unavailable");
   }
 
+  ctx.scale(scale, scale);
   ctx.drawImage(background, 0, 0, config.width, config.height);
-  drawMaskedPoster(ctx, poster, config, maskMarkup);
+  drawMaskedPoster(ctx, poster, mask, config);
   drawQuote(ctx, review, config.quote);
   drawRating(ctx, star, rating, config.stars);
   drawProfileLink(ctx, username, config.link, config.width);
@@ -218,17 +236,20 @@ async function renderMovieCard({
   return canvas.toDataURL("image/png");
 }
 
-function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, config: LayoutConfig, maskMarkup: string) {
-  const pathData = maskMarkup.match(/<path[^>]*\sd="([^"]+)"/)?.[1];
-  if (!pathData) {
-    throw new Error("Movie card mask has no path");
+function drawMaskedPoster(ctx: CanvasRenderingContext2D, poster: HTMLImageElement, mask: HTMLImageElement, config: LayoutConfig) {
+  const maskedPoster = document.createElement("canvas");
+  maskedPoster.width = config.width;
+  maskedPoster.height = config.height;
+  const maskedContext = maskedPoster.getContext("2d");
+
+  if (!maskedContext) {
+    throw new Error("Canvas is unavailable");
   }
 
-  ctx.save();
-  ctx.translate(config.maskOffset.x, config.maskOffset.y);
-  ctx.clip(new Path2D(pathData));
-  drawCover(ctx, poster, -config.maskOffset.x, -config.maskOffset.y, config.width, config.height);
-  ctx.restore();
+  drawCover(maskedContext, poster, 0, 0, config.width, config.height);
+  maskedContext.globalCompositeOperation = "destination-in";
+  maskedContext.drawImage(mask, config.maskOffset.x, config.maskOffset.y);
+  ctx.drawImage(maskedPoster, 0, 0, config.width, config.height);
 }
 
 function drawCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement, x: number, y: number, width: number, height: number) {
