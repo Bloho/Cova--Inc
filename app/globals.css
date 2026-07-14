@@ -6,6 +6,13 @@
 }
 
 @font-face {
+  font-family: "Cova Card";
+  src: url("/fonts/Card-font.otf") format("opentype");
+  font-weight: 700;
+  font-display: block;
+}
+
+@font-face {
   font-family: "SF Pro Display";
   src: url("/fonts/SFPRODISPLAYMEDIUM.OTF") format("opentype");
   font-weight: 500;
@@ -1968,6 +1975,141 @@ textarea {
   border: 0;
   border-radius: 999px;
   cursor: pointer;
+}
+
+.movie-card-dialog {
+  display: grid;
+  width: min(610px, calc(100vw - 36px));
+  min-height: 420px;
+  place-items: center;
+  align-content: center;
+  gap: 24px;
+  padding: 44px;
+  text-align: center;
+  background: #050505;
+  border: 1px solid #2a2a2a;
+  border-radius: 46px;
+  box-shadow: 0 36px 110px rgba(0, 0, 0, 0.72);
+  animation: movie-dialog-in 260ms ease both;
+}
+
+.movie-modal-backdrop.closing .movie-card-dialog {
+  animation: log-dialog-out 240ms ease forwards;
+}
+
+.movie-card-dialog h2 {
+  margin: 0;
+  color: #f4f4f4;
+  font-size: clamp(1.65rem, 4vw, 2.2rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.movie-card-layouts {
+  display: grid;
+  width: min(390px, 100%);
+  gap: 10px;
+}
+
+.movie-card-layout-option {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 84px 1fr 18px;
+  gap: 16px;
+  align-items: center;
+  padding: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: left;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.movie-card-layout-option:hover,
+.movie-card-layout-option.selected {
+  background: #151515;
+  border-color: #232121;
+}
+
+.movie-card-layout-option img {
+  width: 76px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.movie-card-layout-option:nth-child(2) img,
+.movie-card-layout-option:nth-child(3) img {
+  height: 76px;
+}
+
+.movie-card-layout-option span {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.movie-card-layout-option i {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 999px;
+}
+
+.movie-card-layout-option.selected i {
+  background: white;
+  box-shadow: inset 0 0 0 3px #151515;
+}
+
+.movie-card-generate {
+  min-height: 52px;
+  font-size: 1.1rem;
+}
+
+.movie-card-loading {
+  min-height: 270px;
+}
+
+.movie-card-loading h2 {
+  max-width: 390px;
+}
+
+.movie-card-ready {
+  display: grid;
+  width: 100%;
+  justify-items: center;
+  gap: 12px;
+}
+
+.generated-movie-card {
+  display: block;
+  max-width: min(260px, 48vw);
+  max-height: 250px;
+  border-radius: 10px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+.generated-movie-card.horizontal {
+  width: min(330px, 68vw);
+  max-width: 330px;
+}
+
+.movie-card-ready h2 {
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+
+.movie-card-ready .card-modal-button {
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+.movie-card-close {
+  margin-top: 4px;
+  padding: 8px 14px;
+  color: rgba(255, 255, 255, 0.64);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .profile-edit-backdrop {

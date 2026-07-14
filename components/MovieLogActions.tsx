@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, MessageCircle, Share2, X } from "lucide-react";
+import { ArrowLeft, MessageCircle, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { MovieCardGenerator } from "@/components/MovieCardGenerator";
 import { RatingInput } from "@/components/RatingInput";
 import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
@@ -25,7 +26,8 @@ export function MovieLogActions({
   isSignedIn,
   initialRating = 0,
   initialReviewed = false,
-  initialReview = null
+  initialReview = null,
+  username
 }: {
   movie: Movie;
   isSignedIn: boolean;
@@ -222,7 +224,14 @@ export function MovieLogActions({
           <MessageCircle size={18} />
           Review
         </button>
-        <button className="pill-button secondary" disabled={busy} onClick={() => setDialogState("share")} type="button">
+        <button className="pill-button secondary" disabled={busy} onClick={() => {
+          if (existingReview?.body.trim()) {
+            setDialogState("share");
+            return;
+          }
+          openReview();
+          setMessage("Write a review before sharing a movie card.");
+        }} type="button">
           <Share2 size={18} />
           Share card
         </button>
@@ -287,12 +296,13 @@ export function MovieLogActions({
           }
         }}>
           {dialogState === "share" ? (
-            <div className="movie-beta-dialog">
-              <h2>Movie cards will be introduced in the next beta. Stay tuned!</h2>
-              <button className="movie-beta-close" onClick={closeDialog} aria-label="Close movie card notice" type="button">
-                <X size={34} />
-              </button>
-            </div>
+            <MovieCardGenerator
+              movie={movie}
+              review={existingReview?.body ?? ""}
+              rating={Number(existingReview?.rating ?? rating)}
+              username={username}
+              onClose={closeDialog}
+            />
           ) : dialogState === "watchConfirm" || dialogState === "watchRemoving" ? (
             <div className="watchlist-remove-dialog">
               {dialogState === "watchRemoving" ? (
