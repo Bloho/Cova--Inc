@@ -18,20 +18,23 @@ export default async function ProfilePage({
 }) {
   const { username } = await params;
   const supabase = await createSupabaseServerClient();
-  const { user: viewer } = await getCurrentUserProfile();
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("id, username, display_name, avatar_url, bio")
-    .eq("username", username)
-    .maybeSingle();
+  const [viewerResult, profileResult] = await Promise.all([
+    getCurrentUserProfile(),
+    supabase
+      .from("profiles")
+      .select("id, username, display_name, avatar_url, bio")
+      .eq("username", username)
+      .maybeSingle()
+  ]);
+  const { user: viewer } = viewerResult;
+  const { data: profile, error: profileError } = profileResult;
 
   if (profileError || !profile) {
     notFound();
   }
 
   const [{ count: filmsCount }, { data: logs }, { data: reviews }] = await Promise.all([
-    supabase.from("user_movies").select("*", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
+    supabase.from("user_movies").select("tmdb_id", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
     supabase
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
@@ -48,9 +51,13 @@ export default async function ProfilePage({
   ]);
 
   const movies = (logs ?? []).map((row) => fromLoggedMovie(row)).filter(Boolean) as Movie[];
-  const viewerStates = await getUserMovieStates(movies.map((movie) => movie.tmdbId), viewer?.id);
-  const displayMovies = movies.map((movie) => applyUserState(movie, viewerStates.get(movie.tmdbId)));
   const isOwnProfile = viewer?.id === profile.id;
+  const viewerStates = isOwnProfile
+    ? new Map()
+    : await getUserMovieStates(movies.map((movie) => movie.tmdbId), viewer?.id);
+  const displayMovies = movies.map((movie) => isOwnProfile
+    ? { ...movie, watched: true, userRating: movie.userRating ?? movie.rating }
+    : applyUserState(movie, viewerStates.get(movie.tmdbId)));
 
   return (
     <>

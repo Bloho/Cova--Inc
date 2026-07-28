@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BadgeCheckIcon, CreditCardIcon, HomeIcon, LogOutIcon, Plus, Search, UserCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LogFilmDialog } from "@/components/LogFilmDialog";
 import { SearchMovieDialog } from "@/components/SearchMovieDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,6 +36,13 @@ export function HeaderClient({
   const profilePath = username ? `/${username}` : "/";
   const isProfilePage = Boolean(username && pathname === `/${username}`);
   const initials = getInitials(displayName ?? username ?? "Cova");
+
+  useEffect(() => {
+    router.prefetch("/");
+    if (username) {
+      router.prefetch(`/${username}`);
+    }
+  }, [router, username]);
 
   function navigateTo(path: string) {
     window.covaProgressRouteStart?.();

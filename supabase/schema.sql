@@ -87,8 +87,11 @@ create table if not exists public.card_presets (
 
 create index if not exists follows_following_id_idx on public.follows(following_id);
 create index if not exists user_movies_user_id_idx on public.user_movies(user_id);
+create index if not exists user_movies_user_status_watched_at_idx on public.user_movies(user_id, status, watched_at desc);
 create index if not exists reviews_user_id_created_at_idx on public.reviews(user_id, created_at desc);
 create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
+create index if not exists reviews_user_tmdb_updated_at_idx on public.reviews(user_id, tmdb_id, updated_at desc);
+create unique index if not exists reviews_user_tmdb_unique_idx on public.reviews(user_id, tmdb_id);
 
 create or replace function public.handle_new_user()
 returns trigger

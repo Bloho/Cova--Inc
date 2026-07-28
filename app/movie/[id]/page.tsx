@@ -15,23 +15,28 @@ export default async function MoviePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const movie = await getMovie(Number(id));
-  const { user, profile } = await getCurrentUserProfile();
-  const states = await getUserMovieStates([movie.tmdbId], user?.id);
+  const [movie, { user, profile }] = await Promise.all([
+    getMovie(Number(id)),
+    getCurrentUserProfile()
+  ]);
+  const supabase = await createSupabaseServerClient();
+  const [states, reviewResult] = await Promise.all([
+    getUserMovieStates([movie.tmdbId], user?.id),
+    user
+      ? supabase
+          .from("reviews")
+          .select("id, body, rating, created_at, updated_at")
+          .eq("user_id", user.id)
+          .eq("tmdb_id", movie.tmdbId)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle()
+      : Promise.resolve({ data: null })
+  ]);
   const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
   const averageRating = movie.averageRating ?? movie.rating;
   const averagePercent = Math.max(0, Math.min(100, (averageRating / 5) * 100));
-  const supabase = await createSupabaseServerClient();
-  const { data: currentReview } = user
-    ? await supabase
-        .from("reviews")
-        .select("id, body, rating, created_at, updated_at")
-        .eq("user_id", user.id)
-        .eq("tmdb_id", movie.tmdbId)
-        .order("updated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle()
-    : { data: null };
+  const currentReview = reviewResult.data;
 
   return (
     <>

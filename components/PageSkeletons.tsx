@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -7,7 +6,28 @@ const posterSlots = Array.from({ length: 5 });
 const reviewSlots = Array.from({ length: 3 });
 
 export function HeaderSkeleton() {
-  return <Header />;
+  return (
+    <header className="shell app-header" aria-label="Loading navigation">
+      <img className="brand-logo" src="/assets/Cova-logo-white.svg" alt="Cova" width={188} height={62} />
+      <nav className="header-actions" aria-hidden>
+        <Skeleton className="skeleton-button" />
+        <Skeleton className="icon-button" />
+        <Skeleton className="icon-button" />
+      </nav>
+    </header>
+  );
+}
+
+export function RoutePageSkeleton() {
+  return (
+    <>
+      <HeaderSkeleton />
+      <main className="shell site-main route-page-skeleton" aria-label="Loading page">
+        <Skeleton className="skeleton-movie-title" />
+        <Skeleton className="skeleton-paragraph" />
+      </main>
+    </>
+  );
 }
 
 export function HomePageSkeleton() {

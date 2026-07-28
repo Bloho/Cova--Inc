@@ -114,14 +114,14 @@ export function LogFilmDialog({
       router.refresh();
       window.setTimeout(() => {
         setStatus("success");
-      }, 650);
+      }, 120);
       window.setTimeout(() => {
         setStatus("closing");
-      }, 1450);
+      }, 520);
       window.setTimeout(() => {
         resetDialog();
         onClose();
-      }, 1750);
+      }, 760);
     } else {
       const data = await response.json().catch(() => ({}));
       setMessage(data.error ?? "Could not log this film.");

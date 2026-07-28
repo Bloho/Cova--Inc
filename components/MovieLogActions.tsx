@@ -129,13 +129,13 @@ export function MovieLogActions({
         });
       }
       router.refresh();
-      window.setTimeout(() => setDialogState("success"), 650);
-      window.setTimeout(() => setDialogState("closing"), 1450);
+      window.setTimeout(() => setDialogState("success"), 120);
+      window.setTimeout(() => setDialogState("closing"), 520);
       window.setTimeout(() => {
         setDialogState("closed");
         setBusy(false);
         setReview("");
-      }, 1750);
+      }, 760);
       return;
     }
 
@@ -166,10 +166,10 @@ export function MovieLogActions({
       router.refresh();
       window.setTimeout(() => {
         setDrawerOpen(false);
-      }, 520);
+      }, 220);
       window.setTimeout(() => {
         setDrawerDeleting(false);
-      }, 820);
+      }, 360);
       return;
     }
 
@@ -198,10 +198,10 @@ export function MovieLogActions({
       setReview("");
       setRating(0);
       router.refresh();
-      window.setTimeout(() => setDialogState("closing"), 620);
+      window.setTimeout(() => setDialogState("closing"), 220);
       window.setTimeout(() => {
         setDialogState("closed");
-      }, 900);
+      }, 460);
       return;
     }
 

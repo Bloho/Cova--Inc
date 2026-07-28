@@ -9,7 +9,7 @@ export function MoviePoster({ movie, dense = false, isSignedIn = false }: { movi
 
   return (
     <article className={`poster-card${watched ? " watched" : ""}`} title={movie.title} style={{ minHeight: dense ? 188 : undefined }}>
-      <Link className="poster-link" href={`/movie/${movie.tmdbId}`} aria-label={`${movie.title} details`}>
+      <Link className="poster-link" href={`/movie/${movie.tmdbId}`} aria-label={`${movie.title} details`} prefetch>
         <img className="poster-image" src={posterUrl(movie.posterPath)} alt={`${movie.title} poster`} loading="lazy" />
       </Link>
       <div className="poster-meta">
