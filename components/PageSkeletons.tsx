@@ -8,11 +8,13 @@ const reviewSlots = Array.from({ length: 3 });
 export function HeaderSkeleton() {
   return (
     <header className="shell app-header" aria-label="Loading navigation">
-      <img className="brand-logo" src="/assets/Cova-logo-white.svg" alt="Cova" width={188} height={62} />
+      <div className="brand brand-logo" aria-label="Cova">
+        <img src="/assets/Cova-logo-white.svg" alt="Cova" width={188} height={62} />
+      </div>
       <nav className="header-actions" aria-hidden>
         <Skeleton className="skeleton-button" />
-        <Skeleton className="icon-button" />
-        <Skeleton className="icon-button" />
+        <Skeleton className="skeleton-icon" />
+        <Skeleton className="skeleton-icon" />
       </nav>
     </header>
   );

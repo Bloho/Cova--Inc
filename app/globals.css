@@ -2486,7 +2486,7 @@ textarea {
   outline: none;
 }
 
-.skeleton {
+[data-slot="skeleton"] {
   display: block;
   background: #151515;
   border: 1px solid #232121;
@@ -2519,6 +2519,12 @@ textarea {
 
 .skeleton-button {
   width: 132px;
+  height: 44px;
+  border-radius: 999px;
+}
+
+.skeleton-icon {
+  width: 44px;
   height: 44px;
   border-radius: 999px;
 }
