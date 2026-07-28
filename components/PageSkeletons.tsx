@@ -37,20 +37,28 @@ export function HomePageSkeleton() {
     <>
       <HeaderSkeleton />
       <main className="site-main">
-        <section className="shell hero hero-compact">
-          <Skeleton className="skeleton-hero-title" />
-          <Skeleton className="skeleton-hero-copy" />
+        <section className="shell hero hero-compact" aria-label="Loading homepage">
+          <div aria-hidden>
+            <Skeleton className="skeleton-home-title" />
+          </div>
+
+          <div aria-hidden>
+            <Skeleton className="skeleton-home-copy" />
+          </div>
         </section>
 
-        <section className="shell section">
-          <div className="section-head skeleton-section-head">
-            <Skeleton className="skeleton-section-title" />
-            <Skeleton className="skeleton-section-small" />
+        <section className="shell section" aria-label="Loading trending movies">
+          <div className="section-head" aria-hidden>
+            <Skeleton className="skeleton-home-section-title" />
+            <Skeleton className="skeleton-home-section-status" />
           </div>
+
           <Separator />
+
           <PosterRowSkeleton />
         </section>
       </main>
+
       <Footer />
     </>
   );
@@ -60,43 +68,75 @@ export function ProfilePageSkeleton() {
   return (
     <>
       <HeaderSkeleton />
+
       <main className="shell site-main">
         <section className="profile-hero">
           <div className="identity">
             <Skeleton className="avatar" />
-            <div className="skeleton-copy-stack">
-              <Skeleton className="skeleton-title" />
-              <Skeleton className="skeleton-line short" />
-              <Skeleton className="skeleton-button" />
+
+            <div>
+              <div aria-hidden>
+                <Skeleton className="skeleton-profile-name" />
+              </div>
+
+              <div className="handle" aria-hidden>
+                <Skeleton className="skeleton-profile-handle" />
+              </div>
             </div>
           </div>
-          <div className="stats" aria-hidden>
+
+          <div className="stats" aria-label="Profile stats">
             <div className="stat">
-              <Skeleton className="skeleton-stat-number" />
-              <Skeleton className="skeleton-stat-label" />
+              <div aria-hidden>
+                <Skeleton className="skeleton-profile-stat-number" />
+              </div>
+
+              <div aria-hidden>
+                <Skeleton className="skeleton-profile-stat-label" />
+              </div>
             </div>
           </div>
-          <Skeleton className="skeleton-button profile-card-trigger" />
+
+          <div id="cards" aria-hidden>
+            <Skeleton className="skeleton-button profile-card-trigger" />
+          </div>
         </section>
 
-        <Skeleton className="skeleton-tabs" />
+        <nav className="tabs" aria-label="Profile tabs">
+          <a href="#profile" aria-hidden>
+            <Skeleton className="skeleton-profile-tab" />
+          </a>
 
-        <section className="section">
-          <div className="section-head skeleton-section-head">
-            <Skeleton className="skeleton-section-title" />
+          <a href="#films" aria-hidden>
+            <Skeleton className="skeleton-profile-tab" />
+          </a>
+
+          <a href="#reviews" aria-hidden>
+            <Skeleton className="skeleton-profile-tab" />
+          </a>
+        </nav>
+
+        <section id="profile" className="section" aria-label="Loading activity">
+          <div className="section-head" aria-hidden>
+            <Skeleton className="skeleton-profile-section-title" />
           </div>
+
           <Separator />
+
           <ReviewListSkeleton />
         </section>
 
-        <section className="section">
-          <div className="section-head skeleton-section-head">
-            <Skeleton className="skeleton-section-title wide" />
+        <section id="films" className="section" aria-label="Loading films">
+          <div className="section-head" aria-hidden>
+            <Skeleton className="skeleton-profile-section-title wide" />
           </div>
+
           <Separator />
+
           <PosterGridSkeleton />
         </section>
       </main>
+
       <Footer />
     </>
   );
@@ -136,7 +176,14 @@ function PosterRowSkeleton() {
   return (
     <div className="poster-row" aria-hidden>
       {posterSlots.map((_, index) => (
-        <Skeleton className="skeleton-poster-card" key={index} />
+        <article className="poster-card" key={index}>
+          <a className="poster-link" aria-hidden tabIndex={-1}>
+            <Skeleton className="poster-image" />
+          </a>
+          <div className="poster-meta">
+            <Skeleton className="skeleton-home-poster-meta" />
+          </div>
+        </article>
       ))}
     </div>
   );
@@ -144,10 +191,19 @@ function PosterRowSkeleton() {
 
 function PosterGridSkeleton() {
   return (
-    <div className="poster-grid" aria-hidden>
-      {Array.from({ length: 14 }).map((_, index) => (
-        <Skeleton className="skeleton-poster-card" key={index} />
-      ))}
+    <div style={{ display: "flex", flexDirection: "column", gap: "48px" }} aria-hidden>
+      <div className="poster-grid">
+        {Array.from({ length: 14 }).map((_, index) => (
+          <article className="poster-card" key={index}>
+            <a className="poster-link" tabIndex={-1}>
+              <Skeleton className="poster-image" />
+            </a>
+            <div className="poster-meta">
+              <Skeleton className="skeleton-home-poster-meta" />
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
@@ -156,14 +212,23 @@ function ReviewListSkeleton() {
   return (
     <div className="review-list" aria-hidden>
       {reviewSlots.map((_, index) => (
-        <div className="review" key={index}>
+        <article className="review" key={index}>
           <Skeleton className="mini-poster" />
-          <div className="skeleton-copy-stack">
-            <Skeleton className="skeleton-line medium" />
-            <Skeleton className="skeleton-line" />
+
+          <div>
+            <div aria-hidden>
+              <Skeleton className="skeleton-profile-review-title" />
+            </div>
+
+            <div aria-hidden>
+              <Skeleton className="skeleton-profile-review-copy" />
+            </div>
           </div>
-          <Skeleton className="skeleton-stars" />
-        </div>
+
+          <div className="radial-score activity-score user-score">
+            <Skeleton className="skeleton-profile-review-score" />
+          </div>
+        </article>
       ))}
     </div>
   );

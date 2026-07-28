@@ -2540,6 +2540,84 @@ textarea {
   height: 28px;
 }
 
+.skeleton-home-title {
+  width: min(620px, 88vw);
+  height: clamp(2.2rem, 7.04vw, 4.58rem);
+}
+
+.skeleton-home-copy {
+  width: min(720px, 100%);
+  height: clamp(1.12rem, 2.4vw, 1.45rem);
+}
+
+.skeleton-home-section-title {
+  width: 180px;
+  height: 1.25rem;
+}
+
+.skeleton-home-section-status {
+  width: 56px;
+  height: 0.82rem;
+}
+
+.skeleton-home-poster-meta {
+  width: 54%;
+  height: 0.72rem;
+}
+
+.skeleton-profile-name {
+  width: min(300px, 48vw);
+  height: clamp(2rem, 4.75vw, 2.66rem);
+}
+
+.skeleton-profile-handle {
+  width: 96px;
+  height: 1rem;
+}
+
+.skeleton-profile-stat-number {
+  width: 62px;
+  height: clamp(2.1rem, 3.8vw, 2.56rem);
+  margin: 0 auto;
+}
+
+.skeleton-profile-stat-label {
+  width: 42px;
+  height: 1rem;
+  margin: 0 auto;
+}
+
+.skeleton-profile-tab {
+  width: 48px;
+  height: 1rem;
+}
+
+.skeleton-profile-section-title {
+  width: 142px;
+  height: 1.25rem;
+}
+
+.skeleton-profile-section-title.wide {
+  width: min(300px, 65vw);
+}
+
+.skeleton-profile-review-title {
+  width: min(220px, 42vw);
+  height: 1.15rem;
+}
+
+.skeleton-profile-review-copy {
+  width: min(360px, 50vw);
+  height: 1rem;
+  margin-top: 6px;
+}
+
+.skeleton-profile-review-score {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+}
+
 .skeleton-section-head {
   min-height: 42px;
   padding-bottom: 8px;
@@ -2657,7 +2735,7 @@ textarea {
   }
 
   50% {
-    opacity: 1;
+    opacity: 0.5;
   }
 }
 
