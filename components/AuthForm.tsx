@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useState } from "react";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -15,15 +14,23 @@ export function AuthForm() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
-  const onTurnstileVerify = useCallback((token: string) => setTurnstileToken(token), []);
+  const onTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token);
+    setMessage("");
+  }, []);
   const onTurnstileExpire = useCallback(() => setTurnstileToken(""), []);
+
+  function refreshTurnstile() {
+    setTurnstileToken("");
+    window.turnstile?.reset();
+  }
 
   async function submitEmail(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage("");
 
-    if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+    if (!turnstileToken) {
       setMessage("Complete the Turnstile check before continuing.");
       setBusy(false);
       return;
@@ -46,10 +53,10 @@ export function AuthForm() {
     };
 
     if (!result.ok) {
-      setTurnstileToken("");
-      window.turnstile?.reset();
+      refreshTurnstile();
       setMessage(data.error ?? "Could not sign in.");
     } else if (data.needsEmailConfirmation) {
+      refreshTurnstile();
       setMessage("Check your email to confirm your account.");
     } else {
       await fetch("/api/profile/ensure", { method: "POST" });
@@ -65,11 +72,49 @@ export function AuthForm() {
       return;
     }
 
+    if (!turnstileToken) {
+      setMessage("Complete the Turnstile check before continuing.");
+      return;
+    }
+
+    setBusy(true);
+    setMessage("");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl || window.location.origin}/login`
+      redirectTo: `${siteUrl || window.location.origin}/login`,
+      captchaToken: turnstileToken
     });
 
+    refreshTurnstile();
     setMessage(error ? error.message : "Password reset email sent.");
+    setBusy(false);
+  }
+
+  async function signInWithGoogle() {
+    if (!turnstileToken) {
+      setMessage("Complete the Turnstile check before continuing.");
+      return;
+    }
+
+    setBusy(true);
+    setMessage("");
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${siteUrl || window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: "select_account"
+        }
+      }
+    });
+
+    if (error || !data.url) {
+      refreshTurnstile();
+      setMessage(error?.message ?? "Google sign-in is not configured.");
+      setBusy(false);
+      return;
+    }
+
+    window.location.assign(data.url);
   }
 
   return (
@@ -82,10 +127,10 @@ export function AuthForm() {
           Sign up
         </button>
       </div>
-      <Link className="pill-button secondary" href="/auth/google">
+      <button className="pill-button secondary" type="button" onClick={signInWithGoogle} disabled={busy || !turnstileToken}>
         <img src="/utilities/logo-google.svg" alt="Google logo" className="mr-2 h-4 w-4" />
         <span>Continue with Google</span>
-      </Link>
+      </button>
       <form className="login-form" onSubmit={submitEmail}>
         {mode === "signup" ? (
           <input
@@ -107,11 +152,11 @@ export function AuthForm() {
           onChange={(event) => setPassword(event.target.value)}
         />
         <TurnstileWidget onVerify={onTurnstileVerify} onExpire={onTurnstileExpire} />
-        <button className="pill-button" type="submit" disabled={busy} style={{ backgroundColor: "#00AF1F", color: "white" }}>
+        <button className="pill-button" type="submit" disabled={busy || !turnstileToken} style={{ backgroundColor: "#00AF1F", color: "white" }}>
           {mode === "signup" ? "Create account" : "Sign in"}
         </button>
       </form>
-      <button className="text-button" type="button" onClick={resetPassword}>
+      <button className="text-button" type="button" onClick={resetPassword} disabled={busy || !turnstileToken}>
         Reset password
       </button>
       {message ? <p className="form-message">{message}</p> : null}

@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 declare global {
   interface Window {
@@ -12,6 +12,7 @@ declare global {
           sitekey: string;
           callback: (token: string) => void;
           "expired-callback": () => void;
+          "timeout-callback"?: () => void;
           "error-callback": () => void;
           theme?: "dark" | "light" | "auto";
         }
@@ -33,6 +34,12 @@ export function TurnstileWidget({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
   const [scriptReady, setScriptReady] = useState(false);
+  const refreshToken = useCallback(() => {
+    onExpire();
+    if (widgetId.current) {
+      window.turnstile?.reset(widgetId.current);
+    }
+  }, [onExpire]);
 
   useEffect(() => {
     if (!scriptReady || !siteKey || !containerRef.current || !window.turnstile || widgetId.current) {
@@ -43,7 +50,8 @@ export function TurnstileWidget({
       sitekey: siteKey,
       theme: "dark",
       callback: onVerify,
-      "expired-callback": onExpire,
+      "expired-callback": refreshToken,
+      "timeout-callback": refreshToken,
       "error-callback": onExpire
     });
 
@@ -53,7 +61,7 @@ export function TurnstileWidget({
         widgetId.current = null;
       }
     };
-  }, [onExpire, onVerify, scriptReady, siteKey]);
+  }, [onVerify, refreshToken, scriptReady, siteKey]);
 
   if (!siteKey) {
     return <p className="form-message">Turnstile site key is not configured.</p>;

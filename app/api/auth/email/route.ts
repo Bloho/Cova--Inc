@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { ensureProfile } from "@/lib/profile";
 import { getSiteUrl } from "@/lib/site-url";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as {
@@ -13,9 +12,8 @@ export async function POST(request: Request) {
     turnstileToken?: string;
   };
 
-  const turnstile = await verifyTurnstileToken(body.turnstileToken, request);
-  if (!turnstile.ok) {
-    return NextResponse.json({ error: turnstile.error }, { status: 400 });
+  if (!body.turnstileToken) {
+    return NextResponse.json({ error: "Complete the Turnstile check before continuing." }, { status: 400 });
   }
 
   if (!body.email || !body.password || !body.mode) {
@@ -34,6 +32,7 @@ export async function POST(request: Request) {
           password: body.password,
           options: {
             emailRedirectTo: `${siteUrl}/auth/callback`,
+            captchaToken: body.turnstileToken,
             data: {
               full_name: displayName
             }
@@ -41,7 +40,10 @@ export async function POST(request: Request) {
         })
       : await supabase.auth.signInWithPassword({
           email: body.email,
-          password: body.password
+          password: body.password,
+          options: {
+            captchaToken: body.turnstileToken
+          }
         });
 
   if (result.error) {
