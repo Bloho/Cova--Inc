@@ -63,7 +63,8 @@ create table if not exists public.reviews (
   body text not null check (char_length(body) <= 5000),
   is_public boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  unique (user_id, tmdb_id)
 );
 
 create table if not exists public.review_likes (
@@ -91,7 +92,6 @@ create index if not exists user_movies_user_status_watched_at_idx on public.user
 create index if not exists reviews_user_id_created_at_idx on public.reviews(user_id, created_at desc);
 create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
 create index if not exists reviews_user_tmdb_updated_at_idx on public.reviews(user_id, tmdb_id, updated_at desc);
-create unique index if not exists reviews_user_tmdb_unique_idx on public.reviews(user_id, tmdb_id);
 
 create or replace function public.handle_new_user()
 returns trigger

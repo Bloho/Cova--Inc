@@ -69,24 +69,59 @@ export async function POST(request: Request) {
   }
 
   if (review) {
-    const { error: reviewError } = await supabase.from("reviews").upsert(
-      {
-        user_id: user.id,
-        tmdb_id: movie.tmdbId,
-        rating: rating || null,
-        body: review,
-        is_public: true,
-        updated_at: new Date().toISOString()
-      },
-      { onConflict: "user_id,tmdb_id" }
-    );
+    const reviewError = await saveReview(supabase, {
+      userId: user.id,
+      tmdbId: movie.tmdbId,
+      rating: rating || null,
+      body: review
+    });
 
     if (reviewError) {
-      return NextResponse.json({ error: databaseErrorMessage(reviewError.message) }, { status: 500 });
+      return NextResponse.json({ error: databaseErrorMessage(reviewError) }, { status: 500 });
     }
   }
 
   return NextResponse.json({ ok: true });
+}
+
+async function saveReview(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  review: { userId: string; tmdbId: number; rating: number | null; body: string }
+) {
+  const payload = {
+    user_id: review.userId,
+    tmdb_id: review.tmdbId,
+    rating: review.rating,
+    body: review.body,
+    is_public: true,
+    updated_at: new Date().toISOString()
+  };
+  const { error } = await supabase.from("reviews").upsert(payload, { onConflict: "user_id,tmdb_id" });
+
+  if (!error || !error.message.includes("no unique or exclusion constraint matching the ON CONFLICT specification")) {
+    return error?.message ?? null;
+  }
+
+  // Older deployments can be missing the unique review key. Keep saves working
+  // until the accompanying migration is applied, then use the one-request upsert above.
+  const { data: existingReview, error: lookupError } = await supabase
+    .from("reviews")
+    .select("id")
+    .eq("user_id", review.userId)
+    .eq("tmdb_id", review.tmdbId)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (lookupError) {
+    return lookupError.message;
+  }
+
+  const fallback = existingReview
+    ? await supabase.from("reviews").update(payload).eq("id", existingReview.id)
+    : await supabase.from("reviews").insert(payload);
+
+  return fallback.error?.message ?? null;
 }
 
 function databaseErrorMessage(message: string) {
