@@ -239,7 +239,7 @@ export function MovieLogActions({
       {reviewed ? (
         <div className="movie-status-row">
           <button className="watched-badge-button" onClick={() => setDialogState("watchConfirm")} type="button">
-            <Badge variant="sky">Watched</Badge>
+            <Badge className="bg-sky-500 text-white hover:bg-sky-500">Watched</Badge>
           </button>
         </div>
       ) : null}
@@ -249,11 +249,7 @@ export function MovieLogActions({
           setDrawerOpen(open);
         }
       }}>
-        <DrawerContent className={drawerDeleting ? "deleting" : ""} onOpenChange={(open) => {
-          if (!drawerDeleting) {
-            setDrawerOpen(open);
-          }
-        }}>
+        <DrawerContent className={drawerDeleting ? "deleting" : ""}>
           <DrawerHeader>
             <DrawerTitle>{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
             <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">

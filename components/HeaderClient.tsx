@@ -82,16 +82,14 @@ export function HeaderClient({
         </button>
         {isSignedIn ? (
           <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" className="account-trigger rounded-full" aria-label={displayName ?? "Account"}>
-                  <Avatar>
-                    {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName ?? "Profile"} /> : null}
-                    <AvatarFallback>{initials}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              }
-            />
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="account-trigger rounded-full" aria-label={displayName ?? "Account"}>
+                <Avatar>
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName ?? "Profile"} /> : null}
+                  <AvatarFallback>{initials}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
                 <DropdownMenuItem onSelect={() => navigateTo(isProfilePage ? "/" : profilePath)}>
