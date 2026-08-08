@@ -19,6 +19,13 @@
 }
 
 @font-face {
+  font-family: "PP Neue Montreal";
+  src: url("/fonts/PPNeueMontreal-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "SF Pro Display";
   src: url("/fonts/optimalt-med.otf") format("opentype");
   font-weight: 500;
@@ -3009,10 +3016,11 @@ textarea {
   --movie-page-logo: #d7d7d7;
   --movie-page-text: #000000;
   --movie-page-muted: rgba(0, 0, 0, 0.5);
-  min-height: 100svh;
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  overflow: clip;
+  overflow: hidden;
   color: var(--movie-page-text);
   background: var(--movie-page-background);
 }
@@ -3164,26 +3172,27 @@ textarea {
 
 .movie-page-main {
   display: grid;
-  grid-template-rows: minmax(212px, 1fr) auto minmax(208px, 1fr);
-  min-height: calc(100svh - 178px);
+  grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+  min-height: 0;
 }
 
 .movie-page-top-space {
-  min-height: 212px;
   border-bottom: 1px solid var(--movie-page-grid);
 }
 
 .movie-page-feature {
   display: grid;
-  grid-template-columns: minmax(260px, 390px) minmax(0, 650px);
+  grid-template-columns: minmax(240px, 340px) minmax(0, 650px);
   gap: clamp(36px, 5vw, 72px);
   align-items: center;
   justify-content: center;
-  padding: 36px clamp(40px, 7vw, 88px) 48px;
+  padding: 28px clamp(40px, 7vw, 88px);
   border-bottom: 1px solid var(--movie-page-grid);
 }
 
 .movie-page-poster {
+  width: min(100%, clamp(240px, 34vh, 340px));
+  justify-self: end;
   overflow: hidden;
   border: 1px solid var(--movie-page-grid);
   border-radius: 7px;
@@ -3209,6 +3218,8 @@ textarea {
   margin-bottom: 18px;
   color: var(--movie-page-text);
   font-size: 14px;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -3242,6 +3253,10 @@ textarea {
   font-size: 14px;
   font-weight: 500;
   line-height: 1.16;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
 }
 
 .movie-page-actions {
@@ -3330,6 +3345,12 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .movie-page {
+    height: 100svh;
+    min-height: 100svh;
+    overflow: hidden;
+  }
+
   .movie-page-header,
   .movie-page-main,
   .movie-page-footer {
@@ -3377,13 +3398,19 @@ textarea {
   }
 
   .movie-page-main {
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: minmax(48px, 1fr) auto minmax(24px, 1fr);
+    min-height: 0;
   }
 
   .movie-page-feature {
     grid-template-columns: minmax(120px, 170px) minmax(0, 1fr);
     gap: 20px;
     padding: 28px 20px 34px;
+  }
+
+  .movie-page-poster {
+    width: min(100%, 150px);
+    justify-self: end;
   }
 
   .movie-page-meta {
