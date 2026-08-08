@@ -66,7 +66,7 @@ export function MoviePageHeader({
       </Link>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
         <Button className="movie-log-button" onClick={() => setLogOpen(true)} type="button">
-          <img src="/utilities/+ LOG.svg" alt="Log a film" />
+          <img src="/utilities/LOG.svg" alt="Log a film" />
         </Button>
         <Button variant="outline" className="movie-search-button" onClick={() => setSearchOpen(true)} type="button">
           <SearchIcon aria-hidden />
