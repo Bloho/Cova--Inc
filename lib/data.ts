@@ -7,6 +7,7 @@ export type Movie = {
   watched: boolean;
   posterPath: string;
   backdropPath?: string;
+  director?: string;
   overview: string;
   reviewer?: string;
   reviewCount: number;

@@ -11,6 +11,9 @@ type TmdbMovie = {
   poster_path?: string | null;
   backdrop_path?: string | null;
   overview?: string;
+  credits?: {
+    crew?: Array<{ job?: string; name?: string }>;
+  };
 };
 
 type TmdbListResponse = {
@@ -54,7 +57,7 @@ const getCachedTmdbList = unstable_cache(
 );
 
 const getCachedTmdbMovie = unstable_cache(
-  async (tmdbId: number) => fetchTmdbMovie(`/movie/${tmdbId}`),
+  async (tmdbId: number) => fetchTmdbMovieWithCredits(tmdbId),
   ["tmdb-movie"],
   { revalidate: 60 * 60 }
 );
@@ -105,6 +108,25 @@ async function fetchTmdbMovie(path: string): Promise<Movie | null> {
   return fromTmdb((await response.json()) as TmdbMovie);
 }
 
+async function fetchTmdbMovieWithCredits(tmdbId: number): Promise<Movie | null> {
+  const token = process.env.TMDB_API_KEY;
+  if (!token) {
+    return null;
+  }
+
+  const request = tmdbRequest(`${TMDB_URL}/movie/${tmdbId}?language=en-US&append_to_response=credits`, token);
+  const response = await fetch(request.url, {
+    headers: request.headers,
+    next: { revalidate: 60 * 60 }
+  }).catch(() => null);
+
+  if (!response?.ok) {
+    return null;
+  }
+
+  return fromTmdb((await response.json()) as TmdbMovie);
+}
+
 function tmdbRequest(url: string, token: string) {
   const requestUrl = new URL(url);
   const headers: Record<string, string> = {
@@ -135,6 +157,7 @@ function fromTmdb(movie: TmdbMovie): Movie {
     watched: false,
     posterPath: movie.poster_path ?? "",
     backdropPath: movie.backdrop_path ?? undefined,
+    director: movie.credits?.crew?.find((member) => member.job === "Director")?.name,
     overview: movie.overview ?? "",
     reviewCount: Math.floor(((movie.vote_average ?? 7) * 13) % 40) + 4
   };

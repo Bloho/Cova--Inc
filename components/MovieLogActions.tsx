@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
 import { RatingInput } from "@/components/RatingInput";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
@@ -50,6 +50,7 @@ export function MovieLogActions({
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
   const dialogOpen = dialogState !== "closed";
   const reviewedOn = existingReview ? formatReviewDate(existingReview.updated_at ?? existingReview.created_at) : "";
+  const hasReview = Boolean(existingReview?.body.trim());
   const drawerRating = normalizeRating(Number(existingReview?.rating ?? rating ?? 0));
   const drawerRatingPercent = (drawerRating / 5) * 100;
 
@@ -212,7 +213,7 @@ export function MovieLogActions({
 
   return (
     <>
-      <div className="movie-log-panel">
+      <div className={`movie-log-panel movie-page-actions${hasReview ? " reviewed" : ""}`}>
         <RatingInput
           value={rating}
           compact
@@ -220,29 +221,31 @@ export function MovieLogActions({
           label="Your rating"
           onChange={(value) => openReview(value)}
         />
-        <button className="pill-button secondary" disabled={busy} onClick={() => openReview()} type="button">
-          <MessageCircle size={18} />
-          Review
-        </button>
-        <button className="pill-button secondary" disabled={busy} onClick={() => {
-          if (existingReview?.body.trim()) {
-            setDialogState("share");
-            return;
-          }
-          openReview();
-          setMessage("Write a review before sharing a movie card.");
-        }} type="button">
-          <Share2 size={18} />
-          Share card
-        </button>
+        {hasReview ? (
+          <>
+            <Button className="movie-read-review" disabled={busy} onClick={() => openReview()} type="button">
+              <MessageCircle aria-hidden />
+              Read review
+            </Button>
+            <Button
+              className="movie-card-action"
+              disabled={busy}
+              onClick={() => {
+                if (existingReview?.body.trim()) {
+                  setDialogState("share");
+                  return;
+                }
+                openReview();
+                setMessage("Write a review before sharing a movie card.");
+              }}
+              type="button"
+              aria-label="Share movie card"
+            >
+              <Share2 aria-hidden />
+            </Button>
+          </>
+        ) : null}
       </div>
-      {reviewed ? (
-        <div className="movie-status-row">
-          <button className="watched-badge-button" onClick={() => setDialogState("watchConfirm")} type="button">
-            <Badge className="bg-sky-500 text-white hover:bg-sky-500">Watched</Badge>
-          </button>
-        </div>
-      ) : null}
 
       <Drawer open={drawerOpen} onOpenChange={(open) => {
         if (!drawerDeleting) {
