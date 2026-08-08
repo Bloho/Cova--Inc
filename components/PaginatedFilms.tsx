@@ -113,7 +113,7 @@ export function PaginatedFilms({
       )}
 
       {totalPages > 1 && (
-        <Pagination>
+        <Pagination className="profile-pagination">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious

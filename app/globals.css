@@ -26,6 +26,13 @@
 }
 
 @font-face {
+  font-family: "PP Nikkei Journal";
+  src: url("/fonts/PPNikkeiJournal-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "SF Pro Display";
   src: url("/fonts/optimalt-med.otf") format("opentype");
   font-weight: 500;
@@ -159,6 +166,76 @@ textarea {
 
 .site-main {
   min-height: calc(100vh - 72px);
+}
+
+.home-page {
+  width: 100%;
+  --movie-page-background: #ffffff;
+  --movie-page-grid: #e2e2e2;
+  --movie-page-text: #000000;
+  --movie-page-muted: rgba(0, 0, 0, 0.5);
+  min-height: 100dvh;
+  height: 100dvh;
+  margin-inline: auto;
+  overflow: hidden;
+  color: var(--movie-page-text);
+  background: var(--movie-page-background);
+  border-inline: 1px solid var(--movie-page-grid);
+}
+
+.dark .home-page {
+  --movie-page-background: #000000;
+  --movie-page-grid: #222222;
+  --movie-page-text: #f7f7f7;
+  --movie-page-muted: rgba(255, 255, 255, 0.5);
+}
+
+.home-page .app-header {
+  width: 100%;
+  padding-inline: 16px;
+  border-bottom: 1px solid var(--surface-border);
+}
+
+.home-page .movie-page-header {
+  width: 100%;
+  margin-inline: 0;
+  border-inline: 0;
+}
+
+.home-page .site-main {
+  height: calc(100dvh - 96px - 76px);
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 354px auto minmax(0, 1fr);
+}
+
+.home-page .hero-compact,
+.home-page .section {
+  width: 100%;
+  padding-inline: 64px;
+  border-bottom: 1px solid var(--movie-page-grid);
+}
+
+.home-page .section {
+  margin-top: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 36px;
+  padding-bottom: 48px;
+}
+
+.home-page .poster-row {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.profile-pagination {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.home-page .home-page-footer {
+  width: 100%;
+  margin: 0;
+  border-inline: 0;
 }
 
 .app-header {
@@ -347,18 +424,37 @@ textarea {
 }
 
 .hero-compact {
+  isolation: isolate;
+  overflow: hidden;
   min-height: 210px;
   place-items: end start;
   padding: 36px 0 18px;
   text-align: left;
 }
 
+.home-hero-video {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  background: transparent;
+}
+
+.home-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
 .hero-compact h1 {
   margin: 0;
-  font-size: clamp(2.5rem, 8vw, 5.2rem);
+  color: rgb(238, 238, 238);
+  font-family: "PP Nikkei Journal", Georgia, serif;
+  font-size: clamp(1.8rem, 4.6vw, 3.6rem);
+  font-weight: 400;
   line-height: 0.88;
-  font-weight: 600;
-  color: rgb(238, 238, 238)
 }
 
 .hero-compact p {
@@ -480,7 +576,7 @@ textarea {
 .poster-card {
   position: relative;
   display: flex;
-  min-height: 178px;
+  min-height: 150px;
   aspect-ratio: 2 / 2.86;
   align-items: flex-end;
   overflow: hidden;
@@ -488,6 +584,31 @@ textarea {
   border-radius: 8px;
   isolation: isolate;
   transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.home-page .poster-card {
+  border-color: var(--movie-page-grid);
+}
+
+.home-poster-tooltip {
+  --home-poster-tooltip-y: 17px;
+  transform: translateY(var(--home-poster-tooltip-y));
+  color: #ffffff;
+  background: #151515;
+  border: 1px solid #232121;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-size: 14px;
+}
+
+.dark .home-poster-tooltip {
+  color: #000000;
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.dark .home-poster-tooltip svg {
+  background: #ffffff;
+  fill: #ffffff;
 }
 
 .poster-card:hover {
@@ -1143,6 +1264,7 @@ textarea {
   width: 36px;
   height: 42px;
   place-items: center;
+  padding: 0;
   color: rgba(255, 255, 255, 0.2);
   background: transparent;
   border: 0;
@@ -1171,11 +1293,16 @@ textarea {
 
 .star-shell {
   position: relative;
-  display: inline-grid;
+  display: inline-flex;
   width: 100%;
+  height: 1em;
+  align-items: center;
+  justify-content: center;
   place-items: center;
   font-size: 2.3rem;
+  font-family: Arial, sans-serif;
   line-height: 1;
+  overflow: visible;
 }
 
 .log-dialog-review .star-shell {
@@ -1183,13 +1310,18 @@ textarea {
 }
 
 .star-empty {
+  display: block;
   color: rgba(255, 255, 255, 0.16);
 }
 
 .star-fill {
   position: absolute;
-  inset: 0;
+  inset: 0 auto 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   overflow: hidden;
+  white-space: nowrap;
   color: white;
   transition: width 120ms ease;
 }
@@ -3012,7 +3144,7 @@ textarea {
 /* Individual film pages use their own editorial grid while retaining shared dialogs. */
 .movie-page {
   --movie-page-background: #ffffff;
-  --movie-page-grid: #e3e3e3;
+  --movie-page-grid: #e2e2e2;
   --movie-page-logo: #d7d7d7;
   --movie-page-text: #000000;
   --movie-page-muted: rgba(0, 0, 0, 0.5);
@@ -3027,7 +3159,7 @@ textarea {
 
 .dark .movie-page {
   --movie-page-background: #000000;
-  --movie-page-grid: #242424;
+  --movie-page-grid: #222222;
   --movie-page-logo: #3b3b3b;
   --movie-page-text: #f7f7f7;
   --movie-page-muted: rgba(255, 255, 255, 0.5);
@@ -3057,16 +3189,17 @@ textarea {
   align-items: center;
 }
 
-.movie-page-brand img {
+.movie-page-brand-mark {
   display: block;
   width: 118px;
-  height: auto;
-  opacity: 0.95;
+  height: 38px;
+  background: #d7d7d7;
+  -webkit-mask: url("/assets/Cova-logo-white.svg") center / contain no-repeat;
+  mask: url("/assets/Cova-logo-white.svg") center / contain no-repeat;
 }
 
-:not(.dark) .movie-page-brand img {
-  filter: invert(1);
-  opacity: 0.16;
+.dark .movie-page-brand-mark {
+  background: #373737;
 }
 
 .movie-page-nav {
@@ -3081,8 +3214,8 @@ textarea {
 }
 
 .movie-log-button {
-  width: 55px;
-  height: 30px;
+  width: 65px;
+  height: 40px;
   padding: 0;
   border: 1px solid #0048ff;
   border-radius: 8px;
@@ -3106,11 +3239,12 @@ textarea {
   justify-content: flex-start;
   gap: 10px;
   padding-inline: 14px;
-  border-color: #eeeeee;
+  border-color: var(--movie-page-grid);
   border-radius: 10px;
-  color: #d3d3d3;
+  color: var(--movie-page-muted);
   background: transparent;
-  font-size: 13px;
+  font-size: 14px;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
   font-weight: 500;
 }
 
@@ -3128,7 +3262,7 @@ textarea {
 .movie-avatar-button {
   width: 40px;
   height: 40px;
-  border-color: #eeeeee;
+  border-color: var(--movie-page-grid);
   border-radius: 10px;
   color: var(--movie-page-text);
   background: transparent;
@@ -3147,6 +3281,7 @@ textarea {
 
 .movie-avatar-button {
   overflow: hidden;
+  border-color: transparent;
   border-radius: 999px;
 }
 
@@ -3274,11 +3409,27 @@ textarea {
 
 .movie-page-actions .rating-picker.compact button {
   width: 42px;
-  height: 42px;
+  height: 52px;
 }
 
 .movie-page-actions .star-shell {
   font-size: 2.45rem;
+}
+
+:not(.dark) .movie-page .star-empty {
+  color: #e2e2e2;
+}
+
+:not(.dark) .movie-page .star-fill {
+  color: #2c2c2c;
+}
+
+.dark .movie-page .star-empty {
+  color: #222222;
+}
+
+.dark .movie-page .star-fill {
+  color: #f1f1f1;
 }
 
 .movie-read-review,
@@ -3290,7 +3441,8 @@ textarea {
   color: #ffffff;
   box-shadow: none;
   font-size: 14px;
-  font-weight: 600;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 500;
 }
 
 .movie-read-review {
@@ -3330,6 +3482,7 @@ textarea {
   gap: 20px;
   min-height: 82px;
   padding: 20px 26px;
+  border-top: 1px solid var(--movie-page-grid);
   color: var(--movie-page-logo);
   font-size: 13px;
   font-weight: 500;
@@ -3342,6 +3495,164 @@ textarea {
 
 .movie-page-footer a:hover {
   color: var(--movie-page-text);
+}
+
+/* Official shadcn Drawer slots, scoped to the saved-review panel. */
+.review-drawer-content {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  bottom: 8px;
+  left: auto;
+  display: grid;
+  width: min(390px, calc(100vw - 16px));
+  max-width: none;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 18px;
+  padding: 18px 12px 12px;
+  color: #f4f4f4;
+  background: #101010;
+  border: 1px solid #232121;
+  border-radius: 28px;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.58);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.review-drawer-content.deleting > :not(.drawer-loading-state) {
+  filter: blur(7px);
+  opacity: 0.5;
+  pointer-events: none;
+  transition: filter 180ms ease, opacity 180ms ease;
+}
+
+.review-drawer-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 0;
+}
+
+.review-drawer-title {
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.review-drawer-header .drawer-edit-button {
+  min-height: 36px;
+  color: inherit;
+  background: transparent;
+  border-color: currentColor;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.review-drawer-body {
+  min-height: 0;
+  overflow-y: auto;
+  padding: 28px 24px;
+  color: rgba(255, 255, 255, 0.62);
+  background: #1c1c1c;
+  border-radius: 22px;
+}
+
+.review-drawer-body .drawer-rating-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.review-drawer-body .drawer-rating-summary strong {
+  color: #f5f5f5;
+  font-family: inherit;
+  font-size: clamp(1.45rem, 4vw, 1.95rem);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.review-drawer-body p {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.32;
+}
+
+.review-drawer-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 58px;
+  gap: 14px;
+}
+
+.review-drawer-close,
+.review-drawer-delete {
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: #eeeeee;
+  cursor: pointer;
+}
+
+.review-drawer-close {
+  color: #151515;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.review-drawer-delete {
+  display: grid;
+  place-items: center;
+}
+
+.review-drawer-delete img {
+  width: 24px;
+  height: 24px;
+}
+
+:not(.dark) .review-drawer-content {
+  color: #2c2c2c;
+  background: #ffffff;
+  border-color: #e3e3e3;
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.12);
+}
+
+:not(.dark) .review-drawer-body {
+  color: rgba(44, 44, 44, 0.72);
+  background: #f7f7f7;
+}
+
+:not(.dark) .review-drawer-body .drawer-rating-summary strong {
+  color: #2c2c2c;
+}
+
+:not(.dark) .review-drawer-content .radial-score span {
+  color: #2c2c2c;
+}
+
+:not(.dark) .review-drawer-close,
+:not(.dark) .review-drawer-delete {
+  background: #f3f3f3;
+}
+
+.review-delete-confirm {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.review-delete-confirm-action {
+  color: #ffffff;
+  background: #d42a2a;
+}
+
+.review-delete-confirm-action:hover {
+  background: #bb2222;
 }
 
 @media (max-width: 760px) {
@@ -3363,8 +3674,9 @@ textarea {
     padding: 14px 18px;
   }
 
-  .movie-page-brand img {
+  .movie-page-brand-mark {
     width: 88px;
+    height: 29px;
   }
 
   .movie-page-nav {

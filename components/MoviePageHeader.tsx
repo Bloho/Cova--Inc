@@ -62,7 +62,7 @@ export function MoviePageHeader({
   return (
     <header className="movie-page-header">
       <Link href="/" className="movie-page-brand" aria-label="Cova home">
-        <img src="/assets/Cova-logo-white.svg" alt="Cova" />
+        <span className="movie-page-brand-mark" aria-hidden />
       </Link>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
         <Button className="movie-log-button" onClick={() => setLogOpen(true)} type="button">

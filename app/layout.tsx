@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { TopProgressBar } from "@/components/TopProgressBar";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -31,10 +32,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <TopProgressBar />
-          {children}
-          <Analytics />
-          <SpeedInsights />
+          <TooltipProvider>
+            <TopProgressBar />
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

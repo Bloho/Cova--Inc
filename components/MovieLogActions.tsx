@@ -5,6 +5,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
 import { RatingInput } from "@/components/RatingInput";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import type { Movie } from "@/lib/data";
@@ -42,6 +52,7 @@ export function MovieLogActions({
   const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerDeleting, setDrawerDeleting] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [existingReview, setExistingReview] = useState<ExistingReview | null>(initialReview);
   const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview) || initialRating > 0);
@@ -252,14 +263,14 @@ export function MovieLogActions({
           setDrawerOpen(open);
         }
       }}>
-        <DrawerContent className={drawerDeleting ? "deleting" : ""}>
-          <DrawerHeader>
-            <DrawerTitle>{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
+        <DrawerContent className={`review-drawer-content${drawerDeleting ? " deleting" : ""}`}>
+          <DrawerHeader className="review-drawer-header">
+            <DrawerTitle className="review-drawer-title">{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
             <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">
               Edit
             </button>
           </DrawerHeader>
-          <div className="drawer-review-body">
+          <div className="review-drawer-body">
             <div className="drawer-rating-summary">
               <strong>You rated this movie:</strong>
               <div className="radial-score drawer-rating-score user-score" aria-label={`Your rating ${drawerRating.toFixed(1)} out of 5`}>
@@ -272,11 +283,11 @@ export function MovieLogActions({
             </div>
             <p>{existingReview?.body}</p>
           </div>
-          <div className="drawer-footer">
-            <button className="drawer-close-button" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
+          <div className="review-drawer-footer">
+            <button className="review-drawer-close" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
               Close
             </button>
-            <button className="drawer-delete-button" disabled={drawerDeleting} onClick={deleteReview} aria-label="Delete review" type="button">
+            <button className="review-drawer-delete" disabled={drawerDeleting} onClick={() => setDeleteConfirmOpen(true)} aria-label="Delete review" type="button">
               <img src="/utilities/bin.svg" alt="" />
             </button>
           </div>
@@ -287,6 +298,28 @@ export function MovieLogActions({
           ) : null}
         </DrawerContent>
       </Drawer>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent className="review-delete-confirm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete review?</AlertDialogTitle>
+            <AlertDialogDescription>This review will be deleted permanently and cannot be restored.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={drawerDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="review-delete-confirm-action"
+              disabled={drawerDeleting}
+              onClick={() => {
+                setDeleteConfirmOpen(false);
+                void deleteReview();
+              }}
+            >
+              Delete review
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {dialogOpen ? (
         <div className={`modal-backdrop movie-modal-backdrop${dialogState === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => {
