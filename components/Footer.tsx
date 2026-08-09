@@ -2,13 +2,13 @@ import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
   return (
-    <footer style={{ display: "flex", flexDirection: "column", minHeight: "76px", marginTop: "70px", backgroundColor: "#151515", color: "rgba(255, 255, 255, 0.35)", fontWeight: "700" }}>
+    <footer className="footer">
       <Separator />
-      <div className="shell" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", flex: 1, whiteSpace: "nowrap", paddingTop: "16px", paddingBottom: "16px" }}>
+      <div className="shell footer-inner">
         <span>© Cova, film data from TMDB</span>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" }}>
+        <div className="footer-credit">
           <span>A product of</span>
-          <img src="/assets/BLOHO-FULL-TRADEMARK-WHIT.svg" alt="Bloho" style={{ height: "20px", width: "auto" }} />
+          <img src="/assets/BLOHO-FULL-TRADEMARK-WHIT.svg" alt="Bloho" />
         </div>
       </div>
     </footer>

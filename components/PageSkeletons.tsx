@@ -5,7 +5,27 @@ import { Separator } from "@/components/ui/separator";
 const posterSlots = Array.from({ length: 5 });
 const reviewSlots = Array.from({ length: 3 });
 
-export function HeaderSkeleton() {
+export function HeaderSkeleton({ moviePage = false, hidePrimaryActions = false }: { moviePage?: boolean; hidePrimaryActions?: boolean } = {}) {
+  if (moviePage) {
+    return (
+      <header className="movie-page-header" aria-label="Loading navigation">
+        <div className="movie-page-brand" aria-label="Cova">
+          <Skeleton className="skeleton-movie-brand" />
+        </div>
+        <nav className="movie-page-nav" aria-hidden>
+          {!hidePrimaryActions ? (
+            <>
+              <Skeleton className="skeleton-movie-log" />
+              <Skeleton className="skeleton-movie-search" />
+            </>
+          ) : null}
+          <Skeleton className="skeleton-movie-control" />
+          <Skeleton className="skeleton-movie-avatar" />
+        </nav>
+      </header>
+    );
+  }
+
   return (
     <header className="shell app-header" aria-label="Loading navigation">
       <div className="brand brand-logo" aria-label="Cova">
@@ -34,42 +54,35 @@ export function RoutePageSkeleton() {
 
 export function HomePageSkeleton() {
   return (
-    <>
-      <HeaderSkeleton />
+    <div className="home-page">
+      <HeaderSkeleton moviePage />
       <main className="site-main">
         <section className="shell hero hero-compact" aria-label="Loading homepage">
-          <div aria-hidden>
-            <Skeleton className="skeleton-home-title" />
-          </div>
-
-          <div aria-hidden>
-            <Skeleton className="skeleton-home-copy" />
+          <div className="home-hero-content" aria-hidden>
+            <h1><Skeleton className="skeleton-home-title" /></h1>
+            <p><Skeleton className="skeleton-home-copy" /></p>
           </div>
         </section>
 
         <section className="shell section" aria-label="Loading trending movies">
-          <div className="section-head" aria-hidden>
-            <Skeleton className="skeleton-home-section-title" />
-            <Skeleton className="skeleton-home-section-status" />
-          </div>
-
-          <Separator />
-
           <PosterRowSkeleton />
         </section>
       </main>
 
-      <Footer />
-    </>
+      <footer className="movie-page-footer home-page-footer" aria-label="Loading footer">
+        <Skeleton className="skeleton-footer-copy" />
+        <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
+      </footer>
+    </div>
   );
 }
 
 export function ProfilePageSkeleton() {
   return (
-    <>
-      <HeaderSkeleton />
+    <div className="profile-page">
+      <HeaderSkeleton moviePage hidePrimaryActions />
 
-      <main className="shell site-main">
+      <main className="profile-main">
         <section className="profile-hero">
           <div className="identity">
             <Skeleton className="avatar" />
@@ -138,19 +151,21 @@ export function ProfilePageSkeleton() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }
 
 export function MoviePageSkeleton() {
   return (
-    <>
-      <HeaderSkeleton />
-      <main className="shell site-main">
-        <Skeleton className="skeleton-back-link" />
-        <section className="movie-detail">
-          <Skeleton className="movie-detail-poster" />
-          <div className="movie-detail-copy skeleton-copy-stack">
+    <div className="movie-page">
+      <HeaderSkeleton moviePage />
+      <main className="movie-page-main">
+        <div className="movie-page-top-space" aria-hidden />
+        <section className="movie-page-feature">
+          <div className="movie-page-poster">
+            <Skeleton className="skeleton-movie-poster" />
+          </div>
+          <div className="movie-page-copy skeleton-copy-stack">
             <Skeleton className="skeleton-line short" />
             <Skeleton className="skeleton-movie-title" />
             <Skeleton className="skeleton-paragraph" />
@@ -165,10 +180,12 @@ export function MoviePageSkeleton() {
             </div>
           </div>
         </section>
-        <Separator />
       </main>
-      <Footer />
-    </>
+      <footer className="movie-page-footer" aria-label="Loading footer">
+        <Skeleton className="skeleton-footer-copy" />
+        <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
+      </footer>
+    </div>
   );
 }
 

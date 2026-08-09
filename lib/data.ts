@@ -13,6 +13,7 @@ export type Movie = {
   reviewCount: number;
   userRating?: number;
   reviewed?: boolean;
+  reviewBody?: string;
 };
 
 export type Review = {

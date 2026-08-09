@@ -9,7 +9,7 @@ const CARD_WIDTH = 445;
 const CARD_HEIGHT = 668;
 const PROFILE_VARIANT_COUNT = 50;
 
-export function ProfileCardGenerator({ username, filmsCount }: { username: string; filmsCount: number }) {
+export function ProfileCardGenerator({ username, filmsCount, label = "Get your card" }: { username: string; filmsCount: number; label?: string }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<CardStep>("intro");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
@@ -76,7 +76,7 @@ export function ProfileCardGenerator({ username, filmsCount }: { username: strin
   return (
     <>
       <button className="pill-button profile-card-trigger" onClick={() => setOpen(true)}>
-        Get your card
+        {label}
       </button>
 
       {open ? (

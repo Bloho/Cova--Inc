@@ -22,12 +22,14 @@ export function MoviePageHeader({
   isSignedIn,
   username,
   displayName,
-  avatarUrl
+  avatarUrl,
+  hidePrimaryActions = false
 }: {
   isSignedIn: boolean;
   username: string | null;
   displayName: string | null;
   avatarUrl: string | null;
+  hidePrimaryActions?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -65,13 +67,17 @@ export function MoviePageHeader({
         <span className="movie-page-brand-mark" aria-hidden />
       </Link>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
-        <Button className="movie-log-button" onClick={() => setLogOpen(true)} type="button">
-          <img src="/utilities/LOG.svg" alt="Log a film" />
-        </Button>
-        <Button variant="outline" className="movie-search-button" onClick={() => setSearchOpen(true)} type="button">
-          <SearchIcon aria-hidden />
-          <span>Search for movies</span>
-        </Button>
+        {!hidePrimaryActions ? (
+          <>
+            <Button className="movie-log-button" onClick={() => setLogOpen(true)} type="button">
+              <img src="/utilities/LOG.svg" alt="Log a film" />
+            </Button>
+            <Button variant="outline" className="movie-search-button" onClick={() => setSearchOpen(true)} type="button">
+              <SearchIcon aria-hidden />
+              <span>Search for movies</span>
+            </Button>
+          </>
+        ) : null}
         <Button
           variant="outline"
           size="icon"
@@ -116,8 +122,8 @@ export function MoviePageHeader({
           </Button>
         )}
       </nav>
-      <LogFilmDialog open={logOpen} onClose={() => setLogOpen(false)} isSignedIn={isSignedIn} />
-      <SearchMovieDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {!hidePrimaryActions ? <LogFilmDialog open={logOpen} onClose={() => setLogOpen(false)} isSignedIn={isSignedIn} /> : null}
+      {!hidePrimaryActions ? <SearchMovieDialog open={searchOpen} onClose={() => setSearchOpen(false)} /> : null}
     </header>
   );
 }

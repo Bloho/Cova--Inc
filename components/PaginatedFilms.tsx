@@ -17,6 +17,8 @@ interface PaginatedFilmsProps {
   movies: Movie[];
   isSignedIn: boolean;
   itemsPerPage?: number;
+  showYears?: boolean;
+  showReviewTooltip?: boolean;
 }
 
 const ITEMS_PER_PAGE = 28;
@@ -25,6 +27,8 @@ export function PaginatedFilms({
   movies,
   isSignedIn,
   itemsPerPage = ITEMS_PER_PAGE,
+  showYears = true,
+  showReviewTooltip = false,
 }: PaginatedFilmsProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -105,6 +109,9 @@ export function PaginatedFilms({
               movie={movie}
               dense
               isSignedIn={isSignedIn}
+              showYear={showYears}
+              showTooltip={showReviewTooltip}
+              tooltipVariant="profile"
             />
           ))}
         </div>

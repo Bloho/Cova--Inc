@@ -169,7 +169,7 @@ textarea {
 }
 
 .home-page {
-  width: 100%;
+  width: min(1280px, calc(100% - 48px));
   --movie-page-background: #ffffff;
   --movie-page-grid: #e2e2e2;
   --movie-page-text: #000000;
@@ -236,6 +236,50 @@ textarea {
   width: 100%;
   margin: 0;
   border-inline: 0;
+}
+
+.skeleton-movie-brand {
+  width: 118px;
+  height: 38px;
+}
+
+.skeleton-movie-log {
+  width: 65px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.skeleton-movie-search {
+  width: 246px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.skeleton-movie-control {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+.skeleton-movie-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+}
+
+.skeleton-movie-poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+}
+
+.skeleton-footer-copy {
+  width: 150px;
+  height: 13px;
+  border-radius: 4px;
+}
+
+.skeleton-footer-copy.short {
+  width: 42px;
 }
 
 .app-header {
@@ -2929,9 +2973,44 @@ textarea {
   align-items: center;
   justify-content: space-between;
   margin-top: 70px;
+  color: rgba(0, 0, 0, 0.35);
+  background: #ffffff;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.dark .footer {
   color: rgba(255, 255, 255, 0.35);
   background: #151515;
-  font-weight: 700;
+}
+
+.footer-inner {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  white-space: nowrap;
+}
+
+.footer-credit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.footer-credit img {
+  width: auto;
+  height: 20px;
+  opacity: 0.35;
+  filter: invert(1);
+}
+
+.dark .footer-credit img {
+  filter: none;
 }
 
 @media (max-width: 900px) {
@@ -3305,6 +3384,344 @@ textarea {
   border: 1px solid var(--movie-page-grid);
 }
 
+/* Profile pages share the film-page grid, with their own compact review feed. */
+.profile-page {
+  --movie-page-background: #ffffff;
+  --movie-page-grid: #e2e2e2;
+  --movie-page-text: #000000;
+  --movie-page-muted: rgba(0, 0, 0, 0.5);
+  min-height: 100dvh;
+  color: var(--movie-page-text);
+  background: var(--movie-page-background);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.profile-page button,
+.profile-page input,
+.profile-page textarea,
+.profile-page select {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.dark .profile-page {
+  --movie-page-background: #000000;
+  --movie-page-grid: #222222;
+  --movie-page-text: #f7f7f7;
+  --movie-page-muted: rgba(255, 255, 255, 0.5);
+}
+
+.profile-page .movie-page-header,
+.profile-main {
+  width: min(1280px, calc(100% - 48px));
+  margin-inline: auto;
+  border-inline: 1px solid var(--movie-page-grid);
+}
+
+.profile-main {
+  min-height: calc(100dvh - 96px);
+}
+
+.profile-page-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 56px;
+  min-height: 366px;
+  padding: 64px 76px;
+  border-bottom: 1px solid var(--movie-page-grid);
+}
+
+.profile-page-identity {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-page-avatar {
+  width: 99px;
+  height: 99px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 999px;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--movie-page-text) 12%, transparent);
+}
+
+.profile-page-details {
+  min-width: 0;
+}
+
+.profile-page-details h1 {
+  margin: 0;
+  color: var(--movie-page-text);
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-page .profile-name-edit {
+  margin: -6px -8px;
+  padding: 6px 8px;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-page-handle {
+  margin-top: 7px;
+  color: #686868;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-page-actions {
+  display: grid;
+  min-width: 130px;
+  justify-items: center;
+  gap: 30px;
+  text-align: center;
+}
+
+.profile-page-stat strong,
+.profile-page-stat span {
+  display: block;
+}
+
+.profile-page-stat strong {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 0.94;
+}
+
+.profile-page-stat span {
+  margin-top: 6px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-page .profile-card-trigger {
+  width: 84px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  color: #ffffff;
+  border: 1px solid #e5835f;
+  border-radius: 999px;
+  background: #df3f00;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-page .profile-card-trigger:hover {
+  background: #c73800;
+}
+
+.profile-reviews-heading {
+  display: flex;
+  height: 46px;
+  align-items: center;
+  margin: 0;
+  padding: 0 36px;
+  color: #424242;
+  border-bottom: 1px solid var(--movie-page-grid);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.profile-reviews-list {
+  display: grid;
+  gap: 12px;
+  padding: 16px 36px 28px;
+  border-bottom: 1px solid var(--movie-page-grid);
+}
+
+.profile-review {
+  display: grid;
+  grid-template-columns: 144px minmax(0, 1fr);
+  gap: 15px;
+  min-height: 152px;
+}
+
+.profile-review-poster {
+  width: 144px;
+  height: 204px;
+  overflow: hidden;
+  border-radius: 3px;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--movie-page-text) 8%, transparent);
+}
+
+.profile-review-copy {
+  min-width: 0;
+  padding-top: 13px;
+}
+
+.profile-review-copy time {
+  display: block;
+  color: #616060;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.profile-review-quote {
+  display: -webkit-box;
+  max-width: 100%;
+  margin: 15px 0 0;
+  overflow: hidden;
+  color: var(--movie-page-text);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.14;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.profile-review-copy h3 {
+  margin: 20px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.profile-review-copy h3 span {
+  color: #616060;
+}
+
+.profile-review-copy h3 em {
+  color: #adaaaa;
+  font-style: normal;
+}
+
+.profile-page .profile-films {
+  padding-inline: 36px;
+}
+
+.profile-film-tooltip {
+  width: 205px;
+  max-width: 205px;
+  padding: 16px 18px;
+  color: #ffffff;
+  border: 1px solid #232121;
+  border-radius: 18px;
+  background: #151515;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.profile-film-tooltip svg {
+  fill: #151515;
+  background: #151515;
+}
+
+.profile-film-tooltip-content {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.profile-film-tooltip-content p {
+  display: -webkit-box;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1.16;
+  text-align: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+}
+
+.profile-film-tooltip-stars {
+  display: flex;
+  height: 27px;
+  align-items: center;
+  gap: 4px;
+}
+
+.profile-film-tooltip-star {
+  position: relative;
+  display: block;
+  width: 25px;
+  height: 27px;
+  overflow: hidden;
+  color: #686868;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.profile-film-tooltip-star-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+@media (max-width: 720px) {
+  .profile-page .movie-page-header,
+  .profile-main {
+    width: 100%;
+    border-inline: 0;
+  }
+
+  .profile-page-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    min-height: 0;
+    padding: 42px 20px;
+  }
+
+  .profile-page-actions {
+    width: 100%;
+    grid-auto-flow: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .profile-page-stat {
+    text-align: left;
+  }
+
+  .profile-reviews-heading {
+    padding-inline: 20px;
+  }
+
+  .profile-reviews-list {
+    padding-inline: 20px;
+  }
+
+  .profile-review {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  .profile-review-poster {
+    width: 86px;
+    height: 122px;
+  }
+
+  .profile-review-copy {
+    padding-top: 4px;
+  }
+
+  .profile-review-quote,
+  .profile-review-copy h3 {
+    font-size: 17px;
+  }
+
+  .profile-page .profile-films {
+    padding-inline: 20px;
+  }
+}
+
 .movie-page-main {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -3375,9 +3792,10 @@ textarea {
   max-width: 650px;
   margin: 0;
   color: var(--movie-page-text);
+  font-family: "PP Nikkei Journal", Georgia, serif;
   font-size: clamp(2.3rem, 4vw, 3.7rem);
   font-weight: 500;
-  letter-spacing: 0;
+  letter-spacing: -2px;
   line-height: 0.96;
 }
 
@@ -3484,8 +3902,9 @@ textarea {
   padding: 20px 26px;
   border-top: 1px solid var(--movie-page-grid);
   color: var(--movie-page-logo);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .movie-page-footer div {
@@ -3499,21 +3918,17 @@ textarea {
 
 /* Official shadcn Drawer slots, scoped to the saved-review panel. */
 .review-drawer-content {
-  position: fixed;
-  top: 8px;
-  right: 8px;
-  bottom: 8px;
-  left: auto;
   display: grid;
-  width: min(390px, calc(100vw - 16px));
+  width: min(380px, calc(100vw - 24px));
+  height: calc(100dvh - 24px);
   max-width: none;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 18px;
-  padding: 18px 12px 12px;
+  gap: 16px;
+  padding: 20px 28px 28px;
   color: #f4f4f4;
   background: #101010;
   border: 1px solid #232121;
-  border-radius: 28px;
+  border-radius: 36px;
   box-shadow: 0 24px 90px rgba(0, 0, 0, 0.58);
   font-family: "PP Neue Montreal", Arial, sans-serif;
 }
@@ -3526,24 +3941,32 @@ textarea {
 }
 
 .review-drawer-header {
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
-  padding: 8px 8px 0;
+  min-width: 0;
+  padding: 4px 8px 0;
 }
 
 .review-drawer-title {
+  min-width: 0;
   margin: 0;
   color: inherit;
   font-family: inherit;
-  font-size: 1.35rem;
+  overflow: hidden;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
   font-weight: 600;
   line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .review-drawer-header .drawer-edit-button {
+  position: absolute;
+  right: 8px;
   min-height: 36px;
   color: inherit;
   background: transparent;
@@ -3553,37 +3976,55 @@ textarea {
 }
 
 .review-drawer-body {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 24px;
   min-height: 0;
-  overflow-y: auto;
-  padding: 28px 24px;
+  overflow: hidden;
+  padding: 28px 36px 22px;
   color: rgba(255, 255, 255, 0.62);
   background: #1c1c1c;
   border-radius: 22px;
 }
 
-.review-drawer-body .drawer-rating-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 28px;
-}
-
-.review-drawer-body .drawer-rating-summary strong {
-  color: #f5f5f5;
-  font-family: inherit;
-  font-size: clamp(1.45rem, 4vw, 1.95rem);
-  font-weight: 600;
-  line-height: 1.08;
-}
-
 .review-drawer-body p {
   margin: 0;
+  overflow-y: auto;
   white-space: pre-wrap;
   font-family: inherit;
   font-size: 1.15rem;
   font-weight: 600;
   line-height: 1.32;
+}
+
+.review-drawer-stars {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.review-drawer-star {
+  position: relative;
+  display: inline-grid;
+  width: 48px;
+  height: 52px;
+  place-items: center;
+  overflow: hidden;
+  color: #3a3a3a;
+  font-family: Arial, sans-serif;
+  font-size: 48px;
+  line-height: 1;
+}
+
+.review-drawer-star-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: grid;
+  place-items: center start;
+  overflow: hidden;
+  color: #f4f4f4;
+  white-space: nowrap;
 }
 
 .review-drawer-footer {
@@ -3629,6 +4070,14 @@ textarea {
   background: #f7f7f7;
 }
 
+:not(.dark) .review-drawer-star {
+  color: #e2e2e2;
+}
+
+:not(.dark) .review-drawer-star-fill {
+  color: #2c2c2c;
+}
+
 :not(.dark) .review-drawer-body .drawer-rating-summary strong {
   color: #2c2c2c;
 }
@@ -3639,7 +4088,8 @@ textarea {
 
 :not(.dark) .review-drawer-close,
 :not(.dark) .review-drawer-delete {
-  background: #f3f3f3;
+  color: #ffffff;
+  background: #151515;
 }
 
 .review-delete-confirm {
@@ -3656,6 +4106,11 @@ textarea {
 }
 
 @media (max-width: 760px) {
+  .home-page {
+    width: 100%;
+    border-inline: 0;
+  }
+
   .movie-page {
     height: 100svh;
     min-height: 100svh;

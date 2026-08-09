@@ -60,10 +60,8 @@ export function MovieLogActions({
   const reviewWordCount = countReviewWords(review);
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
   const dialogOpen = dialogState !== "closed";
-  const reviewedOn = existingReview ? formatReviewDate(existingReview.updated_at ?? existingReview.created_at) : "";
   const hasReview = Boolean(existingReview?.body.trim());
   const drawerRating = normalizeRating(Number(existingReview?.rating ?? rating ?? 0));
-  const drawerRatingPercent = (drawerRating / 5) * 100;
 
   function openReview(nextRating = rating) {
     if (!isSignedIn) {
@@ -258,30 +256,32 @@ export function MovieLogActions({
         ) : null}
       </div>
 
-      <Drawer open={drawerOpen} onOpenChange={(open) => {
+      <Drawer direction="right" open={drawerOpen} onOpenChange={(open) => {
         if (!drawerDeleting) {
           setDrawerOpen(open);
         }
       }}>
         <DrawerContent className={`review-drawer-content${drawerDeleting ? " deleting" : ""}`}>
           <DrawerHeader className="review-drawer-header">
-            <DrawerTitle className="review-drawer-title">{reviewedOn ? `Reviewed on ${reviewedOn}` : "Your review"}</DrawerTitle>
+            <DrawerTitle className="review-drawer-title">{movie.title} ({movie.releaseYear})</DrawerTitle>
             <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">
               Edit
             </button>
           </DrawerHeader>
           <div className="review-drawer-body">
-            <div className="drawer-rating-summary">
-              <strong>You rated this movie:</strong>
-              <div className="radial-score drawer-rating-score user-score" aria-label={`Your rating ${drawerRating.toFixed(1)} out of 5`}>
-                <svg viewBox="0 0 64 64" aria-hidden>
-                  <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
-                  <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${drawerRatingPercent} 100`} />
-                </svg>
-                <span>{drawerRating.toFixed(1)}</span>
-              </div>
-            </div>
             <p>{existingReview?.body}</p>
+            <div className="review-drawer-stars" aria-label={`Your rating ${drawerRating.toFixed(1)} out of 5`}>
+              {Array.from({ length: 5 }, (_, index) => {
+                const fill = Math.min(100, Math.max(0, (drawerRating - index) * 100));
+
+                return (
+                  <span className="review-drawer-star" key={index}>
+                    <span className="review-drawer-star-fill" style={{ width: `${fill}%` }}>★</span>
+                    ★
+                  </span>
+                );
+              })}
+            </div>
           </div>
           <div className="review-drawer-footer">
             <button className="review-drawer-close" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
@@ -413,12 +413,4 @@ export function MovieLogActions({
       ) : null}
     </>
   );
-}
-
-function formatReviewDate(value: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  }).format(new Date(value));
 }

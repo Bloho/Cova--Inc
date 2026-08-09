@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { MoviePoster } from "@/components/MoviePoster";
+import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import { PaginatedFilms } from "@/components/PaginatedFilms";
@@ -26,14 +25,14 @@ export default async function ProfilePage({
       .eq("username", username)
       .maybeSingle()
   ]);
-  const { user: viewer } = viewerResult;
+  const { user: viewer, profile: viewerProfile } = viewerResult;
   const { data: profile, error: profileError } = profileResult;
 
   if (profileError || !profile) {
     notFound();
   }
 
-  const [{ count: filmsCount }, { data: logs }, { data: reviews }] = await Promise.all([
+  const [{ count: filmsCount }, { data: logs }, { data: reviews }, { data: filmReviews }] = await Promise.all([
     supabase.from("user_movies").select("tmdb_id", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
     supabase
       .from("user_movies")
@@ -47,73 +46,80 @@ export default async function ProfilePage({
       .eq("user_id", profile.id)
       .eq("is_public", true)
       .order("created_at", { ascending: false })
-      .limit(3)
+      .limit(3),
+    supabase
+      .from("reviews")
+      .select("tmdb_id, body, rating")
+      .eq("user_id", profile.id)
+      .eq("is_public", true)
   ]);
 
   const movies = (logs ?? []).map((row) => fromLoggedMovie(row)).filter(Boolean) as Movie[];
+  const reviewByMovie = new Map((filmReviews ?? []).map((review) => [
+    Number(review.tmdb_id),
+    { body: review.body, rating: Number(review.rating ?? 0) }
+  ]));
   const isOwnProfile = viewer?.id === profile.id;
   const viewerStates = isOwnProfile
     ? new Map()
     : await getUserMovieStates(movies.map((movie) => movie.tmdbId), viewer?.id);
-  const displayMovies = movies.map((movie) => isOwnProfile
-    ? { ...movie, watched: true, userRating: movie.userRating ?? movie.rating }
-    : applyUserState(movie, viewerStates.get(movie.tmdbId)));
+  const displayMovies = movies.map((movie) => {
+    const resolvedMovie = isOwnProfile
+      ? { ...movie, watched: true, userRating: movie.userRating ?? movie.rating }
+      : applyUserState(movie, viewerStates.get(movie.tmdbId));
+    const review = reviewByMovie.get(movie.tmdbId);
+
+    return review
+      ? { ...resolvedMovie, reviewed: true, reviewBody: review.body ?? undefined, userRating: review.rating }
+      : resolvedMovie;
+  });
 
   return (
-    <>
-      <Header />
-      <main className="shell site-main">
-        <section className="profile-hero">
-          <div className="identity">
-            {profile.avatar_url ? <img className="avatar" src={profile.avatar_url} alt="" /> : <div className="avatar" aria-hidden />}
-            <div>
+    <div className="profile-page">
+      <MoviePageHeader
+        isSignedIn={Boolean(viewer)}
+        username={viewerProfile?.username ?? null}
+        displayName={viewerProfile?.display_name ?? null}
+        avatarUrl={viewerProfile?.avatar_url ?? null}
+        hidePrimaryActions
+      />
+      <main className="profile-main">
+        <section className="profile-page-hero">
+          <div className="profile-page-identity">
+            {profile.avatar_url ? <img className="profile-page-avatar" src={profile.avatar_url} alt="" /> : <div className="profile-page-avatar" aria-hidden />}
+            <div className="profile-page-details">
               {isOwnProfile ? <ProfileEditor displayName={profile.display_name} username={profile.username} avatarUrl={profile.avatar_url} /> : <h1>{profile.display_name}</h1>}
-              <div className="handle">@{profile.username}</div>
+              <div className="profile-page-handle">@{profile.username}</div>
             </div>
           </div>
-          <div className="stats" aria-label="Profile stats">
-            <div className="stat">
+          <div className="profile-page-actions" aria-label="Profile stats">
+            <div className="profile-page-stat">
               <strong>{filmsCount ?? 0}</strong>
-              <span>films</span>
+              <span>movies</span>
             </div>
+            {isOwnProfile ? (
+              <div id="cards">
+                <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} label="CARD" />
+              </div>
+            ) : null}
           </div>
-          {isOwnProfile ? (
-            <div id="cards">
-              <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} />
-            </div>
-          ) : null}
         </section>
 
-        <nav className="tabs" aria-label="Profile tabs">
-          <a href="#profile">Profile</a>
-          <a href="#films">Films</a>
-          <a href="#reviews">Reviews</a>
-        </nav>
-
-        <section id="profile" className="section" aria-labelledby="activity">
-          <h2 id="activity" className="section-head">
-            <span>Recent activity</span>
-          </h2>
-          <Separator />
+        <section id="profile" className="profile-reviews" aria-labelledby="activity">
+          <h2 id="activity" className="profile-reviews-heading">Recent reviews</h2>
           {(reviews ?? []).length ? (
-            <div className="review-list">
+            <div className="profile-reviews-list">
               {(reviews ?? []).map((review) => {
                 const movie = fromReviewMovie(review);
-                const reviewRating = Math.max(0, Math.min(5, Number(review.rating ?? 0)));
-                const reviewPercent = (reviewRating / 5) * 100;
                 return (
-                  <article className="review" key={review.id}>
-                    {movie ? <img className="mini-poster" src={posterUrl(movie.posterPath, "w185")} alt={`${movie.title} poster`} /> : null}
-                    <div>
-                      <h3>{movie?.title ?? "Film"}</h3>
-                      <p>{review.body}</p>
-                    </div>
-                    <div className="radial-score activity-score user-score" aria-label={`Rating ${reviewRating.toFixed(1)} out of 5`}>
-                      <svg viewBox="0 0 64 64" aria-hidden>
-                        <circle className="score-ring-track" cx="32" cy="32" r="25" pathLength="100" />
-                        <circle className="score-ring-value" cx="32" cy="32" r="25" pathLength="100" strokeDasharray={`${reviewPercent} 100`} />
-                      </svg>
-                      <span>{reviewRating.toFixed(1)}</span>
+                  <article className="profile-review" key={review.id}>
+                    {movie ? <img className="profile-review-poster" src={posterUrl(movie.posterPath, "w342")} alt={`${movie.title} poster`} /> : <div className="profile-review-poster" aria-hidden />}
+                    <div className="profile-review-copy">
+                      <time dateTime={review.created_at}>{formatReviewDate(review.created_at)}</time>
+                      <p className="profile-review-quote">{formatReviewQuote(review.body)}</p>
+                      <h3>
+                        <span>{movie?.title ?? "Film"}</span>
+                      </h3>
                     </div>
                   </article>
                 );
@@ -124,7 +130,7 @@ export default async function ProfilePage({
           )}
         </section>
 
-        <section id="films" className="section" aria-labelledby="seen">
+        <section id="films" className="section profile-films" aria-labelledby="seen">
           <h2 id="seen" className="section-head">
             <span>{profile.display_name} has seen {filmsCount ?? 0} films</span>
           </h2>
@@ -132,12 +138,31 @@ export default async function ProfilePage({
           <PaginatedFilms
             movies={displayMovies}
             isSignedIn={Boolean(viewer)}
+            showYears={false}
+            showReviewTooltip
           />
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
+}
+
+function formatReviewDate(value: string) {
+  return `Reviewed on ${new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  }).format(new Date(value))}`;
+}
+
+function formatReviewQuote(body: string | null) {
+  const text = (body ?? "").trim();
+  if (!text) {
+    return "No written review.";
+  }
+
+  return text.startsWith("“") || text.startsWith('"') ? text : `“${text}”`;
 }
 
 function fromLoggedMovie(row: any): Movie | null {
