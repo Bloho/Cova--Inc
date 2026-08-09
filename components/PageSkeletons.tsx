@@ -59,8 +59,8 @@ export function HomePageSkeleton() {
       <main className="site-main">
         <section className="shell hero hero-compact" aria-label="Loading homepage">
           <div className="home-hero-content" aria-hidden>
-            <h1><Skeleton className="skeleton-home-title" /></h1>
-            <p><Skeleton className="skeleton-home-copy" /></p>
+            <Skeleton className="skeleton-home-title" />
+            <Skeleton className="skeleton-home-copy" />
           </div>
         </section>
 
@@ -83,63 +83,37 @@ export function ProfilePageSkeleton() {
       <HeaderSkeleton moviePage hidePrimaryActions />
 
       <main className="profile-main">
-        <section className="profile-hero">
-          <div className="identity">
-            <Skeleton className="avatar" />
+        <section className="profile-page-hero" aria-label="Loading profile">
+          <div className="profile-page-identity">
+            <Skeleton className="profile-page-avatar" />
 
-            <div>
-              <div aria-hidden>
-                <Skeleton className="skeleton-profile-name" />
-              </div>
-
-              <div className="handle" aria-hidden>
-                <Skeleton className="skeleton-profile-handle" />
-              </div>
+            <div className="profile-page-details" aria-hidden>
+              <Skeleton className="skeleton-profile-name" />
+              <Skeleton className="skeleton-profile-handle" />
             </div>
           </div>
 
-          <div className="stats" aria-label="Profile stats">
-            <div className="stat">
-              <div aria-hidden>
-                <Skeleton className="skeleton-profile-stat-number" />
-              </div>
+          <div className="profile-page-actions" aria-label="Loading profile stats">
+            <div className="profile-page-stat" aria-hidden>
+              <Skeleton className="skeleton-profile-stat-number" />
+              <Skeleton className="skeleton-profile-stat-label" />
+            </div>
 
-              <div aria-hidden>
-                <Skeleton className="skeleton-profile-stat-label" />
-              </div>
+            <div id="cards" aria-hidden>
+              <Skeleton className="skeleton-button profile-card-trigger" />
             </div>
           </div>
-
-          <div id="cards" aria-hidden>
-            <Skeleton className="skeleton-button profile-card-trigger" />
-          </div>
         </section>
 
-        <nav className="tabs" aria-label="Profile tabs">
-          <a href="#profile" aria-hidden>
-            <Skeleton className="skeleton-profile-tab" />
-          </a>
-
-          <a href="#films" aria-hidden>
-            <Skeleton className="skeleton-profile-tab" />
-          </a>
-
-          <a href="#reviews" aria-hidden>
-            <Skeleton className="skeleton-profile-tab" />
-          </a>
-        </nav>
-
-        <section id="profile" className="section" aria-label="Loading activity">
-          <div className="section-head" aria-hidden>
-            <Skeleton className="skeleton-profile-section-title" />
+        <section id="profile" className="profile-reviews" aria-label="Loading recent reviews">
+          <div className="profile-reviews-heading" role="heading" aria-level={2} aria-hidden>
+            <Skeleton className="skeleton-profile-reviews-heading" />
           </div>
 
-          <Separator />
-
-          <ReviewListSkeleton />
+          <ProfileReviewsSkeleton />
         </section>
 
-        <section id="films" className="section" aria-label="Loading films">
+        <section id="films" className="section profile-films" aria-label="Loading films">
           <div className="section-head" aria-hidden>
             <Skeleton className="skeleton-profile-section-title wide" />
           </div>
@@ -225,25 +199,17 @@ function PosterGridSkeleton() {
   );
 }
 
-function ReviewListSkeleton() {
+function ProfileReviewsSkeleton() {
   return (
-    <div className="review-list" aria-hidden>
+    <div className="profile-reviews-list" aria-hidden>
       {reviewSlots.map((_, index) => (
-        <article className="review" key={index}>
-          <Skeleton className="mini-poster" />
+        <article className="profile-review" key={index}>
+          <Skeleton className="profile-review-poster" />
 
-          <div>
-            <div aria-hidden>
-              <Skeleton className="skeleton-profile-review-title" />
-            </div>
-
-            <div aria-hidden>
-              <Skeleton className="skeleton-profile-review-copy" />
-            </div>
-          </div>
-
-          <div className="radial-score activity-score user-score">
-            <Skeleton className="skeleton-profile-review-score" />
+          <div className="profile-review-copy">
+            <Skeleton className="skeleton-profile-review-date" />
+            <Skeleton className="skeleton-profile-review-quote" />
+            <Skeleton className="skeleton-profile-review-movie" />
           </div>
         </article>
       ))}

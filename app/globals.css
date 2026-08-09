@@ -2767,6 +2767,7 @@ textarea {
 .skeleton-home-copy {
   width: min(720px, 100%);
   height: clamp(1.12rem, 2.4vw, 1.45rem);
+  margin-top: 14px;
 }
 
 .skeleton-home-section-title {
@@ -2804,6 +2805,28 @@ textarea {
   width: 42px;
   height: 1rem;
   margin: 0 auto;
+}
+
+.skeleton-profile-reviews-heading {
+  width: 150px;
+  height: 20px;
+}
+
+.skeleton-profile-review-date {
+  width: 170px;
+  height: 16px;
+}
+
+.skeleton-profile-review-quote {
+  width: min(860px, 100%);
+  height: 69px;
+  margin-top: 15px;
+}
+
+.skeleton-profile-review-movie {
+  width: min(300px, 70%);
+  height: 22px;
+  margin-top: 20px;
 }
 
 .skeleton-profile-tab {
