@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Footer } from "@/components/Footer";
+import Link from "next/link";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileEditor } from "@/components/ProfileEditor";
@@ -143,7 +143,10 @@ export default async function ProfilePage({
           />
         </section>
       </main>
-      <Footer />
+      <footer className="movie-page-footer home-page-footer">
+        <span>© Cova by Bloho, 2026</span>
+        <div><Link href="/about">About</Link><Link href="/legal">Legal</Link></div>
+      </footer>
     </div>
   );
 }

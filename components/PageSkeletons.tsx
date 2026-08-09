@@ -124,7 +124,10 @@ export function ProfilePageSkeleton() {
         </section>
       </main>
 
-      <Footer />
+      <footer className="movie-page-footer home-page-footer" aria-label="Loading footer">
+        <Skeleton className="skeleton-footer-copy" />
+        <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
+      </footer>
     </div>
   );
 }
