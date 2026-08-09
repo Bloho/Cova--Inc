@@ -841,10 +841,16 @@ textarea {
   gap: 22px;
   padding: clamp(34px, 6vw, 78px);
   text-align: center;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
   background: #000;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: clamp(34px, 6vw, 76px);
   box-shadow: 0 34px 120px rgba(0, 0, 0, 0.64);
+}
+
+.onboarding-panel button,
+.onboarding-panel input {
+  font-family: inherit;
 }
 
 .onboarding-panel h2 {
