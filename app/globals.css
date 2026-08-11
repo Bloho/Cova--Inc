@@ -825,27 +825,32 @@ textarea {
 .onboarding-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 100;
   display: grid;
   place-items: center;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.72);
+  padding: clamp(18px, 4vw, 64px);
+  background: #1b1b1b;
+}
+
+.onboarding-demo {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: clamp(18px, 4vw, 64px);
+  background: #1b1b1b;
 }
 
 .onboarding-panel {
   display: grid;
-  width: min(1060px, calc(100vw - 48px));
-  min-height: min(600px, calc(100vh - 48px));
-  place-items: center;
-  align-content: center;
-  gap: 22px;
-  padding: clamp(34px, 6vw, 78px);
-  text-align: center;
+  width: min(1580px, 100%);
+  min-height: min(954px, calc(100dvh - 128px));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  overflow: hidden;
   font-family: "PP Neue Montreal", Arial, sans-serif;
   background: #000;
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: clamp(34px, 6vw, 76px);
-  box-shadow: 0 34px 120px rgba(0, 0, 0, 0.64);
+  border: 1px solid #313131;
+  border-radius: clamp(34px, 5vw, 76px);
+  box-shadow: 0 34px 100px rgba(0, 0, 0, 0.52);
 }
 
 .onboarding-panel button,
@@ -853,91 +858,208 @@ textarea {
   font-family: inherit;
 }
 
-.onboarding-panel h2 {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin: 0;
-  font-size: clamp(2.3rem, 5vw, 4rem);
-  font-weight: 600;
-  line-height: 1;
+.onboarding-art {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background: #111;
 }
 
-.onboarding-panel h2 img {
-  width: clamp(104px, 14vw, 164px);
-  height: auto;
+.onboarding-art-image {
+  object-fit: cover;
+  animation: onboarding-art-in 440ms ease both;
 }
 
-.onboarding-panel p {
-  max-width: 700px;
-  margin: 12px 0 18px;
-  color: white;
-  font-size: clamp(1.7rem, 3.8vw, 3rem);
-  font-weight: 700;
-  line-height: 1.08;
-}
-
-.username-field {
-  display: flex;
-  width: min(500px, 100%);
-  min-height: 80px;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  padding: 0 24px;
-  color: rgba(255, 255, 255, 0.35);
-  background: #181818;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  font-size: clamp(1.7rem, 3vw, 2.35rem);
-  font-weight: 700;
-}
-
-.username-field input {
-  width: 155px;
+.onboarding-content {
+  display: grid;
   min-width: 0;
-  color: white;
-  background: transparent;
+  padding: clamp(42px, 7vw, 110px);
+  place-items: center;
+}
+
+.onboarding-stage {
+  display: flex;
+  width: min(100%, 660px);
+  min-height: min(680px, calc(100dvh - 220px));
+  flex-direction: column;
+  justify-content: center;
+  animation: onboarding-stage-in 440ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.onboarding-logo {
+  width: min(100%, 580px);
+  height: auto;
+  margin-bottom: clamp(80px, 11vw, 170px);
+  opacity: 0.13;
+}
+
+.onboarding-description {
+  margin: 0 0 clamp(72px, 11vw, 170px);
+  color: #a8a8a8;
+  font-size: clamp(1.2rem, 1.65vw, 2rem);
+  font-weight: 600;
+  line-height: 1.24;
+}
+
+.onboarding-primary {
+  width: 100%;
+  min-height: 86px;
+  margin-top: auto;
+  color: #000;
+  background: #fff;
   border: 0;
-  outline: 0;
-  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: clamp(1.35rem, 2vw, 2.1rem);
+  font-weight: 600;
+  transition: transform 180ms ease, background 180ms ease, opacity 180ms ease;
 }
 
-.username-status {
-  min-height: 28px;
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 1.15rem;
-  font-weight: 700;
+.onboarding-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #ededed;
 }
 
-.username-status.available {
-  color: #00ff73;
+.onboarding-primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
 }
 
-.username-status.taken,
-.username-status.invalid {
-  color: #ff5c5c;
+.onboarding-setup,
+.onboarding-complete {
+  align-items: center;
 }
 
-.username-help {
-  margin-top: -14px;
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 1rem;
-  font-weight: 700;
+.onboarding-setup h1,
+.onboarding-complete h1 {
+  margin: 0 0 clamp(56px, 8vw, 104px);
+  color: #f5f5f5;
+  font-size: clamp(2.6rem, 5vw, 5.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  text-align: center;
 }
 
-.onboarding-save,
-.onboarding-done {
-  min-width: 180px;
-  margin-top: 8px;
+.onboarding-avatar-placeholder {
+  width: clamp(105px, 11vw, 168px);
+  aspect-ratio: 1;
+  margin-bottom: clamp(44px, 5vw, 72px);
+  border-radius: 50%;
+  background: #202020;
 }
 
-.profile-link {
-  color: rgba(255, 255, 255, 0.45);
-  font-size: clamp(2rem, 4vw, 3.1rem);
-  font-weight: 700;
+.onboarding-fields {
+  width: 100%;
+  margin-bottom: clamp(60px, 8vw, 112px);
+}
+
+.onboarding-fields label {
+  display: block;
+  width: 100%;
+}
+
+.onboarding-fields input {
+  width: 100%;
+  min-height: 74px;
+  margin-bottom: 18px;
+  padding: 0 34px;
+  color: #f6f6f6;
+  background: #171717;
+  border: 1px solid transparent;
+  border-radius: 17px;
+  outline: none;
+  font-size: clamp(1.15rem, 1.8vw, 1.85rem);
+  font-weight: 600;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.onboarding-fields input::placeholder {
+  color: #a9a9a9;
+  opacity: 1;
+}
+
+.onboarding-fields input:focus {
+  background: #1c1c1c;
+  border-color: #464646;
+}
+
+.onboarding-handle-status {
+  min-height: 1.45em;
+  margin: 0;
+  color: #8c8c8c;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.onboarding-handle-status.available { color: #51d02b; }
+.onboarding-handle-status.taken,
+.onboarding-handle-status.invalid { color: #ff6969; }
+
+.onboarding-complete h1 {
+  color: #242424;
+}
+
+.onboarding-complete p {
+  max-width: 570px;
+  margin: 0 0 clamp(100px, 14vw, 210px);
+  color: #fff;
+  font-size: clamp(1.45rem, 2.3vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.05;
+  text-align: left;
+}
+
+.onboarding-complete strong {
+  display: block;
+  color: #087dff;
+  font: inherit;
+}
+
+@keyframes onboarding-stage-in {
+  from { opacity: 0; transform: translateX(22px) scale(0.985); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes onboarding-art-in {
+  from { opacity: 0; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 800px) {
+  .onboarding-backdrop,
+  .onboarding-demo { padding: 0; }
+
+  .onboarding-panel {
+    min-height: 100dvh;
+    grid-template-columns: 1fr;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .onboarding-art { min-height: 28dvh; }
+
+  .onboarding-content { padding: 36px 24px; }
+
+  .onboarding-stage { min-height: 58dvh; }
+
+  .onboarding-logo { margin-bottom: 48px; }
+
+  .onboarding-description { margin-bottom: 52px; }
+
+  .onboarding-setup h1,
+  .onboarding-complete h1 { margin-bottom: 38px; }
+
+  .onboarding-avatar-placeholder { margin-bottom: 30px; }
+
+  .onboarding-fields { margin-bottom: 46px; }
+
+  .onboarding-complete p { margin-bottom: 58px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-stage,
+  .onboarding-art-image { animation: none; }
 }
 
 .log-dialog {

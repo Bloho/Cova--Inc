@@ -58,7 +58,12 @@ export default async function Home({
         <span>© Cova by Bloho, 2026</span>
         <div><Link href="/about">About</Link><Link href="/legal">Legal</Link></div>
       </footer>
-      {needsOnboarding ? <OnboardingModal initialUsername={profile?.username} /> : null}
+      {needsOnboarding ? (
+        <OnboardingModal
+          initialUsername={profile?.username}
+          initialDisplayName={profile?.display_name}
+        />
+      ) : null}
     </div>
   );
 }

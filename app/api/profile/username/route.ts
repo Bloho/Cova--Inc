@@ -14,11 +14,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in before choosing a username." }, { status: 401 });
   }
 
-  const body = (await request.json()) as { username?: string };
+  const body = (await request.json()) as { username?: string; displayName?: string };
   const username = normalizeUsername(body.username ?? "");
+  const displayName = body.displayName?.trim();
 
   if (!USERNAME_RE.test(username)) {
     return NextResponse.json({ error: "Username should be 3-10 characters using letters, numbers, and dashes." }, { status: 400 });
+  }
+
+  if (displayName !== undefined && (!displayName || displayName.length > 16)) {
+    return NextResponse.json({ error: "Profile name should be 1-16 characters." }, { status: 400 });
   }
 
   const profile = await ensureProfile(supabase, user);
@@ -44,6 +49,7 @@ export async function POST(request: Request) {
     .from("profiles")
     .update({
       username,
+      ...(displayName ? { display_name: displayName } : {}),
       onboarded_at: new Date().toISOString()
     })
     .eq("id", user.id);
