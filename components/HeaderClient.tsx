@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BadgeCheckIcon, CreditCardIcon, HomeIcon, LogOutIcon, Plus, Search, UserCircle } from "lucide-react";
+import { Plus, Search, UserCircle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogFilmDialog } from "@/components/LogFilmDialog";
@@ -49,16 +49,6 @@ export function HeaderClient({
     router.push(path);
   }
 
-  function openCards() {
-    if (isProfilePage) {
-      window.dispatchEvent(new CustomEvent("cova-open-profile-card"));
-      return;
-    }
-
-    window.sessionStorage.setItem("cova-open-profile-card", "1");
-    navigateTo(`${profilePath}#cards`);
-  }
-
   async function signOut() {
     window.covaProgressStart?.();
     await fetch("/api/auth/signout", { method: "POST" });
@@ -90,22 +80,34 @@ export function HeaderClient({
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuGroup>
-                <DropdownMenuItem onSelect={() => navigateTo(isProfilePage ? "/" : profilePath)}>
-                  {isProfilePage ? <HomeIcon /> : <BadgeCheckIcon />}
-                  {isProfilePage ? "Home" : "Profile"}
+            <DropdownMenuContent align="end" className="w-60 bg-[#0a0a0a] border-[#1a1a1a] text-white rounded-2xl p-3 space-y-1">
+              <DropdownMenuGroup className="space-y-1">
+                <DropdownMenuItem onSelect={() => navigateTo("/wishlist")} className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
+                  <Image src="/assets/wishlist.svg" alt="" width={20} height={20} className="opacity-70" />
+                  <span className="text-sm font-medium">Wishlist</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={openCards}>
-                  <CreditCardIcon />
-                  Cards
+                <DropdownMenuItem onSelect={() => navigateTo(isProfilePage ? "/" : profilePath)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
+                  <Image src="/assets/profile.svg" alt="" width={20} height={20} className="opacity-70" />
+                  <span className="text-sm font-medium">{isProfilePage ? "Home" : "Profile"}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigateTo("/favourites")} className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
+                  <Image src="/assets/favourites.svg" alt="" width={20} height={20} className="opacity-70" />
+                  <span className="text-sm font-medium">Favourites</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={signOut}>
-                <LogOutIcon />
-                Sign Out
-              </DropdownMenuItem>
+              <DropdownMenuSeparator className="my-2 bg-[#2a2a2a]" />
+              <DropdownMenuGroup className="space-y-1">
+                <DropdownMenuItem onSelect={() => navigateTo("/settings")} className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-[#1a1a1a] focus:bg-[#1a1a1a]">
+                  <Image src="/assets/settings.svg" alt="" width={20} height={20} className="opacity-70" />
+                  <span className="text-sm font-medium">Settings</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <div className="pt-1">
+                <DropdownMenuItem onSelect={signOut} className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-[#1a1a1a] hover:bg-[#252525] focus:bg-[#252525] text-[#ff9e9e]">
+                  <Image src="/assets/signout.svg" alt="" width={20} height={20} />
+                  <span className="text-sm font-medium">Sign out</span>
+                </DropdownMenuItem>
+              </div>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
