@@ -6,6 +6,7 @@ const nextConfig = {
       static: 180
     }
   },
+
   images: {
     remotePatterns: [
       {
@@ -13,6 +14,15 @@ const nextConfig = {
         hostname: "image.tmdb.org"
       }
     ]
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: "/landing",
+        destination: "/landing.html"
+      }
+    ];
   }
 };
 
