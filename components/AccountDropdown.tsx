@@ -55,7 +55,7 @@ export function AccountDropdown({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={10} className="cova-account-menu">
-        <DropdownMenuGroup>
+        <DropdownMenuGroup className="cova-account-group">
           <DropdownMenuItem onSelect={keepFutureItemClosed} className="cova-account-item" data-future="true">
             <Image src="/icons/wishlist.svg" alt="" width={24} height={24} />
             <span>Wishlist</span>
@@ -79,10 +79,12 @@ export function AccountDropdown({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="cova-account-separator" />
-        <DropdownMenuItem onSelect={keepFutureItemClosed} className="cova-account-item" data-future="true">
-          <Image src="/icons/settings.svg" alt="" width={24} height={24} />
-          <span>Settings</span>
-        </DropdownMenuItem>
+        <DropdownMenuGroup className="cova-account-group">
+          <DropdownMenuItem onSelect={keepFutureItemClosed} className="cova-account-item" data-future="true">
+            <Image src="/icons/settings.svg" alt="" width={24} height={24} />
+            <span>Settings</span>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator className="cova-account-separator cova-account-separator-bottom" />
         <DropdownMenuItem onSelect={onSignOut} className="cova-account-item cova-account-signout">
           <Image src="/icons/signout.svg" alt="" width={24} height={24} />
