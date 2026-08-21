@@ -438,6 +438,103 @@ textarea {
   background: #303030;
 }
 
+.cova-account-menu {
+  width: 280px;
+  min-width: 280px;
+  padding: 10px;
+  overflow: hidden;
+  color: #f3f3f3;
+  background: #000;
+  border: 1px solid #303030;
+  border-radius: 20px;
+  box-shadow: 0 18px 45px rgb(0 0 0 / 30%);
+}
+
+.cova-account-item {
+  min-height: 46px;
+  gap: 14px;
+  padding: 8px 12px;
+  color: inherit;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.cova-account-item:hover,
+.cova-account-item:focus-visible {
+  background: rgb(255 255 255 / 8%);
+}
+
+.cova-account-item[data-future="true"] {
+  cursor: default;
+}
+
+.cova-account-item[data-future="true"]:hover,
+.cova-account-item[data-future="true"]:focus-visible {
+  background: transparent;
+}
+
+.cova-account-item img {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  object-fit: contain;
+}
+
+.cova-account-separator {
+  height: 1px;
+  margin: 8px 12px;
+  background: #303030;
+}
+
+.cova-account-separator-bottom {
+  margin-top: 4px;
+}
+
+.cova-account-signout {
+  margin-top: 2px;
+  color: #ff9d9d;
+  background: #1c1c1c;
+}
+
+.cova-account-signout:hover,
+.cova-account-signout:focus-visible {
+  color: #ffb1b1;
+  background: #282828;
+}
+
+html:not(.dark) .cova-account-menu {
+  color: #2c2c2c;
+  background: #fff;
+  border-color: #e3e3e3;
+}
+
+html:not(.dark) .cova-account-item:hover,
+html:not(.dark) .cova-account-item:focus-visible {
+  background: #f1f1f1;
+}
+
+html:not(.dark) .cova-account-item[data-future="true"]:hover,
+html:not(.dark) .cova-account-item[data-future="true"]:focus-visible {
+  background: transparent;
+}
+
+html:not(.dark) .cova-account-separator {
+  background: #e3e3e3;
+}
+
+html:not(.dark) .cova-account-signout {
+  color: #d94b4b;
+  background: #f1f1f1;
+}
+
+html:not(.dark) .cova-account-signout:hover,
+html:not(.dark) .cova-account-signout:focus-visible {
+  color: #bc3434;
+  background: #e7e7e7;
+}
+
 .login-button,
 .pill-button {
   display: inline-flex;

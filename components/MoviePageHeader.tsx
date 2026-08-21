@@ -1,22 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { BadgeCheckIcon, CreditCardIcon, HomeIcon, LogOutIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { BadgeCheckIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { LogFilmDialog } from "@/components/LogFilmDialog";
 import { SearchMovieDialog } from "@/components/SearchMovieDialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AccountDropdown } from "@/components/AccountDropdown";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
 
 export function MoviePageHeader({
   isSignedIn,
@@ -31,14 +23,11 @@ export function MoviePageHeader({
   avatarUrl: string | null;
   hidePrimaryActions?: boolean;
 }) {
-  const pathname = usePathname();
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const profilePath = username ? `/${username}` : "/";
-  const isProfilePage = pathname === profilePath;
 
   useEffect(() => setMounted(true), []);
 
@@ -47,19 +36,12 @@ export function MoviePageHeader({
     router.push(path);
   }
 
-  function openCards() {
-    window.sessionStorage.setItem("cova-open-profile-card", "1");
-    navigateTo(`${profilePath}#cards`);
-  }
-
   async function signOut() {
     window.covaProgressStart?.();
     await fetch("/api/auth/signout", { method: "POST" });
     router.push("/");
     router.refresh();
   }
-
-  const initials = getInitials(displayName ?? username ?? "Cova");
 
   return (
     <header className="movie-page-header">
@@ -89,33 +71,14 @@ export function MoviePageHeader({
           {mounted && resolvedTheme === "dark" ? <MoonIcon aria-hidden /> : <SunIcon aria-hidden />}
         </Button>
         {isSignedIn ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="movie-avatar-button" aria-label={displayName ?? "Account"}>
-                <Avatar>
-                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName ?? "Profile"} /> : null}
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuGroup>
-                <DropdownMenuItem onSelect={() => navigateTo(isProfilePage ? "/" : profilePath)}>
-                  {isProfilePage ? <HomeIcon /> : <BadgeCheckIcon />}
-                  {isProfilePage ? "Home" : "Profile"}
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={openCards}>
-                  <CreditCardIcon />
-                  Cards
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={signOut}>
-                <LogOutIcon />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AccountDropdown
+            username={username}
+            displayName={displayName}
+            avatarUrl={avatarUrl}
+            triggerClassName="movie-avatar-button"
+            onNavigate={navigateTo}
+            onSignOut={signOut}
+          />
         ) : (
           <Button asChild variant="outline" size="icon" className="movie-avatar-button" aria-label="Sign in">
             <Link href="/login"><BadgeCheckIcon aria-hidden /></Link>
@@ -126,13 +89,4 @@ export function MoviePageHeader({
       {!hidePrimaryActions ? <SearchMovieDialog open={searchOpen} onClose={() => setSearchOpen(false)} /> : null}
     </header>
   );
-}
-
-function getInitials(value: string) {
-  return value
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("") || "CV";
 }
