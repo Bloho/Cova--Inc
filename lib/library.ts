@@ -7,6 +7,8 @@ export type UserMovieState = {
   watched: boolean;
   rating: number;
   reviewed: boolean;
+  inWatchlist: boolean;
+  isFavourite: boolean;
 };
 
 export const getCurrentUserProfile = cache(async function getCurrentUserProfile() {
@@ -54,7 +56,7 @@ export async function getUserMovieStates(tmdbIds: number[], userId?: string | nu
   const [{ data: userMovies }, { data: reviews }] = await Promise.all([
     supabase
       .from("user_movies")
-      .select("tmdb_id, status, rating")
+      .select("tmdb_id, status, rating, in_watchlist, liked")
       .eq("user_id", resolvedUserId)
       .in("tmdb_id", tmdbIds),
     supabase
@@ -72,7 +74,9 @@ export async function getUserMovieStates(tmdbIds: number[], userId?: string | nu
     state.set(tmdbId, {
       watched: row.status === "watched",
       rating: Number(row.rating ?? 0),
-      reviewed: reviewedIds.has(tmdbId)
+      reviewed: reviewedIds.has(tmdbId),
+      inWatchlist: Boolean(row.in_watchlist),
+      isFavourite: Boolean(row.liked)
     });
   }
 
@@ -81,7 +85,9 @@ export async function getUserMovieStates(tmdbIds: number[], userId?: string | nu
     state.set(tmdbId, {
       watched: current?.watched ?? true,
       rating: current?.rating ?? 0,
-      reviewed: true
+      reviewed: true,
+      inWatchlist: current?.inWatchlist ?? false,
+      isFavourite: current?.isFavourite ?? false
     });
   }
 

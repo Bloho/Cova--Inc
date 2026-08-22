@@ -56,8 +56,8 @@ export function AccountDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={10} className="cova-account-menu">
         <DropdownMenuGroup className="cova-account-group">
-          <DropdownMenuItem onSelect={keepFutureItemClosed} className="cova-account-item" data-future="true">
-            <Image src="/icons/wishlist.svg" alt="" width={24} height={24} />
+          <DropdownMenuItem onSelect={() => onNavigate("/wishlist")} className="cova-account-item">
+            <Image src="/icons/wishlist=false.svg" alt="" width={24} height={24} />
             <span>Wishlist</span>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -73,8 +73,8 @@ export function AccountDropdown({
             <Image src="/icons/profile.svg" alt="" width={24} height={24} />
             <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={keepFutureItemClosed} className="cova-account-item" data-future="true">
-            <Image src="/icons/favourite.svg" alt="" width={24} height={24} />
+          <DropdownMenuItem onSelect={() => onNavigate("/favourites")} className="cova-account-item">
+            <Image src="/icons/favourite=false.svg" alt="" width={24} height={24} />
             <span>Favourites</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>

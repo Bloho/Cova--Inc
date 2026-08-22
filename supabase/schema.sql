@@ -49,6 +49,7 @@ create table if not exists public.user_movies (
   status public.watch_status not null,
   rating numeric(2,1) check (rating between 0 and 5 and rating * 2 = floor(rating * 2)),
   liked boolean not null default false,
+  in_watchlist boolean not null default false,
   watched_at date,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -89,6 +90,10 @@ create table if not exists public.card_presets (
 create index if not exists follows_following_id_idx on public.follows(following_id);
 create index if not exists user_movies_user_id_idx on public.user_movies(user_id);
 create index if not exists user_movies_user_status_watched_at_idx on public.user_movies(user_id, status, watched_at desc);
+create index if not exists user_movies_user_wishlist_updated_at_idx
+  on public.user_movies(user_id, updated_at desc) where in_watchlist;
+create index if not exists user_movies_user_favourites_updated_at_idx
+  on public.user_movies(user_id, updated_at desc) where liked;
 create index if not exists reviews_user_id_created_at_idx on public.reviews(user_id, created_at desc);
 create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
 create index if not exists reviews_user_tmdb_updated_at_idx on public.reviews(user_id, tmdb_id, updated_at desc);

@@ -440,7 +440,7 @@ textarea {
 
 .cova-account-menu {
   --cova-account-button-gap: 2px;
-  width: 150px;
+  width: 200px;
   min-width: 150px;
   padding: 10px;
   overflow: hidden;
@@ -4047,6 +4047,73 @@ html:not(.dark) .cova-account-signout:focus-visible {
   -webkit-line-clamp: 5;
 }
 
+.movie-collection-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 34px;
+  margin-top: 26px;
+}
+
+.movie-collection-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--movie-page-text);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.movie-collection-button img {
+  flex: 0 0 auto;
+}
+
+.movie-collection-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.movie-collection-error {
+  width: 100%;
+  margin: 0;
+  color: #e05252;
+  font-size: 14px;
+}
+
+.collection-main {
+  min-height: calc(100dvh - 178px);
+}
+
+.collection-title-band {
+  display: flex;
+  align-items: center;
+  min-height: 66px;
+  padding: 0 38px;
+  border-bottom: 1px solid var(--movie-page-grid);
+}
+
+.collection-title-band h1 {
+  margin: 0;
+  color: var(--movie-page-text);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.collection-films {
+  padding-top: 34px;
+}
+
+.collection-films .poster-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
 .movie-page-actions {
   display: flex;
   align-items: center;
@@ -4491,5 +4558,26 @@ html:not(.dark) .review-drawer-delete {
     min-height: 66px;
     padding-inline: 18px;
     font-size: 11px;
+  }
+
+  .movie-collection-actions {
+    gap: 12px 18px;
+  }
+
+  .movie-collection-button {
+    font-size: 16px;
+  }
+
+  .collection-title-band {
+    min-height: 56px;
+    padding-inline: 20px;
+  }
+
+  .collection-title-band h1 {
+    font-size: 24px;
+  }
+
+  .collection-films .poster-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

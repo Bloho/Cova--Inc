@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MovieCollectionActions } from "@/components/MovieCollectionActions";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { MovieLogActions } from "@/components/MovieLogActions";
 import { posterUrl } from "@/lib/data";
@@ -30,7 +31,8 @@ export default async function MoviePage({
           .maybeSingle()
       : Promise.resolve({ data: null })
   ]);
-  const movieWithState = applyUserState(movie, states.get(movie.tmdbId));
+  const movieState = states.get(movie.tmdbId);
+  const movieWithState = applyUserState(movie, movieState);
   const currentReview = reviewResult.data;
 
   return (
@@ -54,6 +56,12 @@ export default async function MoviePage({
             </div>
             <h1>{movie.title}</h1>
             <p className="movie-page-overview">{movie.overview}</p>
+            <MovieCollectionActions
+              movie={movie}
+              isSignedIn={Boolean(user)}
+              initialInWishlist={movieState?.inWatchlist ?? false}
+              initialFavourite={movieState?.isFavourite ?? false}
+            />
             <MovieLogActions
               movie={movie}
               isSignedIn={Boolean(user)}
