@@ -22,6 +22,14 @@ type CollectionRow = {
   movies: CollectionMovie | CollectionMovie[] | null;
 };
 
+function getCollectionErrorMessage(kind: CollectionKind, message: string) {
+  if (message.includes("in_watchlist") || message.includes("schema cache")) {
+    return "Wishlist storage is not set up yet. Run supabase/20260822_collections.sql in the Supabase project connected to this deployment, then refresh this page.";
+  }
+
+  return `Could not load your ${kind}. Please try again.`;
+}
+
 export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) {
   const { user, profile } = await getCurrentUserProfile();
 
@@ -35,8 +43,6 @@ export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) 
     .eq("user_id", user.id)
     .eq(collectionColumn, true)
     .order("updated_at", { ascending: false });
-
-  if (error) throw new Error(`Could not load your ${kind}.`);
 
   const movies = ((data ?? []) as CollectionRow[]).flatMap((row): Movie[] => {
     const movie = Array.isArray(row.movies) ? row.movies[0] : row.movies;
@@ -68,7 +74,11 @@ export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) 
       <main className="profile-main collection-main">
         <section className="collection-title-band"><h1>{title}</h1></section>
         <section className="profile-films collection-films">
-          <PaginatedFilms movies={movies} isSignedIn itemsPerPage={28} showYears={false} />
+          {error ? (
+            <p className="movie-collection-error">{getCollectionErrorMessage(kind, error.message)}</p>
+          ) : (
+            <PaginatedFilms movies={movies} isSignedIn itemsPerPage={28} showYears={false} />
+          )}
         </section>
       </main>
       <footer className="movie-page-footer">
