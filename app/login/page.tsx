@@ -3,7 +3,7 @@ import { AuthForm } from "@/components/AuthForm";
 
 export default function LoginPage() {
   return (
-    <main className="grid min-h-svh lg:grid-cols-2">
+    <main className="grid min-h-svh font-[family-name:'PP_Neue_Montreal'] lg:grid-cols-2">
       <section className="flex flex-col gap-4 p-6 md:p-10">
         <Link href="/" className="inline-flex w-fit items-center" aria-label="Cova home">
           <img src="/assets/Cova-logo-white.svg" alt="Cova logo" className="h-10 w-auto invert dark:invert-0" />
