@@ -9,7 +9,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Cova",
   description: "Watch, review, and share films with your people.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://cova.quest"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://cova.bloho.space"),
   icons: {
     icon: "/assets/favicon.png"
   },

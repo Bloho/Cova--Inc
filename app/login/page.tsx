@@ -3,18 +3,24 @@ import { AuthForm } from "@/components/AuthForm";
 
 export default function LoginPage() {
   return (
-    <main className="login-page">
-      <section className="login-panel">
-        <Link href="/" className="brand" aria-label="Cova home">
-          <img src="/assets/Cova-logo-white.svg" alt="Cova logo" style={{ height: "70px", width: "auto" }} />
+    <main className="grid min-h-svh lg:grid-cols-2">
+      <section className="flex flex-col gap-4 p-6 md:p-10">
+        <Link href="/" className="inline-flex w-fit items-center" aria-label="Cova home">
+          <img src="/assets/Cova-logo-white.svg" alt="Cova logo" className="h-10 w-auto invert dark:invert-0" />
         </Link>
-        <div>
-          <h1>Sign in to Cova</h1>
-          <p className="handle">cova.bloho.xyz</p>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-sm">
+            <AuthForm />
+          </div>
         </div>
-        <AuthForm />
       </section>
-      <section className="login-media" aria-label="Cova movie card preview" />
+      <section className="relative hidden bg-muted lg:block" aria-label="Cova movie card preview">
+        <img
+          src="/assets/log-in-banner.jpg"
+          alt=""
+          className="absolute inset-0 size-full object-cover dark:brightness-[0.35] dark:grayscale"
+        />
+      </section>
     </main>
   );
 }

@@ -1,12 +1,20 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { TurnstileWidget } from "@/components/TurnstileWidget";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function AuthForm() {
   const supabase = createSupabaseBrowserClient();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +33,12 @@ export function AuthForm() {
     window.turnstile?.reset();
   }
 
-  async function submitEmail(event: React.FormEvent<HTMLFormElement>) {
+  function changeMode(nextMode: "signin" | "signup") {
+    setMode(nextMode);
+    setMessage("");
+  }
+
+  async function submitEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage("");
@@ -80,7 +93,7 @@ export function AuthForm() {
     setBusy(true);
     setMessage("");
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${siteUrl || window.location.origin}/login`,
+      redirectTo: `${window.location.origin}/login`,
       captchaToken: turnstileToken
     });
 
@@ -100,9 +113,10 @@ export function AuthForm() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${siteUrl || window.location.origin}/auth/callback`,
+        redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
-          prompt: "select_account"
+          prompt: "select_account",
+          captcha_token: turnstileToken
         }
       }
     });
@@ -118,48 +132,98 @@ export function AuthForm() {
   }
 
   return (
-    <div className="login-form">
-      <div className="segmented auth-mode">
-        <button className={mode === "signin" ? "active" : ""} type="button" onClick={() => setMode("signin")}>
-          Sign in
-        </button>
-        <button className={mode === "signup" ? "active" : ""} type="button" onClick={() => setMode("signup")}>
-          Sign up
-        </button>
-      </div>
-      <button className="pill-button secondary" type="button" onClick={signInWithGoogle} disabled={busy || !turnstileToken}>
-        <img src="/utilities/logo-google.svg" alt="Google logo" className="mr-2 h-4 w-4" />
-        <span>Continue with Google</span>
-      </button>
-      <form className="login-form" onSubmit={submitEmail}>
+    <form className="flex flex-col gap-6" onSubmit={submitEmail}>
+      <FieldGroup>
+        <div className="flex flex-col items-center gap-1 text-center">
+          <h1 className="text-2xl font-semibold">
+            {mode === "signup" ? "Create your account" : "Login to your account"}
+          </h1>
+          <FieldDescription>
+            {mode === "signup" ? "Set up your Cova account below" : "Enter your email below to login to your account"}
+          </FieldDescription>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button type="button" variant={mode === "signin" ? "default" : "outline"} onClick={() => changeMode("signin")}>
+            Sign in
+          </Button>
+          <Button type="button" variant={mode === "signup" ? "default" : "outline"} onClick={() => changeMode("signup")}>
+            Sign up
+          </Button>
+        </div>
+
         {mode === "signup" ? (
-          <input
-            className="input"
-            type="text"
-            placeholder="Display name"
-            autoComplete="name"
-            value={displayName}
-            onChange={(event) => setDisplayName(event.target.value)}
-          />
+          <Field>
+            <FieldLabel htmlFor="display-name">Display name</FieldLabel>
+            <Input
+              id="display-name"
+              type="text"
+              placeholder="Your name"
+              autoComplete="name"
+              required
+              value={displayName}
+              onChange={(event) => setDisplayName(event.target.value)}
+            />
+          </Field>
         ) : null}
-        <input className="input" type="email" placeholder="Email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        <input
-          className="input"
-          type="password"
-          placeholder="Password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <TurnstileWidget onVerify={onTurnstileVerify} onExpire={onTurnstileExpire} />
-        <button className="pill-button" type="submit" disabled={busy || !turnstileToken} style={{ backgroundColor: "#00AF1F", color: "white" }}>
-          {mode === "signup" ? "Create account" : "Sign in"}
-        </button>
-      </form>
-      <button className="text-button" type="button" onClick={resetPassword} disabled={busy || !turnstileToken}>
-        Reset password
-      </button>
-      {message ? <p className="form-message">{message}</p> : null}
-    </div>
+
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </Field>
+
+        <Field>
+          <div className="flex items-center">
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Button className="ml-auto h-auto p-0 text-sm underline-offset-4 hover:underline" variant="link" type="button" onClick={resetPassword} disabled={busy || !turnstileToken}>
+              Forgot your password?
+            </Button>
+          </div>
+          <Input
+            id="password"
+            type="password"
+            autoComplete={mode === "signup" ? "new-password" : "current-password"}
+            required
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </Field>
+
+        <Field>
+          <TurnstileWidget onVerify={onTurnstileVerify} onExpire={onTurnstileExpire} />
+        </Field>
+
+        <Field>
+          <Button type="submit" disabled={busy || !turnstileToken}>
+            {busy ? "Please wait..." : mode === "signup" ? "Create account" : "Login"}
+          </Button>
+        </Field>
+
+        <FieldSeparator>Or continue with</FieldSeparator>
+
+        <Field>
+          <Button variant="outline" type="button" onClick={signInWithGoogle} disabled={busy || !turnstileToken}>
+            <img src="/utilities/logo-google.svg" alt="" className="size-4" />
+            Continue with Google
+          </Button>
+          <div className="text-center text-sm text-muted-foreground">
+            {mode === "signup" ? "Already have an account?" : "Don't have an account?"}{" "}
+            <Button className="h-auto p-0 underline underline-offset-4" variant="link" type="button" onClick={() => changeMode(mode === "signup" ? "signin" : "signup")}>
+              {mode === "signup" ? "Sign in" : "Sign up"}
+            </Button>
+          </div>
+        </Field>
+
+        {message ? <div className="text-center text-sm text-muted-foreground" role="status">{message}</div> : null}
+      </FieldGroup>
+    </form>
   );
 }
