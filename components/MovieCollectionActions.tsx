@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Movie } from "@/lib/data";
@@ -75,32 +74,22 @@ export function MovieCollectionActions({
     <div className="movie-collection-actions">
       <button
         type="button"
-        className="movie-collection-button"
+        className={`movie-collection-button wishlist${inWishlist ? " is-added" : ""}`}
         aria-pressed={inWishlist}
         disabled={pending !== null}
         onClick={() => void toggleCollection("wishlist")}
       >
-        <Image
-          src={inWishlist ? "/icons/wishlist=true.svg" : "/icons/wishlist=false.svg"}
-          alt=""
-          width={33}
-          height={33}
-        />
+        <span className="movie-collection-icon" aria-hidden />
         <span>{inWishlist ? "Added to wishlist!" : "Add it to wishlist"}</span>
       </button>
       <button
         type="button"
-        className="movie-collection-button"
+        className={`movie-collection-button favourite${isFavourite ? " is-added" : ""}`}
         aria-pressed={isFavourite}
         disabled={pending !== null}
         onClick={() => void toggleCollection("favourite")}
       >
-        <Image
-          src={isFavourite ? "/icons/favourite=true.svg" : "/icons/favourite=false.svg"}
-          alt=""
-          width={33}
-          height={33}
-        />
+        <span className="movie-collection-icon" aria-hidden />
         <span>{isFavourite ? "Added to favourites" : "Add it to favourites"}</span>
       </button>
       {error ? <p className="movie-collection-error">{error}</p> : null}

@@ -302,8 +302,8 @@ textarea {
 }
 
 .brand-logo-video {
-  width: 94px;
-  height: 31px;
+  width: 120px;
+  height: 40px;
   object-fit: contain;
 }
 
@@ -3574,8 +3574,8 @@ html:not(.dark) .movie-card-close {
 
 .movie-page-brand-video {
   display: block;
-  width: 118px;
-  height: 38px;
+  width: 146px;
+  height: 47px;
   object-fit: contain;
 }
 
@@ -4113,32 +4113,103 @@ html:not(.dark) .movie-card-close {
 .movie-collection-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px 34px;
+  gap: 14px 9px;
   margin-top: 26px;
 }
 
 .movie-collection-button {
+  --collection-fill: #161616;
+  --collection-foreground: #545454;
   display: inline-flex;
+  width: 45px;
+  height: 45px;
   align-items: center;
   gap: 10px;
-  padding: 0;
+  padding: 6px 13px;
+  overflow: hidden;
   border: 0;
-  background: transparent;
-  color: var(--movie-page-text);
+  border-radius: 12px;
+  color: var(--collection-foreground);
+  background: var(--collection-fill);
   font-family: "PP Neue Montreal", Arial, sans-serif;
   font-size: 20px;
   font-weight: 600;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
+  transition: width 180ms ease, color 180ms ease, background-color 180ms ease;
 }
 
-.movie-collection-button img {
-  flex: 0 0 auto;
+.movie-collection-button.wishlist {
+  --collection-expanded-width: 216px;
+}
+
+.movie-collection-button.favourite {
+  --collection-expanded-width: 242px;
+}
+
+.movie-collection-button:hover,
+.movie-collection-button:focus-visible {
+  width: var(--collection-expanded-width);
+  outline: 0;
+}
+
+.movie-collection-button.is-added.wishlist {
+  --collection-fill: #0f3806;
+  --collection-foreground: #b1ff87;
+}
+
+.movie-collection-button.is-added.favourite {
+  --collection-fill: #550000;
+  --collection-foreground: #ff6464;
+}
+
+.movie-collection-button span:last-child {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.movie-collection-button:hover span:last-child,
+.movie-collection-button:focus-visible span:last-child {
+  opacity: 1;
+}
+
+.movie-collection-icon {
+  display: block;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  background: currentColor;
+}
+
+.movie-collection-button.wishlist .movie-collection-icon {
+  -webkit-mask: url("/icons/wishlist=false.svg") center / contain no-repeat;
+  mask: url("/icons/wishlist=false.svg") center / contain no-repeat;
+}
+
+.movie-collection-button.favourite .movie-collection-icon {
+  -webkit-mask: url("/icons/favourite=false.svg") center / contain no-repeat;
+  mask: url("/icons/favourite=false.svg") center / contain no-repeat;
 }
 
 .movie-collection-button:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+html:not(.dark) .movie-collection-button {
+  --collection-fill: #e0e0e0;
+  --collection-foreground: #b8b8b8;
+}
+
+html:not(.dark) .movie-collection-button.is-added.wishlist {
+  --collection-fill: #bfffc3;
+  --collection-foreground: #6bcb33;
+}
+
+html:not(.dark) .movie-collection-button.is-added.favourite {
+  --collection-fill: #ffd6d6;
+  --collection-foreground: #ff8181;
 }
 
 .movie-collection-error {
@@ -4529,8 +4600,8 @@ html:not(.dark) .review-drawer-delete {
   }
 
   .movie-page-brand-video {
-    width: 88px;
-    height: 29px;
+    width: 108px;
+    height: 35px;
   }
 
   .movie-page-nav {
