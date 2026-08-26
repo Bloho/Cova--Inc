@@ -94,7 +94,7 @@ export function AccountDropdown({
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="cova-account-separator cova-account-separator-bottom" />
-        <DropdownMenuItem onFocus={() => setHighlightedItem("signout")} onPointerMove={() => setHighlightedItem("signout")} onSelect={onSignOut} className={`cova-account-item cova-account-signout${highlightedItem === "signout" ? " is-highlighted" : ""}`}>
+        <DropdownMenuItem onSelect={onSignOut} className="cova-account-item cova-account-signout">
           <Image src="/icons/signout.svg" alt="" width={24} height={24} />
           <span>Sign out</span>
         </DropdownMenuItem>

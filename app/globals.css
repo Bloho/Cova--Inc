@@ -521,17 +521,13 @@ textarea {
 .cova-account-signout {
   margin-top: 2px;
   color: #ff9d9d;
-  background: #1c1c1c;
+  background: transparent;
 }
 
 .cova-account-signout:hover,
 .cova-account-signout:focus-visible {
   color: #ffb1b1;
-  background: #282828;
-}
-
-.cova-account-signout.is-highlighted {
-  background: #282828;
+  background: rgb(255 157 157 / 16%);
 }
 
 html:not(.dark) .cova-account-menu {
@@ -560,17 +556,13 @@ html:not(.dark) .cova-account-separator {
 
 html:not(.dark) .cova-account-signout {
   color: #d94b4b;
-  background: #f1f1f1;
+  background: transparent;
 }
 
 html:not(.dark) .cova-account-signout:hover,
 html:not(.dark) .cova-account-signout:focus-visible {
   color: #bc3434;
-  background: #e7e7e7;
-}
-
-html:not(.dark) .cova-account-signout.is-highlighted {
-  background: #e7e7e7;
+  background: #ffe3e3;
 }
 
 .login-button,
