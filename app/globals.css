@@ -4211,6 +4211,156 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   font-size: 14px;
 }
 
+.billing-main {
+  display: grid;
+  min-height: calc(100dvh - 178px);
+  place-items: center;
+  padding: 64px 38px;
+}
+
+.billing-panel {
+  display: grid;
+  width: min(720px, 100%);
+  gap: 28px;
+  padding: 38px;
+  color: var(--movie-page-text);
+  background: var(--movie-page-background);
+  border: 1px solid var(--movie-page-grid);
+  border-radius: 12px;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.billing-panel-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.billing-eyebrow,
+.billing-description,
+.billing-note,
+.billing-country small {
+  margin: 0;
+  color: var(--movie-page-muted);
+}
+
+.billing-eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.billing-panel h1 {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1;
+}
+
+.billing-price {
+  margin: 10px 0 0;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.billing-price span {
+  margin-left: 6px;
+  color: var(--movie-page-muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.billing-details {
+  display: grid;
+  gap: 16px;
+}
+
+.billing-details dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.billing-details dl div {
+  display: grid;
+  gap: 5px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--movie-page-grid);
+  border-radius: 8px;
+}
+
+.billing-details dt {
+  color: var(--movie-page-muted);
+  font-size: 13px;
+}
+
+.billing-details dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.billing-primary-action,
+.billing-secondary-action {
+  min-height: 44px;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.billing-primary-action {
+  color: #fff;
+  background: #006dff;
+  border: 1px solid #006dff;
+}
+
+.billing-secondary-action {
+  color: var(--movie-page-text);
+  background: transparent;
+  border: 1px solid var(--movie-page-grid);
+}
+
+.billing-primary-action:disabled,
+.billing-secondary-action:disabled,
+.billing-country select:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.billing-country {
+  display: grid;
+  gap: 8px;
+  max-width: 300px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.billing-country select {
+  min-height: 40px;
+  padding: 0 10px;
+  color: var(--movie-page-text);
+  background: var(--movie-page-background);
+  border: 1px solid var(--movie-page-grid);
+  border-radius: 6px;
+  font: inherit;
+}
+
+.billing-country small {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.billing-message {
+  margin: 0;
+  color: var(--movie-page-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .collection-main {
   min-height: calc(100dvh - 178px);
 }
