@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, MessageCircle, Share2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
@@ -232,12 +232,12 @@ export function MovieLogActions({
         />
         {hasReview ? (
           <>
-            <Button className="movie-read-review" disabled={busy} onClick={() => openReview()} type="button">
-              <MessageCircle aria-hidden />
-              Read review
+            <Button className="movie-review-action read-review-action" disabled={busy} onClick={() => openReview()} type="button">
+              <img src="/utilities/read-review-icon.svg" alt="" />
+              <span>Read review</span>
             </Button>
             <Button
-              className="movie-card-action"
+              className="movie-review-action share-review-action"
               disabled={busy}
               onClick={() => {
                 if (existingReview?.body.trim()) {
@@ -248,9 +248,10 @@ export function MovieLogActions({
                 setMessage("Write a review before sharing a movie card.");
               }}
               type="button"
-              aria-label="Share movie card"
+              aria-label="Share review"
             >
-              <Share2 aria-hidden />
+              <img src="/utilities/share-review-icon.svg" alt="" />
+              <span>Share review</span>
             </Button>
           </>
         ) : null}

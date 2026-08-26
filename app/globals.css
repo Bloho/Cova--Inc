@@ -4286,47 +4286,62 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   color: #f1f1f1;
 }
 
-.movie-read-review,
-.movie-card-action {
-  height: 30px;
-  border: 1px solid #1dd900;
-  border-radius: 8px;
-  background: #00c403;
-  color: #ffffff;
+.movie-review-action {
+  display: inline-flex;
+  width: 45px;
+  height: 45px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 13px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 12px;
+  color: #f3f3f3;
+  background: #1d1d1d;
   box-shadow: none;
-  font-size: 14px;
   font-family: "PP Neue Montreal", Arial, sans-serif;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: width 180ms ease, background-color 180ms ease;
 }
 
-.movie-read-review {
-  padding-inline: 14px;
+.read-review-action {
+  --review-action-expanded-width: 180px;
 }
 
-.movie-read-review svg {
-  width: 15px;
-  height: 15px;
+.share-review-action {
+  --review-action-expanded-width: 188px;
 }
 
-.movie-card-action {
-  width: 30px;
-  padding: 0;
-  border-color: #889aff;
-  border-radius: 999px;
-  background: #0071ff;
+.movie-review-action:hover,
+.movie-review-action:focus-visible {
+  width: var(--review-action-expanded-width);
+  outline: 0;
 }
 
-.movie-card-action svg {
-  width: 16px;
-  height: 16px;
+.movie-review-action img {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  object-fit: contain;
 }
 
-.movie-read-review:hover {
-  background: #00ad02;
+.movie-review-action span {
+  opacity: 0;
+  transition: opacity 120ms ease;
 }
 
-.movie-card-action:hover {
-  background: #0067e6;
+.movie-review-action:hover span,
+.movie-review-action:focus-visible span {
+  opacity: 1;
+}
+
+html:not(.dark) .movie-review-action {
+  color: #777777;
+  background: #e0e0e0;
 }
 
 .movie-page-footer {
