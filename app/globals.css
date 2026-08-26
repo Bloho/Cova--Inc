@@ -4291,7 +4291,8 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   width: 45px;
   height: 45px;
   align-items: center;
-  gap: 0;
+  justify-content: flex-start;
+  gap: 10px;
   padding: 6px 13px;
   overflow: hidden;
   border: 0;
@@ -4319,7 +4320,6 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .movie-review-action:hover,
 .movie-review-action:focus-visible {
   width: var(--review-action-expanded-width);
-  gap: 10px;
   outline: 0;
 }
 
@@ -4331,15 +4331,16 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 }
 
 .movie-review-action span {
-  width: 0;
+  min-width: 0;
+  max-width: 0;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 120ms ease;
+  transition: max-width 180ms ease, opacity 120ms ease;
 }
 
 .movie-review-action:hover span,
 .movie-review-action:focus-visible span {
-  width: auto;
+  max-width: 150px;
   opacity: 1;
 }
 
