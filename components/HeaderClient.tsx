@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { Plus, Search, UserCircle } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogFilmDialog } from "@/components/LogFilmDialog";
@@ -47,7 +46,9 @@ export function HeaderClient({
   return (
     <header className="shell app-header">
       <Link href="/" className="brand brand-logo" aria-label="Cova home" prefetch>
-        <Image src="/assets/Cova-logo-white.svg" alt="Cova" width={188} height={62} priority />
+        <video autoPlay className="brand-logo-video" loop muted playsInline preload="auto" aria-label="Cova">
+          <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
+        </video>
       </Link>
       <nav className="header-actions" aria-label="Primary">
         <button className="login-button" onClick={() => setLogOpen(true)} aria-label="Log a film">
@@ -67,7 +68,7 @@ export function HeaderClient({
           />
         ) : (
           <Link className="icon-button" href="/login" aria-label="Sign in" prefetch>
-            <UserCircle size={25} strokeWidth={2.4} />
+            <img className="signed-out-profile-icon" src="/icons/profile.svg" alt="" />
           </Link>
         )}
       </nav>

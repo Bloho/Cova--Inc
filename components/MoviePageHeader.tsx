@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { BadgeCheckIcon, MoonIcon, SearchIcon, SunIcon } from "lucide-react";
+import { MoonIcon, SearchIcon, SunIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -46,7 +46,9 @@ export function MoviePageHeader({
   return (
     <header className="movie-page-header">
       <Link href="/" className="movie-page-brand" aria-label="Cova home">
-        <span className="movie-page-brand-mark" aria-hidden />
+        <video autoPlay className="movie-page-brand-video" loop muted playsInline preload="auto" aria-label="Cova">
+          <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
+        </video>
       </Link>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
         {!hidePrimaryActions ? (
@@ -81,7 +83,7 @@ export function MoviePageHeader({
           />
         ) : (
           <Button asChild variant="outline" size="icon" className="movie-avatar-button" aria-label="Sign in">
-            <Link href="/login"><BadgeCheckIcon aria-hidden /></Link>
+            <Link href="/login"><img className="signed-out-profile-icon" src="/icons/profile.svg" alt="" /></Link>
           </Button>
         )}
       </nav>

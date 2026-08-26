@@ -301,10 +301,16 @@ textarea {
   align-items: center;
 }
 
-.brand-logo img {
+.brand-logo-video {
   width: 94px;
-  height: auto;
-  opacity: 1;
+  height: 31px;
+  object-fit: contain;
+}
+
+.signed-out-profile-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
 }
 
 .header-actions {
@@ -474,6 +480,10 @@ textarea {
   background: rgb(255 255 255 / 8%);
 }
 
+.cova-account-item.is-highlighted {
+  background: rgb(255 255 255 / 8%);
+}
+
 .cova-account-item[data-future="true"] {
   cursor: default;
 }
@@ -483,11 +493,19 @@ textarea {
   background: transparent;
 }
 
-.cova-account-item img {
+.cova-account-item img,
+.cova-account-icon {
   width: 24px;
   height: 24px;
   flex: 0 0 24px;
   object-fit: contain;
+}
+
+.cova-account-icon {
+  display: block;
+  background: #ababab;
+  -webkit-mask: var(--cova-icon) center / contain no-repeat;
+  mask: var(--cova-icon) center / contain no-repeat;
 }
 
 .cova-account-separator {
@@ -512,6 +530,10 @@ textarea {
   background: #282828;
 }
 
+.cova-account-signout.is-highlighted {
+  background: #282828;
+}
+
 html:not(.dark) .cova-account-menu {
   color: #2c2c2c;
   background: #fff;
@@ -520,6 +542,10 @@ html:not(.dark) .cova-account-menu {
 
 html:not(.dark) .cova-account-item:hover,
 html:not(.dark) .cova-account-item:focus-visible {
+  background: #f1f1f1;
+}
+
+html:not(.dark) .cova-account-item.is-highlighted {
   background: #f1f1f1;
 }
 
@@ -540,6 +566,10 @@ html:not(.dark) .cova-account-signout {
 html:not(.dark) .cova-account-signout:hover,
 html:not(.dark) .cova-account-signout:focus-visible {
   color: #bc3434;
+  background: #e7e7e7;
+}
+
+html:not(.dark) .cova-account-signout.is-highlighted {
   background: #e7e7e7;
 }
 
@@ -2525,6 +2555,45 @@ html:not(.dark) .cova-account-signout:focus-visible {
   font-weight: 500;
 }
 
+html:not(.dark) .movie-card-dialog {
+  background: #ffffff;
+  border-color: #dedede;
+  box-shadow: 0 36px 110px rgba(0, 0, 0, 0.22);
+}
+
+html:not(.dark) .movie-card-dialog h2 {
+  color: #111111;
+}
+
+html:not(.dark) .movie-card-layout-option {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+html:not(.dark) .movie-card-layout-option:hover,
+html:not(.dark) .movie-card-layout-option.selected {
+  background: #f3f3f3;
+  border-color: #dedede;
+}
+
+html:not(.dark) .movie-card-layout-option i {
+  border-color: rgba(0, 0, 0, 0.65);
+}
+
+html:not(.dark) .movie-card-layout-option.selected i {
+  background: #111111;
+  box-shadow: inset 0 0 0 3px #f3f3f3;
+}
+
+html:not(.dark) .movie-card-dialog .card-modal-button {
+  color: #ffffff;
+  background: #111111;
+  border-color: #111111;
+}
+
+html:not(.dark) .movie-card-close {
+  color: rgba(0, 0, 0, 0.64);
+}
+
 .profile-edit-backdrop {
   background: rgba(0, 0, 0, 0.62);
   animation: modal-backdrop-in 220ms ease both;
@@ -3503,17 +3572,11 @@ html:not(.dark) .cova-account-signout:focus-visible {
   align-items: center;
 }
 
-.movie-page-brand-mark {
+.movie-page-brand-video {
   display: block;
   width: 118px;
   height: 38px;
-  background: #d7d7d7;
-  -webkit-mask: url("/assets/Cova-logo-white.svg") center / contain no-repeat;
-  mask: url("/assets/Cova-logo-white.svg") center / contain no-repeat;
-}
-
-.dark .movie-page-brand-mark {
-  background: #373737;
+  object-fit: contain;
 }
 
 .movie-page-nav {
@@ -4465,7 +4528,7 @@ html:not(.dark) .review-drawer-delete {
     padding: 14px 18px;
   }
 
-  .movie-page-brand-mark {
+  .movie-page-brand-video {
     width: 88px;
     height: 29px;
   }
