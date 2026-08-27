@@ -13,8 +13,8 @@ type BillingSubscription = {
 } | null;
 
 type CheckoutData = {
-  keyId: string;
-  subscriptionId: string;
+  key: string;
+  subscription_id: string;
   name: string;
   description: string;
   prefill: { name: string; email: string };

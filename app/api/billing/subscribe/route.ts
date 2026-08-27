@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     if (existing && isRazorpaySubscriptionId(existing.razorpay_subscription_id)) {
       return NextResponse.json(checkoutPayload({
         subscriptionId: existing.razorpay_subscription_id,
-        keyId: getRazorpayKeyId(),
+        key: getRazorpayKeyId(),
         displayName: profile.display_name,
         email: user.email ?? ""
       }));
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(checkoutPayload({
       subscriptionId: subscription.id,
-      keyId: getRazorpayKeyId(),
+      key: getRazorpayKeyId(),
       displayName: profile.display_name,
       email: user.email ?? ""
     }));
@@ -117,10 +117,10 @@ export async function POST(request: Request) {
   }
 }
 
-function checkoutPayload(input: { subscriptionId: string; keyId: string; displayName: string; email: string }) {
+function checkoutPayload(input: { subscriptionId: string; key: string; displayName: string; email: string }) {
   return {
-    keyId: input.keyId,
-    subscriptionId: input.subscriptionId,
+    key: input.key,
+    subscription_id: input.subscriptionId,
     name: "Cova",
     description: "Cova monthly subscription",
     prefill: {
