@@ -4246,9 +4246,8 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .billing-brand-loop {
   display: block;
-  width: 230px;
-  height: 92px;
-  object-fit: contain;
+  width: 100%;
+  height: auto;
 }
 
 .billing-offer {
@@ -4944,11 +4943,6 @@ html:not(.dark) .review-drawer-delete {
   .billing-main {
     min-height: 640px;
     padding: 60px 20px 68px;
-  }
-
-  .billing-brand-loop {
-    width: 190px;
-    height: 76px;
   }
 
   .billing-panel h1 {
