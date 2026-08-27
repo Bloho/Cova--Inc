@@ -50,7 +50,7 @@ Cova has one monthly paid plan, selected server-side by region:
 - India: `₹99 / month` (`9900` paise), using `RAZORPAY_PLAN_INR`.
 - Rest of world: `$1.99 / month` (`199` cents), using `RAZORPAY_PLAN_USD`.
 
-The browser never submits a plan ID, amount, or currency. `/api/billing/subscribe` determines the region on the server using an account's verified country, then trusted deployment country headers, then the user's billing-country selection. `/api/billing/webhook` is the source of truth for entitlement state. Use `hasActiveSubscription(userId)` from `lib/billing/subscription.ts` in every future paid API route or Server Component; do not rely on the billing UI alone.
+The browser never submits a plan ID, amount, or currency. `/api/billing/subscribe` determines the region on the server using an account's verified country, then trusted deployment country headers, then the user's billing-country selection. `/api/billing/webhook` is the source of truth for entitlement state. Use `hasActiveSubscription(userId)` and `getActiveMembershipGrant(userId)` from `lib/billing/subscription.ts` in every future paid API route or Server Component; do not rely on the billing UI alone.
 
 ### Required environment variables
 
@@ -63,19 +63,27 @@ RAZORPAY_KEY_SECRET=
 RAZORPAY_WEBHOOK_SECRET=
 RAZORPAY_PLAN_INR=
 RAZORPAY_PLAN_USD=
+RAZORPAY_OFFER_WELCOME50_INR=
 ```
 
 `SUPABASE_SERVICE_ROLE_KEY` is required only on the server so the verified webhook can update protected subscription records. Never expose it, `RAZORPAY_KEY_SECRET`, or `RAZORPAY_WEBHOOK_SECRET` in `NEXT_PUBLIC_*` variables.
 
 ### Database migration
 
-Run this in the Supabase SQL Editor against the same project used by the deployment:
+Run these in the Supabase SQL Editor against the same project used by the deployment, in order:
 
 ```sql
 -- supabase/20260827_billing.sql
+-- supabase/20260827_billing_promotions.sql
 ```
 
-For a brand-new database, `supabase/schema.sql` already includes the billing tables. The migration adds account country fields, `subscriptions`, and `razorpay_webhook_events` to an existing database. The webhook-event table uses Razorpay's event ID for idempotency.
+For a brand-new database, `supabase/schema.sql` already includes the billing tables and promotion grants. The migrations add account country fields, subscriptions, webhook event storage, and the one-time promotion grant table to an existing database. The webhook-event table uses Razorpay's event ID for idempotency.
+
+### Promotions
+
+- `WELCOME50` is automatic for a user's first successful Indian subscription. Set `RAZORPAY_OFFER_WELCOME50_INR` to its Razorpay offer ID. It is never exposed to the browser.
+- `HOTCHICKSDONTPAY100` is entered on the billing page and grants one month of Cova access. It is intentionally fulfilled by Cova instead of Razorpay: a 100% subscription discount would reduce the first Razorpay charge to Rs. 0, which Razorpay subscriptions do not support.
+- The free-month code can be redeemed once per account. The `membership_grants` table is the audit record and enforces that constraint.
 
 ### Create Test Mode plans
 

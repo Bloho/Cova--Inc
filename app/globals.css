@@ -4336,6 +4336,52 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   font-weight: 400;
 }
 
+.billing-promotion {
+  display: flex;
+  width: min(334px, 100%);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.billing-promotion input,
+.billing-promotion button {
+  height: 38px;
+  border: 1px solid var(--movie-page-grid);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.billing-promotion input {
+  min-width: 0;
+  flex: 1;
+  padding: 0 12px;
+  border-radius: 6px;
+  color: var(--movie-page-text);
+  background: transparent;
+  text-transform: uppercase;
+}
+
+.billing-promotion input::placeholder {
+  color: var(--movie-page-muted);
+  text-transform: none;
+}
+
+.billing-promotion button {
+  flex: 0 0 auto;
+  padding: 0 14px;
+  border-radius: 6px;
+  color: var(--movie-page-text);
+  background: color-mix(in srgb, var(--movie-page-text) 4%, transparent);
+  cursor: pointer;
+}
+
+.billing-promotion input:disabled,
+.billing-promotion button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .billing-footer {
   width: min(1280px, calc(100% - 48px));
   margin-inline: auto;

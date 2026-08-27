@@ -32,17 +32,24 @@ function getRazorpayCredentials() {
 export async function createRazorpaySubscription(input: {
   planId: string;
   userId: string;
+  offerId?: string;
+  promotionCode?: string;
 }) {
+  const notes: Record<string, string> = {
+    cova_user_id: input.userId
+  };
+
+  if (input.promotionCode) notes.cova_promotion = input.promotionCode;
+
   return razorpayRequest<RazorpaySubscription>("/subscriptions", {
     method: "POST",
     body: JSON.stringify({
       plan_id: input.planId,
+      ...(input.offerId ? { offer_id: input.offerId } : {}),
       total_count: 1200,
       quantity: 1,
       customer_notify: true,
-      notes: {
-        cova_user_id: input.userId
-      }
+      notes
     })
   });
 }

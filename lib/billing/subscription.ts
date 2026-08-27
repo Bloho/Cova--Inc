@@ -16,6 +16,11 @@ export type BillingSubscription = {
   updated_at: string;
 };
 
+export type MembershipGrant = {
+  promotionCode: string;
+  endsAt: string;
+};
+
 const ENTITLED_STATUSES = ["authenticated", "active"];
 
 export async function getLatestSubscription(userId: string) {
@@ -45,4 +50,26 @@ export async function hasActiveSubscription(userId: string) {
 
   if (error || !data) return false;
   return !data.current_period_end || new Date(data.current_period_end).getTime() > Date.now();
+}
+
+export async function getActiveMembershipGrant(userId: string) {
+  const supabase = await createSupabaseServerClient();
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from("membership_grants")
+    .select("promotion_code, ends_at")
+    .eq("user_id", userId)
+    .lte("starts_at", now)
+    .gt("ends_at", now)
+    .order("ends_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return {
+    promotionCode: data.promotion_code,
+    endsAt: data.ends_at
+  } satisfies MembershipGrant;
 }

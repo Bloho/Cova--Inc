@@ -102,8 +102,21 @@ create table if not exists public.subscriptions (
   cancel_at_period_end boolean not null default false,
   cancelled_at timestamptz,
   razorpay_event_created_at bigint,
+  promotion_code text,
+  razorpay_offer_id text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table if not exists public.membership_grants (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  promotion_code text not null,
+  starts_at timestamptz not null default now(),
+  ends_at timestamptz not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, promotion_code),
+  check (ends_at > starts_at)
 );
 
 create table if not exists public.razorpay_webhook_events (
@@ -123,6 +136,7 @@ create index if not exists reviews_user_id_created_at_idx on public.reviews(user
 create index if not exists reviews_tmdb_id_created_at_idx on public.reviews(tmdb_id, created_at desc);
 create index if not exists reviews_user_tmdb_updated_at_idx on public.reviews(user_id, tmdb_id, updated_at desc);
 create index if not exists subscriptions_user_updated_at_idx on public.subscriptions(user_id, updated_at desc);
+create index if not exists membership_grants_user_ends_at_idx on public.membership_grants(user_id, ends_at desc);
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -168,6 +182,7 @@ alter table public.review_likes enable row level security;
 alter table public.card_presets enable row level security;
 alter table public.subscriptions enable row level security;
 alter table public.razorpay_webhook_events enable row level security;
+alter table public.membership_grants enable row level security;
 
 drop policy if exists "profiles are readable" on public.profiles;
 drop policy if exists "users update own profile" on public.profiles;
@@ -175,6 +190,10 @@ drop policy if exists "users insert own profile" on public.profiles;
 create policy "profiles are readable" on public.profiles for select using (true);
 create policy "users update own profile" on public.profiles for update using (auth.uid() = id);
 create policy "users insert own profile" on public.profiles for insert with check (auth.uid() = id);
+
+drop policy if exists "users read own membership grants" on public.membership_grants;
+create policy "users read own membership grants"
+  on public.membership_grants for select using (auth.uid() = user_id);
 
 drop policy if exists "follows are readable" on public.follows;
 drop policy if exists "users manage own follows" on public.follows;

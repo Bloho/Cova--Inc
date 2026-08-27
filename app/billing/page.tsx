@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { BillingPanel } from "@/components/BillingPanel";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { getRegionalPricing } from "@/lib/billing/pricing";
-import { getLatestSubscription } from "@/lib/billing/subscription";
+import { getActiveMembershipGrant, getLatestSubscription } from "@/lib/billing/subscription";
 import { getCurrentUserProfile } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -29,9 +29,10 @@ export default async function BillingPage() {
   if (!user) redirect("/login");
 
   const supabase = await createSupabaseServerClient();
-  const [profileResult, subscriptionResult, requestHeaders] = await Promise.all([
+  const [profileResult, subscriptionResult, membershipGrantResult, requestHeaders] = await Promise.all([
     supabase.from("profiles").select("verified_country, billing_country").eq("id", user.id).maybeSingle(),
     getLatestSubscription(user.id).catch(() => null),
+    getActiveMembershipGrant(user.id).catch(() => null),
     headers()
   ]);
 
@@ -67,6 +68,7 @@ export default async function BillingPage() {
       <main className="profile-main billing-main">
         <BillingPanel
           subscription={subscription}
+          membershipGrant={membershipGrantResult}
           currentPrice={pricing?.formattedPrice ?? "$1.99"}
           currentCurrency={pricing?.currency ?? "USD"}
           configured={Boolean(pricing)}

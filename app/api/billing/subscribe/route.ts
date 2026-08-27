@@ -8,6 +8,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 
 const BLOCKING_STATUSES = ["created", "authenticated", "active", "pending", "paused"];
+const SUCCESSFUL_STATUSES = ["authenticated", "active", "completed"];
+const WELCOME_PROMOTION_CODE = "WELCOME50";
 
 export async function POST(request: Request) {
   const supabase = await createSupabaseServerClient();
@@ -48,18 +50,40 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Billing plans are not configured correctly." }, { status: 503 });
     }
 
-    const { data: existing, error: existingError } = await admin
-      .from("subscriptions")
-      .select("id, razorpay_subscription_id, razorpay_plan_id, subscription_status")
-      .eq("user_id", user.id)
-      .in("subscription_status", BLOCKING_STATUSES)
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const now = new Date().toISOString();
+    const [{ data: existing, error: existingError }, { data: paidHistory, error: paidHistoryError }, { data: activeGrant, error: grantError }] = await Promise.all([
+      admin
+        .from("subscriptions")
+        .select("id, razorpay_subscription_id, razorpay_plan_id, subscription_status")
+        .eq("user_id", user.id)
+        .in("subscription_status", BLOCKING_STATUSES)
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      admin
+        .from("subscriptions")
+        .select("id")
+        .eq("user_id", user.id)
+        .in("subscription_status", SUCCESSFUL_STATUSES)
+        .limit(1)
+        .maybeSingle(),
+      admin
+        .from("membership_grants")
+        .select("id")
+        .eq("user_id", user.id)
+        .lte("starts_at", now)
+        .gt("ends_at", now)
+        .limit(1)
+        .maybeSingle()
+    ]);
 
-    if (existingError) {
-      console.error("Billing subscription lookup failed", existingError.message);
+    if (existingError || paidHistoryError || grantError) {
+      console.error("Billing subscription lookup failed", existingError?.message ?? paidHistoryError?.message ?? grantError?.message);
       return NextResponse.json({ error: "We could not check your current subscription." }, { status: 500 });
+    }
+
+    if (activeGrant) {
+      return NextResponse.json({ error: "Your promotional membership is already active." }, { status: 409 });
     }
 
     if (existing && isRazorpaySubscriptionId(existing.razorpay_subscription_id) && existing.razorpay_plan_id === pricing.razorpayPlanId) {
@@ -83,9 +107,12 @@ export async function POST(request: Request) {
       }
     }
 
+    const welcomeOfferId = getWelcomeOfferId(pricing.currency, Boolean(paidHistory));
     const subscription = await createRazorpaySubscription({
       planId: pricing.razorpayPlanId,
-      userId: user.id
+      userId: user.id,
+      offerId: welcomeOfferId ?? undefined,
+      promotionCode: welcomeOfferId ? WELCOME_PROMOTION_CODE : undefined
     });
 
     if (!isRazorpaySubscriptionId(subscription.id)) {
@@ -101,6 +128,8 @@ export async function POST(request: Request) {
       subscription_status: subscription.status,
       subscription_region: pricing.region,
       subscription_currency: pricing.currency,
+      promotion_code: welcomeOfferId ? WELCOME_PROMOTION_CODE : null,
+      razorpay_offer_id: welcomeOfferId,
       current_period_end: unixToIso(subscription.current_end),
       cancel_at_period_end: false,
       razorpay_event_created_at: null,
@@ -127,6 +156,12 @@ export async function POST(request: Request) {
     console.error("Billing subscription setup failed", error instanceof Error ? error.message : "unknown error");
     return NextResponse.json({ error: "Billing is not configured yet. Please try again later." }, { status: 503 });
   }
+}
+
+function getWelcomeOfferId(currency: "INR" | "USD", hasPaidBefore: boolean) {
+  if (currency !== "INR" || hasPaidBefore) return null;
+  const offerId = process.env.RAZORPAY_OFFER_WELCOME50_INR?.trim();
+  return offerId && /^offer_[A-Za-z0-9]+$/.test(offerId) ? offerId : null;
 }
 
 function checkoutPayload(input: { subscriptionId: string; key: string; displayName: string; email: string }) {
