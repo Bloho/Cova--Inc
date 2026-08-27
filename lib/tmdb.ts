@@ -21,6 +21,7 @@ type TmdbListResponse = {
 };
 
 const TMDB_URL = "https://api.themoviedb.org/3";
+const TMDB_REQUEST_TIMEOUT_MS = 8_000;
 
 export async function getHomeMovies() {
   const trending = await getCachedTmdbList("/trending/movie/day");
@@ -76,10 +77,10 @@ async function fetchTmdbList(path: string): Promise<Movie[]> {
 
   const separator = path.includes("?") ? "&" : "?";
   const request = tmdbRequest(`${TMDB_URL}${path}${separator}language=en-US&page=1`, token);
-  const response = await fetch(request.url, {
+  const response = await fetchTmdb(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 30 }
-  }).catch(() => null);
+  });
 
   if (!response?.ok) {
     return [];
@@ -96,10 +97,10 @@ async function fetchTmdbMovie(path: string): Promise<Movie | null> {
   }
 
   const request = tmdbRequest(`${TMDB_URL}${path}?language=en-US`, token);
-  const response = await fetch(request.url, {
+  const response = await fetchTmdb(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 60 }
-  }).catch(() => null);
+  });
 
   if (!response?.ok) {
     return null;
@@ -115,10 +116,10 @@ async function fetchTmdbMovieWithCredits(tmdbId: number): Promise<Movie | null> 
   }
 
   const request = tmdbRequest(`${TMDB_URL}/movie/${tmdbId}?language=en-US&append_to_response=credits`, token);
-  const response = await fetch(request.url, {
+  const response = await fetchTmdb(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 60 }
-  }).catch(() => null);
+  });
 
   if (!response?.ok) {
     return null;
@@ -143,6 +144,17 @@ function tmdbRequest(url: string, token: string) {
     url: requestUrl.toString(),
     headers
   };
+}
+
+async function fetchTmdb(url: string, init: RequestInit) {
+  try {
+    return await fetch(url, {
+      ...init,
+      signal: AbortSignal.timeout(TMDB_REQUEST_TIMEOUT_MS)
+    });
+  } catch {
+    return null;
+  }
 }
 
 function fromTmdb(movie: TmdbMovie): Movie {
