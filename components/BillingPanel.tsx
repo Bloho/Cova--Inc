@@ -110,9 +110,7 @@ export function BillingPanel({
 
   return (
     <section className="billing-panel" aria-labelledby="billing-title">
-      <video autoPlay className="billing-brand-video" loop muted playsInline preload="metadata" aria-label="Cova">
-        <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
-      </video>
+      <img className="billing-brand-loop" src="/assets/cova-loop.webp" alt="Cova" />
       <div className="billing-offer">
         <h1 id="billing-title">{canSubscribe || canResumeCheckout ? "Get Cova for just" : "Your Cova membership"}</h1>
         {canSubscribe || canResumeCheckout ? (

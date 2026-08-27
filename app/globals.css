@@ -34,6 +34,13 @@
 
 @font-face {
   font-family: "Alte Haas Grotesk";
+  src: url("/fonts/AlteHaasGroteskRegular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Alte Haas Grotesk";
   src: url("/fonts/AlteHaasGroteskBold.ttf") format("truetype");
   font-weight: 700;
   font-display: swap;
@@ -4237,7 +4244,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   text-align: center;
 }
 
-.billing-brand-video {
+.billing-brand-loop {
   display: block;
   width: 230px;
   height: 92px;
@@ -4296,6 +4303,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 }
 
 .billing-primary-action {
+  margin-top: 20px;
   width: min(100%, 334px);
   min-height: 52px;
   padding: 8px 24px;
@@ -4312,7 +4320,6 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   border: 1px solid #ffffff;
 }
 
-.billing-primary-action:disabled,
 .billing-primary-action:disabled {
   cursor: wait;
   opacity: 0.65;
@@ -4321,6 +4328,11 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .billing-message {
   font-size: 14px;
   line-height: 1.4;
+}
+
+.billing-provider-note {
+  font-family: "Alte Haas Grotesk", Arial, sans-serif;
+  font-weight: 400;
 }
 
 .billing-footer {
@@ -4342,7 +4354,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 }
 
 .billing-payment-methods h2 {
-  margin: 0 0 10px;
+  margin: 0 0 22px;
   color: var(--movie-page-text);
   font-size: 17px;
   line-height: 1;
@@ -4934,7 +4946,7 @@ html:not(.dark) .review-drawer-delete {
     padding: 60px 20px 68px;
   }
 
-  .billing-brand-video {
+  .billing-brand-loop {
     width: 190px;
     height: 76px;
   }
