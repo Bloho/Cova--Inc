@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ensureProfile } from "@/lib/profile";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Collection = "wishlist" | "favourite";
@@ -71,13 +72,31 @@ export async function POST(request: Request) {
 
   const { data: existing, error: existingError } = await supabase
     .from("user_movies")
-    .select("tmdb_id")
+    .select("tmdb_id, in_watchlist, liked")
     .eq("user_id", user.id)
     .eq("tmdb_id", movie.tmdbId)
     .maybeSingle();
 
   if (existingError) {
     return NextResponse.json({ error: collectionDatabaseError(existingError.message) }, { status: 500 });
+  }
+
+  const wasActive = body.collection === "wishlist" ? Boolean(existing?.in_watchlist) : Boolean(existing?.liked);
+  if (body.active && !wasActive && !await hasActiveCovaMembership(user.id)) {
+    const column = body.collection === "wishlist" ? "in_watchlist" : "liked";
+    const { count, error: countError } = await supabase
+      .from("user_movies")
+      .select("tmdb_id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq(column, true);
+
+    if (countError) {
+      return NextResponse.json({ error: collectionDatabaseError(countError.message) }, { status: 500 });
+    }
+
+    if ((count ?? 0) >= 5) {
+      return limitReached(body.collection);
+    }
   }
 
   const update = body.collection === "wishlist" ? { in_watchlist: body.active } : { liked: body.active };
@@ -99,8 +118,25 @@ export async function POST(request: Request) {
       : { error: null };
 
   if (error) {
+    const feature = getLimitFeature(error.message);
+    if (feature) return limitReached(feature === "wishlist" ? "wishlist" : "favourite");
     return NextResponse.json({ error: collectionDatabaseError(error.message) }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
+}
+
+function getLimitFeature(message: string) {
+  if (message.includes("COVA_FREE_LIMIT:wishlist")) return "wishlist";
+  if (message.includes("COVA_FREE_LIMIT:favourites")) return "favourite";
+  return null;
+}
+
+function limitReached(collection: Collection) {
+  const feature = collection === "wishlist" ? "wishlist" : "favourites";
+  return NextResponse.json({
+    error: `The free plan includes up to 5 ${feature}.`,
+    code: "FREE_LIMIT_REACHED",
+    feature
+  }, { status: 403 });
 }

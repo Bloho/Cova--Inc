@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { consumeFreeUsage } from "@/lib/usage-client";
 
 type CardLayout = "horizontal" | "square" | "vertical";
 type CardStep = "select" | "loading" | "ready";
@@ -85,10 +86,11 @@ export function MovieCardGenerator({
   const [error, setError] = useState("");
 
   async function generateCard() {
-    setStep("loading");
     setError("");
 
     try {
+      if (!await consumeFreeUsage("movie_share_card", movie.tmdbId)) return;
+      setStep("loading");
       const variant = Math.floor(Math.random() * VARIANT_COUNT) + 1;
       const [url] = await Promise.all([
         renderMovieCard({ movie, review, rating, username, layout, variant }),

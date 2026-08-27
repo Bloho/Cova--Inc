@@ -3,6 +3,7 @@ import type { Movie } from "@/lib/data";
 import { ensureProfile } from "@/lib/profile";
 import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -52,6 +53,32 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: databaseErrorMessage(movieError.message) }, { status: 500 });
   }
 
+  if (review) {
+    const [{ data: existingReview, error: existingReviewError }, isMember] = await Promise.all([
+      supabase.from("reviews").select("id").eq("user_id", user.id).eq("tmdb_id", movie.tmdbId).maybeSingle(),
+      hasActiveCovaMembership(user.id)
+    ]);
+
+    if (existingReviewError) {
+      return NextResponse.json({ error: databaseErrorMessage(existingReviewError.message) }, { status: 500 });
+    }
+
+    if (!existingReview && !isMember) {
+      const { count, error: countError } = await supabase
+        .from("reviews")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      if (countError) {
+        return NextResponse.json({ error: databaseErrorMessage(countError.message) }, { status: 500 });
+      }
+
+      if ((count ?? 0) >= 5) {
+        return limitReached("reviews");
+      }
+    }
+  }
+
   const { error: logError } = await supabase.from("user_movies").upsert(
     {
       user_id: user.id,
@@ -77,11 +104,22 @@ export async function POST(request: Request) {
     });
 
     if (reviewError) {
+      if (reviewError.includes("COVA_FREE_LIMIT:reviews")) {
+        return limitReached("reviews");
+      }
       return NextResponse.json({ error: databaseErrorMessage(reviewError) }, { status: 500 });
     }
   }
 
   return NextResponse.json({ ok: true });
+}
+
+function limitReached(feature: "reviews") {
+  return NextResponse.json({
+    error: "The free plan includes up to 5 reviews.",
+    code: "FREE_LIMIT_REACHED",
+    feature
+  }, { status: 403 });
 }
 
 async function saveReview(

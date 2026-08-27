@@ -75,6 +75,7 @@ Run these in the Supabase SQL Editor against the same project used by the deploy
 ```sql
 -- supabase/20260827_billing.sql
 -- supabase/20260827_billing_promotions.sql
+-- supabase/20260827_free_tier_limits.sql
 ```
 
 For a brand-new database, `supabase/schema.sql` already includes the billing tables and promotion grants. The migrations add account country fields, subscriptions, webhook event storage, and the one-time promotion grant table to an existing database. The webhook-event table uses Razorpay's event ID for idempotency.
@@ -84,6 +85,10 @@ For a brand-new database, `supabase/schema.sql` already includes the billing tab
 - `WELCOME50` is automatic for a user's first successful Indian subscription. Set `RAZORPAY_OFFER_WELCOME50_INR` to its Razorpay offer ID. It is never exposed to the browser.
 - `HOTCHICKSDONTPAY100` is entered on the billing page and grants one month of Cova access. It is intentionally fulfilled by Cova instead of Razorpay: a 100% subscription discount would reduce the first Razorpay charge to Rs. 0, which Razorpay subscriptions do not support.
 - The free-month code can be redeemed once per account. The `membership_grants` table is the audit record and enforces that constraint.
+
+### Free plan limits
+
+Free accounts can create up to five reviews, wishlist entries, favourite entries, share cards for each movie, and profile-card exports. The app shows the upgrade prompt at the limit, while database triggers and the `consume_free_usage` function enforce the same limits for direct API or Supabase calls. Paid subscriptions and active membership grants are unlimited.
 
 ### Create Test Mode plans
 

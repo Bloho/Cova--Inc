@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Movie } from "@/lib/data";
+import { isLimitResponse, openUpgradePrompt } from "@/lib/upgrade-prompt";
 
 type Collection = "wishlist" | "favourite";
 
@@ -57,6 +58,12 @@ export function MovieCollectionActions({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
+        if (isLimitResponse(payload)) {
+          if (collection === "wishlist") setInWishlist(active);
+          else setIsFavourite(active);
+          openUpgradePrompt(payload.feature);
+          return;
+        }
         throw new Error(payload?.error ?? "Could not update this collection.");
       }
 

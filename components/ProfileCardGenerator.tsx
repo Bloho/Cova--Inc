@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { consumeFreeUsage } from "@/lib/usage-client";
 
 type CardStep = "intro" | "loading" | "ready";
 
@@ -46,15 +47,20 @@ export function ProfileCardGenerator({ username, filmsCount, label = "Get your c
     }
   }
 
-  function downloadCard() {
+  async function downloadCard() {
     if (!cardUrl) {
       return;
     }
 
-    const link = document.createElement("a");
-    link.href = cardUrl;
-    link.download = `cova-${username}-profile-card.png`;
-    link.click();
+    try {
+      if (!await consumeFreeUsage("profile_card_export")) return;
+      const link = document.createElement("a");
+      link.href = cardUrl;
+      link.download = `cova-${username}-profile-card.png`;
+      link.click();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not prepare that download. Try again.");
+    }
   }
 
   function requestClose() {
@@ -115,7 +121,7 @@ export function ProfileCardGenerator({ username, filmsCount, label = "Get your c
                 <img className="generated-profile-card" src={cardUrl} alt="Generated Cova profile card" />
                 <div className="card-ready-copy">
                   <h2>Your card has been successfully generated!</h2>
-                  <button className="card-modal-button icon-card-button" onClick={downloadCard}>
+                  <button className="card-modal-button icon-card-button" onClick={() => void downloadCard()}>
                     <img src="/icons/download.svg" alt="" />
                     Download
                   </button>

@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { TopProgressBar } from "@/components/TopProgressBar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UpgradePrompt } from "@/components/UpgradePrompt";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({
           <TooltipProvider>
             <TopProgressBar />
             {children}
+            <UpgradePrompt />
             <Analytics />
             <SpeedInsights />
           </TooltipProvider>

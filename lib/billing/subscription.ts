@@ -73,3 +73,12 @@ export async function getActiveMembershipGrant(userId: string) {
     endsAt: data.ends_at
   } satisfies MembershipGrant;
 }
+
+export async function hasActiveCovaMembership(userId: string) {
+  const [hasSubscription, membershipGrant] = await Promise.all([
+    hasActiveSubscription(userId),
+    getActiveMembershipGrant(userId)
+  ]);
+
+  return hasSubscription || Boolean(membershipGrant);
+}

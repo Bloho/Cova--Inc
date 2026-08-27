@@ -21,6 +21,7 @@ import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
+import { isLimitResponse, openUpgradePrompt } from "@/lib/upgrade-prompt";
 
 type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "watchConfirm" | "watchRemoving" | "closing";
 type ExistingReview = {
@@ -150,6 +151,12 @@ export function MovieLogActions({
     }
 
     const data = await response.json().catch(() => ({}));
+    if (isLimitResponse(data)) {
+      openUpgradePrompt(data.feature);
+      setDialogState("closed");
+      setBusy(false);
+      return;
+    }
     setMessage(data.error ?? "Could not log this film.");
     setDialogState("review");
     setBusy(false);
