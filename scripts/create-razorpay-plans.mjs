@@ -10,13 +10,14 @@ if (!keyId || !keySecret) {
   process.exit(1);
 }
 
+const replaceExistingPlans = process.argv.includes("--replace");
 const plans = [
-  { envName: "RAZORPAY_PLAN_INR", name: "Cova Monthly INR", amount: 15000, currency: "INR" },
-  { envName: "RAZORPAY_PLAN_USD", name: "Cova Monthly USD", amount: 239, currency: "USD" }
+  { envName: "RAZORPAY_PLAN_INR", name: "Cova Monthly INR", amount: 9900, currency: "INR" },
+  { envName: "RAZORPAY_PLAN_USD", name: "Cova Monthly USD", amount: 199, currency: "USD" }
 ];
 
 for (const plan of plans) {
-  if (process.env[plan.envName]) {
+  if (process.env[plan.envName] && !replaceExistingPlans) {
     console.log(`${plan.envName} is already set: ${process.env[plan.envName]}`);
     continue;
   }

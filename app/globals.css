@@ -33,6 +33,13 @@
 }
 
 @font-face {
+  font-family: "Alte Haas Grotesk";
+  src: url("/fonts/AlteHaasGroteskBold.ttf") format("truetype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "SF Pro Display";
   src: url("/fonts/optimalt-med.otf") format("opentype");
   font-weight: 500;
@@ -4213,108 +4220,98 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .billing-main {
   display: grid;
-  min-height: calc(100dvh - 178px);
+  min-height: min(960px, calc(100dvh - 96px));
   place-items: center;
-  padding: 64px 38px;
+  padding: 88px 38px 96px;
+  border-bottom: 1px solid var(--movie-page-grid);
 }
 
 .billing-panel {
   display: grid;
-  width: min(720px, 100%);
-  gap: 28px;
-  padding: 38px;
+  width: min(430px, 100%);
+  justify-items: center;
+  gap: 30px;
   color: var(--movie-page-text);
-  background: var(--movie-page-background);
-  border: 1px solid var(--movie-page-grid);
-  border-radius: 12px;
-  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-family: "Alte Haas Grotesk", Arial, sans-serif;
+  font-weight: 700;
+  text-align: center;
 }
 
-.billing-panel-copy {
+.billing-brand-video {
+  display: block;
+  width: 230px;
+  height: 92px;
+  object-fit: contain;
+}
+
+.billing-offer {
   display: grid;
-  gap: 8px;
+  width: 100%;
+  justify-items: center;
+  gap: 12px;
 }
 
-.billing-eyebrow,
-.billing-description,
-.billing-note,
+.billing-panel h1 {
+  margin: 0;
+  font-size: clamp(31px, 4vw, 42px);
+  line-height: 1;
+}
+
+.billing-price-video {
+  display: block;
+  width: 240px;
+  height: 118px;
+  object-fit: contain;
+}
+
+.billing-month,
+.billing-provider-note,
+.billing-message,
 .billing-country small {
   margin: 0;
   color: var(--movie-page-muted);
 }
 
-.billing-eyebrow {
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.billing-panel h1 {
-  margin: 0;
-  font-size: 38px;
+.billing-month {
+  margin-top: -22px;
+  color: var(--movie-page-text);
+  font-size: 29px;
   line-height: 1;
 }
 
-.billing-price {
-  margin: 10px 0 0;
-  font-size: 32px;
-  font-weight: 600;
+.billing-membership-summary {
+  display: grid;
+  gap: 8px;
+  min-height: 96px;
+  align-content: center;
 }
 
-.billing-price span {
-  margin-left: 6px;
+.billing-membership-summary strong {
+  font-size: 36px;
+  line-height: 1;
+}
+
+.billing-membership-summary span {
   color: var(--movie-page-muted);
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.billing-details {
-  display: grid;
-  gap: 16px;
-}
-
-.billing-details dl {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-}
-
-.billing-details dl div {
-  display: grid;
-  gap: 5px;
-  padding: 14px;
-  background: var(--surface);
-  border: 1px solid var(--movie-page-grid);
-  border-radius: 8px;
-}
-
-.billing-details dt {
-  color: var(--movie-page-muted);
-  font-size: 13px;
-}
-
-.billing-details dd {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
 }
 
 .billing-primary-action,
 .billing-secondary-action {
-  min-height: 44px;
-  padding: 6px 16px;
-  border-radius: 8px;
+  width: min(100%, 334px);
+  min-height: 52px;
+  padding: 8px 24px;
+  border-radius: 999px;
   font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 21px;
+  font-weight: 700;
   cursor: pointer;
 }
 
 .billing-primary-action {
-  color: #fff;
-  background: #006dff;
-  border: 1px solid #006dff;
+  color: #090909;
+  background: #ffffff;
+  border: 1px solid #ffffff;
 }
 
 .billing-secondary-action {
@@ -4333,9 +4330,10 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .billing-country {
   display: grid;
   gap: 8px;
-  max-width: 300px;
-  font-size: 14px;
-  font-weight: 600;
+  width: min(280px, 100%);
+  margin: 14px auto 0;
+  font-size: 13px;
+  text-align: left;
 }
 
 .billing-country select {
@@ -4350,15 +4348,126 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .billing-country small {
   font-size: 12px;
-  font-weight: 500;
   line-height: 1.35;
 }
 
-.billing-message {
-  margin: 0;
+.billing-country-controls {
+  width: 100%;
   color: var(--movie-page-muted);
+  font-size: 13px;
+}
+
+.billing-country-controls summary {
+  width: fit-content;
+  margin-inline: auto;
+  cursor: pointer;
+}
+
+.billing-message {
   font-size: 14px;
   line-height: 1.4;
+}
+
+.billing-footer {
+  width: min(1280px, calc(100% - 48px));
+  margin-inline: auto;
+  border-inline: 1px solid var(--movie-page-grid);
+  color: var(--movie-page-text);
+  font-family: "Alte Haas Grotesk", Arial, sans-serif;
+  font-weight: 700;
+}
+
+.billing-footer-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  min-height: 212px;
+  padding: 38px 18px 28px;
+  border-bottom: 1px solid var(--movie-page-grid);
+}
+
+.billing-payment-methods h2 {
+  margin: 0 0 10px;
+  color: var(--movie-page-text);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.billing-payment-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 48px);
+  gap: 6px;
+}
+
+.billing-payment-logo {
+  display: grid;
+  width: 48px;
+  height: 32px;
+  place-items: center;
+  padding: 3px;
+  overflow: hidden;
+  background: #111111;
+  border: 1px solid #303030;
+  border-radius: 5px;
+}
+
+.billing-payment-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.billing-payment-logo:last-child img {
+  width: 26px;
+  height: 26px;
+}
+
+.billing-footer-links {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  color: var(--movie-page-muted);
+  font-size: 15px;
+  line-height: 1;
+  text-align: right;
+}
+
+.billing-footer-links a:hover {
+  color: var(--movie-page-text);
+}
+
+.billing-footer-bottom {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  min-height: 150px;
+  padding: 22px 18px;
+  overflow: hidden;
+  color: var(--movie-page-muted);
+  font-size: 14px;
+}
+
+.billing-footer-bottom img {
+  width: min(280px, 34%);
+  opacity: 0.12;
+  transform: rotate(8deg) translate(12%, 25%);
+}
+
+html:not(.dark) .billing-primary-action {
+  color: #ffffff;
+  background: #090909;
+  border-color: #090909;
+}
+
+html:not(.dark) .billing-payment-logo {
+  background: #f4f4f4;
+  border-color: #d4d4d4;
+}
+
+html:not(.dark) .billing-footer-bottom img {
+  filter: invert(1);
 }
 
 .collection-main {
@@ -4875,5 +4984,45 @@ html:not(.dark) .review-drawer-delete {
 
   .collection-films .poster-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .billing-main {
+    min-height: 640px;
+    padding: 60px 20px 68px;
+  }
+
+  .billing-brand-video {
+    width: 190px;
+    height: 76px;
+  }
+
+  .billing-panel h1 {
+    font-size: 31px;
+  }
+
+  .billing-footer {
+    width: 100%;
+    border-inline: 0;
+  }
+
+  .billing-footer-content {
+    display: grid;
+    gap: 38px;
+    min-height: 0;
+    padding: 30px 20px;
+  }
+
+  .billing-payment-grid {
+    grid-template-columns: repeat(5, 48px);
+  }
+
+  .billing-footer-links {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .billing-footer-bottom {
+    min-height: 120px;
+    padding-inline: 20px;
   }
 }

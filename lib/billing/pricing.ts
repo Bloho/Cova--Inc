@@ -39,25 +39,25 @@ export function getRegionalPricing({ verifiedCountry, selectedCountry, headers }
     ? {
         region: "IN",
         currency: "INR",
-        amount: 150,
-        amountInSubunits: 15000,
-        formattedPrice: "₹150",
+        amount: 99,
+        amountInSubunits: 9900,
+        formattedPrice: "₹99",
         razorpayPlanId: planId,
         source
       }
     : {
         region: "GLOBAL",
         currency: "USD",
-        amount: 2.39,
-        amountInSubunits: 239,
-        formattedPrice: "$2.39",
+        amount: 1.99,
+        amountInSubunits: 199,
+        formattedPrice: "$1.99",
         razorpayPlanId: planId,
         source
       };
 }
 
 export function getPriceForCurrency(currency: string | null | undefined) {
-  return currency === "INR" ? "₹150" : "$2.39";
+  return currency === "INR" ? "₹99" : "$1.99";
 }
 
 function getDeploymentCountry(headers?: Headers) {

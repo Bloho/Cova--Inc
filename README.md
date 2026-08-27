@@ -47,8 +47,8 @@ If Google returns to `localhost:3000` after granting permission on the deployed 
 
 Cova has one monthly paid plan, selected server-side by region:
 
-- India: `₹150 / month` (`15000` paise), using `RAZORPAY_PLAN_INR`.
-- Rest of world: `$2.39 / month` (`239` cents), using `RAZORPAY_PLAN_USD`.
+- India: `₹99 / month` (`9900` paise), using `RAZORPAY_PLAN_INR`.
+- Rest of world: `$1.99 / month` (`199` cents), using `RAZORPAY_PLAN_USD`.
 
 The browser never submits a plan ID, amount, or currency. `/api/billing/subscribe` determines the region on the server using an account's verified country, then trusted deployment country headers, then the user's billing-country selection. `/api/billing/webhook` is the source of truth for entitlement state. Use `hasActiveSubscription(userId)` from `lib/billing/subscription.ts` in every future paid API route or Server Component; do not rely on the billing UI alone.
 
@@ -94,7 +94,15 @@ RAZORPAY_PLAN_INR=plan_...
 RAZORPAY_PLAN_USD=plan_...
 ```
 
-Copy those values into `.env.local` and your Test Mode deployment variables. The plans are monthly and use exactly `15000 INR` subunits and `239 USD` subunits.
+Copy those values into `.env.local` and your Test Mode deployment variables. The plans are monthly and use exactly `9900 INR` subunits and `199 USD` subunits.
+
+When replacing older plans, create fresh Razorpay plans with:
+
+```bash
+npm run billing:create-plans -- --replace
+```
+
+Then replace both `RAZORPAY_PLAN_*` values locally and in Vercel. Existing Razorpay subscriptions remain attached to their original plans; they are not repriced automatically.
 
 ### Webhook setup
 

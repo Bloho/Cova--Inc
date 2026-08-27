@@ -61,6 +61,8 @@ export function BillingPanel({
   const [message, setMessage] = useState("");
   const canCancel = subscription && ["created", "authenticated", "active", "pending", "paused"].includes(subscription.status) && !subscription.cancelAtPeriodEnd;
   const canSubscribe = !subscription || ["halted", "cancelled", "completed", "expired"].includes(subscription.status);
+  const canResumeCheckout = subscription?.status === "created";
+  const priceVideo = currentCurrency === "INR" ? "/assets/99.webm" : "/assets/1.99.webm";
 
   async function saveCountry(nextCountry: string) {
     setCountry(nextCountry);
@@ -152,28 +154,28 @@ export function BillingPanel({
 
   return (
     <section className="billing-panel" aria-labelledby="billing-title">
-      <div className="billing-panel-copy">
-        <p className="billing-eyebrow">Cova membership</p>
-        <h1 id="billing-title">Billing</h1>
-        <p className="billing-price">{subscription?.price ?? currentPrice}<span>/ month</span></p>
-        <p className="billing-description">Unlock the paid Cova experience with one monthly plan.</p>
-      </div>
+      <video autoPlay className="billing-brand-video" loop muted playsInline preload="metadata" aria-label="Cova">
+        <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
+      </video>
+      <div className="billing-offer">
+        <h1 id="billing-title">{canSubscribe || canResumeCheckout ? "Get Cova for just" : "Your Cova membership"}</h1>
+        {canSubscribe || canResumeCheckout ? (
+          <>
+            <video autoPlay className="billing-price-video" loop muted playsInline preload="metadata" aria-label={`${currentPrice} per month`}>
+              <source src={priceVideo} type="video/webm" />
+            </video>
+            <p className="billing-month">/month</p>
+          </>
+        ) : (
+          <div className="billing-membership-summary">
+            <strong>{formatStatus(subscription?.status ?? "free")}</strong>
+            {subscription?.currentPeriodEnd ? <span>{subscription.cancelAtPeriodEnd ? "Access ends" : "Renews"} {formatDate(subscription.currentPeriodEnd)}</span> : null}
+          </div>
+        )}
 
-      <div className="billing-details">
-        <dl>
-          <div><dt>Status</dt><dd>{subscription ? formatStatus(subscription.status) : "Free"}</dd></div>
-          <div><dt>Currency</dt><dd>{subscription?.currency ?? currentCurrency}</dd></div>
-          {subscription?.currentPeriodEnd ? <div><dt>{subscription.cancelAtPeriodEnd ? "Ends" : "Renews"}</dt><dd>{formatDate(subscription.currentPeriodEnd)}</dd></div> : null}
-        </dl>
-
-        {canSubscribe ? (
-          <button className="billing-primary-action" disabled={busy !== null} onClick={() => void startCheckout()} type="button">
-            {busy === "subscribe" ? "Opening checkout..." : subscription?.status === "halted" ? "Try subscribing again" : "Subscribe"}
-          </button>
-        ) : null}
-        {subscription?.status === "created" ? (
-          <button className="billing-primary-action" disabled={busy !== null} onClick={() => void startCheckout()} type="button">
-            {busy === "subscribe" ? "Opening checkout..." : "Resume checkout"}
+        {canSubscribe || canResumeCheckout ? (
+          <button className="billing-primary-action" disabled={busy !== null || !configured} onClick={() => void startCheckout()} type="button">
+            {busy === "subscribe" ? "Opening checkout..." : canResumeCheckout ? "Resume checkout" : "Checkout"}
           </button>
         ) : null}
         {canCancel ? (
@@ -181,21 +183,24 @@ export function BillingPanel({
             {busy === "cancel" ? "Cancelling..." : "Cancel at period end"}
           </button>
         ) : null}
-        {subscription?.cancelAtPeriodEnd ? <p className="billing-note">Cancellation is scheduled; access remains until the current period ends.</p> : null}
+        <p className="billing-provider-note">{canSubscribe || canResumeCheckout ? "*you will be directed to our payments provider" : subscription?.cancelAtPeriodEnd ? "Cancellation is scheduled; access remains until the current period ends." : "Your subscription is managed securely by Razorpay."}</p>
       </div>
 
-      <label className="billing-country">
-        <span>Billing country</span>
-        <select disabled={busy === "country"} onChange={(event) => void saveCountry(event.target.value)} value={country}>
-          <option value="IN">India</option>
-          <option value="US">United States</option>
-          <option value="GB">United Kingdom</option>
-          <option value="CA">Canada</option>
-          <option value="AU">Australia</option>
-          <option value="ZZ">Other country</option>
-        </select>
-        <small>{pricingSource === "user_selection" || pricingSource === "default" ? "Used when a verified account country or trusted server location is unavailable." : "A verified account country or trusted server location is currently setting your price."}</small>
-      </label>
+      <details className="billing-country-controls">
+        <summary>Billing country: {country === "IN" ? "India" : country === "US" ? "United States" : country}</summary>
+        <label className="billing-country">
+          <span>Billing country</span>
+          <select disabled={busy === "country"} onChange={(event) => void saveCountry(event.target.value)} value={country}>
+            <option value="IN">India</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="ZZ">Other country</option>
+          </select>
+          <small>{pricingSource === "user_selection" || pricingSource === "default" ? "Used when a verified account country or trusted server location is unavailable." : "A verified account country or trusted server location is currently setting your price."}</small>
+        </label>
+      </details>
 
       {message ? <p className="billing-message" role="status">{message}</p> : null}
     </section>
