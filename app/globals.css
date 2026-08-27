@@ -4228,8 +4228,8 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .billing-main {
   display: grid;
   min-height: min(960px, calc(100dvh - 96px));
-  place-items: center;
-  padding: 88px 38px 96px;
+  place-items: start center;
+  padding: 32px 38px 96px;
   border-bottom: 1px solid var(--movie-page-grid);
 }
 
@@ -4242,6 +4242,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   font-family: "Alte Haas Grotesk", Arial, sans-serif;
   font-weight: 700;
   text-align: center;
+  margin-top: max(0px, calc(50dvh - 498px));
 }
 
 .billing-brand-loop {
@@ -4265,6 +4266,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .billing-price-video {
   display: block;
+  justify-self: center;
   width: 240px;
   height: 118px;
   object-fit: contain;
@@ -4942,7 +4944,11 @@ html:not(.dark) .review-drawer-delete {
 
   .billing-main {
     min-height: 640px;
-    padding: 60px 20px 68px;
+    padding: 28px 20px 68px;
+  }
+
+  .billing-panel {
+    margin-top: 0;
   }
 
   .billing-panel h1 {

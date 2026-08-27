@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
     const { data: existing, error: existingError } = await admin
       .from("subscriptions")
-      .select("razorpay_subscription_id, subscription_status")
+      .select("id, razorpay_subscription_id, razorpay_plan_id, subscription_status")
       .eq("user_id", user.id)
       .in("subscription_status", BLOCKING_STATUSES)
       .order("updated_at", { ascending: false })
@@ -62,13 +62,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "We could not check your current subscription." }, { status: 500 });
     }
 
-    if (existing && isRazorpaySubscriptionId(existing.razorpay_subscription_id)) {
+    if (existing && isRazorpaySubscriptionId(existing.razorpay_subscription_id) && existing.razorpay_plan_id === pricing.razorpayPlanId) {
       return NextResponse.json(checkoutPayload({
         subscriptionId: existing.razorpay_subscription_id,
         key: getRazorpayKeyId(),
         displayName: profile.display_name,
         email: user.email ?? ""
       }));
+    }
+
+    if (existing?.subscription_status === "created") {
+      const { error: supersedeError } = await admin
+        .from("subscriptions")
+        .update({ subscription_status: "superseded", updated_at: new Date().toISOString() })
+        .eq("id", existing.id);
+
+      if (supersedeError) {
+        console.error("Billing subscription replacement failed", supersedeError.message);
+        return NextResponse.json({ error: "We could not replace an earlier checkout session. Please try again." }, { status: 500 });
+      }
     }
 
     const subscription = await createRazorpaySubscription({
