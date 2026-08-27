@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { BillingPanel } from "@/components/BillingPanel";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
-import { getPriceForCurrency, getRegionalPricing } from "@/lib/billing/pricing";
+import { getRegionalPricing } from "@/lib/billing/pricing";
 import { getLatestSubscription } from "@/lib/billing/subscription";
 import { getCurrentUserProfile } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -51,9 +51,7 @@ export default async function BillingPage() {
         subscriptionId: subscriptionResult.razorpay_subscription_id,
         status: subscriptionResult.subscription_status,
         currency: subscriptionResult.subscription_currency,
-        price: getPriceForCurrency(subscriptionResult.subscription_currency),
-        currentPeriodEnd: subscriptionResult.current_period_end,
-        cancelAtPeriodEnd: subscriptionResult.cancel_at_period_end
+        currentPeriodEnd: subscriptionResult.current_period_end
       }
     : null;
 
@@ -71,8 +69,6 @@ export default async function BillingPage() {
           subscription={subscription}
           currentPrice={pricing?.formattedPrice ?? "$1.99"}
           currentCurrency={pricing?.currency ?? "USD"}
-          billingCountry={profileResult.data?.billing_country ?? null}
-          pricingSource={pricing?.source ?? "default"}
           configured={Boolean(pricing)}
         />
       </main>

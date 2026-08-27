@@ -7,9 +7,7 @@ type BillingSubscription = {
   subscriptionId: string;
   status: string;
   currency: "INR" | "USD";
-  price: string;
   currentPeriodEnd: string | null;
-  cancelAtPeriodEnd: boolean;
 } | null;
 
 type CheckoutData = {
@@ -44,45 +42,19 @@ export function BillingPanel({
   subscription,
   currentPrice,
   currentCurrency,
-  billingCountry,
-  pricingSource,
   configured
 }: {
   subscription: BillingSubscription;
   currentPrice: string;
   currentCurrency: "INR" | "USD";
-  billingCountry: string | null;
-  pricingSource: string;
   configured: boolean;
 }) {
   const router = useRouter();
-  const [busy, setBusy] = useState<"subscribe" | "cancel" | "country" | null>(null);
-  const [country, setCountry] = useState(billingCountry ?? "US");
+  const [busy, setBusy] = useState<"subscribe" | null>(null);
   const [message, setMessage] = useState("");
-  const canCancel = subscription && ["created", "authenticated", "active", "pending", "paused"].includes(subscription.status) && !subscription.cancelAtPeriodEnd;
   const canSubscribe = !subscription || ["halted", "cancelled", "completed", "expired"].includes(subscription.status);
   const canResumeCheckout = subscription?.status === "created";
   const priceVideo = currentCurrency === "INR" ? "/assets/99.webm" : "/assets/1.99.webm";
-
-  async function saveCountry(nextCountry: string) {
-    setCountry(nextCountry);
-    setBusy("country");
-    setMessage("");
-    try {
-      const response = await fetch("/api/billing/country", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ country: nextCountry })
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error ?? "Billing country could not be saved.");
-      router.refresh();
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Billing country could not be saved.");
-    } finally {
-      setBusy(null);
-    }
-  }
 
   async function startCheckout() {
     if (!configured) {
@@ -136,22 +108,6 @@ export function BillingPanel({
     }
   }
 
-  async function cancelSubscription() {
-    setBusy("cancel");
-    setMessage("");
-    try {
-      const response = await fetch("/api/billing/cancel", { method: "POST" });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error ?? "Subscription could not be cancelled.");
-      setMessage(data.message ?? "Your subscription will end after the current billing period.");
-      router.refresh();
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Subscription could not be cancelled.");
-    } finally {
-      setBusy(null);
-    }
-  }
-
   return (
     <section className="billing-panel" aria-labelledby="billing-title">
       <video autoPlay className="billing-brand-video" loop muted playsInline preload="metadata" aria-label="Cova">
@@ -169,7 +125,7 @@ export function BillingPanel({
         ) : (
           <div className="billing-membership-summary">
             <strong>{formatStatus(subscription?.status ?? "free")}</strong>
-            {subscription?.currentPeriodEnd ? <span>{subscription.cancelAtPeriodEnd ? "Access ends" : "Renews"} {formatDate(subscription.currentPeriodEnd)}</span> : null}
+            {subscription?.currentPeriodEnd ? <span>Renews {formatDate(subscription.currentPeriodEnd)}</span> : null}
           </div>
         )}
 
@@ -178,29 +134,8 @@ export function BillingPanel({
             {busy === "subscribe" ? "Opening checkout..." : canResumeCheckout ? "Resume checkout" : "Checkout"}
           </button>
         ) : null}
-        {canCancel ? (
-          <button className="billing-secondary-action" disabled={busy !== null} onClick={() => void cancelSubscription()} type="button">
-            {busy === "cancel" ? "Cancelling..." : "Cancel at period end"}
-          </button>
-        ) : null}
-        <p className="billing-provider-note">{canSubscribe || canResumeCheckout ? "*you will be directed to our payments provider" : subscription?.cancelAtPeriodEnd ? "Cancellation is scheduled; access remains until the current period ends." : "Your subscription is managed securely by Razorpay."}</p>
+        <p className="billing-provider-note">{canSubscribe || canResumeCheckout ? "*you will be directed to our payments provider" : "Your subscription is managed securely by Razorpay."}</p>
       </div>
-
-      <details className="billing-country-controls">
-        <summary>Billing country: {country === "IN" ? "India" : country === "US" ? "United States" : country}</summary>
-        <label className="billing-country">
-          <span>Billing country</span>
-          <select disabled={busy === "country"} onChange={(event) => void saveCountry(event.target.value)} value={country}>
-            <option value="IN">India</option>
-            <option value="US">United States</option>
-            <option value="GB">United Kingdom</option>
-            <option value="CA">Canada</option>
-            <option value="AU">Australia</option>
-            <option value="ZZ">Other country</option>
-          </select>
-          <small>{pricingSource === "user_selection" || pricingSource === "default" ? "Used when a verified account country or trusted server location is unavailable." : "A verified account country or trusted server location is currently setting your price."}</small>
-        </label>
-      </details>
 
       {message ? <p className="billing-message" role="status">{message}</p> : null}
     </section>

@@ -4266,8 +4266,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .billing-month,
 .billing-provider-note,
-.billing-message,
-.billing-country small {
+.billing-message {
   margin: 0;
   color: var(--movie-page-muted);
 }
@@ -4296,8 +4295,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   font-size: 15px;
 }
 
-.billing-primary-action,
-.billing-secondary-action {
+.billing-primary-action {
   width: min(100%, 334px);
   min-height: 52px;
   padding: 8px 24px;
@@ -4314,53 +4312,10 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   border: 1px solid #ffffff;
 }
 
-.billing-secondary-action {
-  color: var(--movie-page-text);
-  background: transparent;
-  border: 1px solid var(--movie-page-grid);
-}
-
 .billing-primary-action:disabled,
-.billing-secondary-action:disabled,
-.billing-country select:disabled {
+.billing-primary-action:disabled {
   cursor: wait;
   opacity: 0.65;
-}
-
-.billing-country {
-  display: grid;
-  gap: 8px;
-  width: min(280px, 100%);
-  margin: 14px auto 0;
-  font-size: 13px;
-  text-align: left;
-}
-
-.billing-country select {
-  min-height: 40px;
-  padding: 0 10px;
-  color: var(--movie-page-text);
-  background: var(--movie-page-background);
-  border: 1px solid var(--movie-page-grid);
-  border-radius: 6px;
-  font: inherit;
-}
-
-.billing-country small {
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.billing-country-controls {
-  width: 100%;
-  color: var(--movie-page-muted);
-  font-size: 13px;
-}
-
-.billing-country-controls summary {
-  width: fit-content;
-  margin-inline: auto;
-  cursor: pointer;
 }
 
 .billing-message {
@@ -4384,7 +4339,6 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   gap: 40px;
   min-height: 212px;
   padding: 38px 18px 28px;
-  border-bottom: 1px solid var(--movie-page-grid);
 }
 
 .billing-payment-methods h2 {
@@ -4405,11 +4359,6 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   width: 48px;
   height: 32px;
   place-items: center;
-  padding: 3px;
-  overflow: hidden;
-  background: #111111;
-  border: 1px solid #303030;
-  border-radius: 5px;
 }
 
 .billing-payment-logo img {
@@ -4452,18 +4401,12 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .billing-footer-bottom img {
   width: min(280px, 34%);
   opacity: 0.12;
-  transform: rotate(8deg) translate(12%, 25%);
 }
 
 html:not(.dark) .billing-primary-action {
   color: #ffffff;
   background: #090909;
   border-color: #090909;
-}
-
-html:not(.dark) .billing-payment-logo {
-  background: #f4f4f4;
-  border-color: #d4d4d4;
 }
 
 html:not(.dark) .billing-footer-bottom img {
