@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+const SUPABASE_REQUEST_TIMEOUT_MS = 8_000;
+
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
 
@@ -8,6 +10,9 @@ export async function createSupabaseServerClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      global: {
+        fetch: fetchWithTimeout
+      },
       cookies: {
         getAll() {
           return cookieStore.getAll();
@@ -24,4 +29,14 @@ export async function createSupabaseServerClient() {
       }
     }
   );
+}
+
+function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  const timeout = AbortSignal.timeout(SUPABASE_REQUEST_TIMEOUT_MS);
+  const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
+
+  return fetch(input, {
+    ...init,
+    signal
+  });
 }
