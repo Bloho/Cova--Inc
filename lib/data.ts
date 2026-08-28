@@ -33,7 +33,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
     overview: "An insomniac office worker and a soap maker form an underground fight club that evolves into something much larger.",
-    reviewer: "Stephen",
     reviewCount: 18
   },
   {
@@ -44,7 +43,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
     overview: "Interwoven stories of crime, loyalty, and chance collide across Los Angeles.",
-    reviewer: "Sarni",
     reviewCount: 21
   },
   {
@@ -55,7 +53,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
     overview: "A young girl enters a spirit world and must find courage to save her parents.",
-    reviewer: "Ayush",
     reviewCount: 34
   },
   {
@@ -66,7 +63,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/7fn624j5lj3xTme2SgiLCeuedmO.jpg",
     overview: "A driven jazz drummer is pushed to his limits by a ruthless instructor.",
-    reviewer: "Santosh",
     reviewCount: 16
   },
   {
@@ -77,7 +73,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
     overview: "A poor family infiltrates a wealthy household in a darkly comic thriller about class.",
-    reviewer: "User01",
     reviewCount: 29
   },
   {
@@ -88,7 +83,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
     overview: "Explorers travel through a wormhole in search of a future for humanity.",
-    reviewer: "nottogo",
     reviewCount: 24
   },
   {
@@ -99,7 +93,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg",
     overview: "Barbie leaves Barbieland and enters the real world in a bright, existential comedy.",
-    reviewer: "Meera",
     reviewCount: 13
   },
   {
@@ -110,7 +103,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
     overview: "The story of J. Robert Oppenheimer and the creation of the atomic bomb.",
-    reviewer: "Kabir",
     reviewCount: 27
   },
   {
@@ -121,7 +113,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",
     overview: "Paul Atreides unites with the Fremen while war spreads across Arrakis.",
-    reviewer: "Anya",
     reviewCount: 31
   },
   {
@@ -132,7 +123,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/kCGlIMHnOm8JPXq3rXM6c5wMxcT.jpg",
     overview: "A woman brought back to life travels through a strange, lavish world of appetite and discovery.",
-    reviewer: "Rohan",
     reviewCount: 19
   },
   {
@@ -143,7 +133,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/w3LxiVYdWWRvEVdn5RYq6jIqkb1.jpg",
     overview: "A laundromat owner is pulled into a multiverse crisis involving every life she could have lived.",
-    reviewer: "Ira",
     reviewCount: 42
   },
   {
@@ -154,7 +143,6 @@ export const seedMovies: Movie[] = [
     watched: false,
     posterPath: "/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
     overview: "Two imprisoned men form a bond across decades while holding onto hope.",
-    reviewer: "Dev",
     reviewCount: 38
   }
 ];

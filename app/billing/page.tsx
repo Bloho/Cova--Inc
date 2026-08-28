@@ -91,9 +91,9 @@ export default async function BillingPage() {
           <nav className="billing-footer-links" aria-label="Billing links">
             <Link href="/">Home</Link>
             <a href="https://bloho.space" rel="noreferrer" target="_blank">Bloho.space</a>
-            <Link href="/legal">Terms and conditions</Link>
-            <Link href="/legal">Privacy Policy</Link>
-            <Link href="/legal">Legal</Link>
+            <Link href="/company/legal">Terms and conditions</Link>
+            <Link href="/company/legal">Privacy Policy</Link>
+            <Link href="/company/legal">Legal</Link>
             <Link href="/about">About</Link>
           </nav>
         </div>

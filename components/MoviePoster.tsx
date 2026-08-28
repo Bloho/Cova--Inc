@@ -29,9 +29,9 @@ export function MoviePoster({
       <Link className="poster-link" href={`/movie/${movie.tmdbId}`} aria-label={`${movie.title} details`} prefetch>
         <img className="poster-image" src={posterUrl(movie.posterPath)} alt={`${movie.title} poster`} loading="lazy" />
       </Link>
-      {movie.reviewer || showYear ? (
+      {showYear ? (
         <div className="poster-meta">
-          <span>{movie.reviewer ?? movie.releaseYear}</span>
+          <span>{movie.releaseYear}</span>
         </div>
       ) : null}
     </article>

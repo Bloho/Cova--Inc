@@ -87,7 +87,7 @@ export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) 
       </main>
       <footer className="movie-page-footer">
         <span>© Cova by Bloho, 2026</span>
-        <div><Link href="/about">About</Link><Link href="/legal">Legal</Link></div>
+        <div><Link href="/about">About</Link><Link href="/company/legal">Legal</Link></div>
       </footer>
     </div>
   );

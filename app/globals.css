@@ -197,6 +197,157 @@ textarea {
   border-inline: 1px solid var(--movie-page-grid);
 }
 
+.company-legal-page {
+  --company-legal-background: #ffffff;
+  --company-legal-grid: #e2e2e2;
+  --company-legal-text: #111111;
+  --company-legal-muted: #666666;
+  width: min(960px, calc(100% - 48px));
+  min-height: 100dvh;
+  margin-inline: auto;
+  color: var(--company-legal-text);
+  background: var(--company-legal-background);
+  border-inline: 1px solid var(--company-legal-grid);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.dark .company-legal-page {
+  --company-legal-background: #000000;
+  --company-legal-grid: #222222;
+  --company-legal-text: #f7f7f7;
+  --company-legal-muted: #929292;
+}
+
+.company-legal-header,
+.company-legal-footer {
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--company-legal-grid);
+}
+
+.company-legal-brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.company-legal-brand img {
+  display: block;
+  width: 116px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.company-legal-home,
+.company-legal-content a,
+.company-legal-footer a {
+  color: inherit;
+  text-underline-offset: 4px;
+}
+
+.company-legal-home {
+  color: var(--company-legal-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.company-legal-content {
+  max-width: 720px;
+  padding: 80px 72px 92px;
+}
+
+.company-legal-eyebrow {
+  margin: 0 0 12px;
+  color: var(--company-legal-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.company-legal-content h1,
+.company-legal-content h2,
+.company-legal-content p {
+  margin: 0;
+}
+
+.company-legal-content h1 {
+  max-width: 620px;
+  font-size: clamp(2.7rem, 7vw, 5.75rem);
+  line-height: 0.94;
+  letter-spacing: 0;
+}
+
+.company-legal-intro {
+  max-width: 560px;
+  margin-top: 28px !important;
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  line-height: 1.28;
+}
+
+.company-legal-updated {
+  margin-top: 18px !important;
+  color: var(--company-legal-muted);
+  font-size: 0.9rem;
+}
+
+.company-legal-content section {
+  margin-top: 54px;
+  padding-top: 18px;
+  border-top: 1px solid var(--company-legal-grid);
+}
+
+.company-legal-content h2 {
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+
+.company-legal-content section p {
+  margin-top: 16px;
+  color: var(--company-legal-muted);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.company-legal-tmdb {
+  display: grid;
+  grid-template-columns: 144px minmax(0, 1fr);
+  gap: 34px;
+  align-items: start;
+}
+
+.company-legal-tmdb-mark {
+  display: grid;
+  gap: 10px;
+}
+
+.company-legal-tmdb-mark img {
+  display: block;
+  width: 108px;
+  height: auto;
+}
+
+.company-legal-tmdb-mark span {
+  color: var(--company-legal-muted);
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.company-legal-tmdb-notice {
+  color: var(--company-legal-text) !important;
+  font-weight: 600;
+}
+
+.company-legal-footer {
+  min-height: 76px;
+  color: var(--company-legal-muted);
+  border-top: 1px solid var(--company-legal-grid);
+  border-bottom: 0;
+  font-size: 0.8rem;
+}
+
 .dark .home-page {
   --movie-page-background: #000000;
   --movie-page-grid: #222222;
