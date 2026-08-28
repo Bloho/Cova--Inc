@@ -1412,7 +1412,7 @@ html:not(.dark) .cova-account-signout:focus-visible {
   justify-self: center;
   grid-template-columns: 1fr;
   gap: 46px;
-  margin-top: 14px;
+  margin-top: 26px;
 }
 
 .log-result {
@@ -3051,7 +3051,7 @@ html:not(.dark) .movie-card-close {
 .skeleton-home-copy {
   width: min(720px, 100%);
   height: clamp(1.12rem, 2.4vw, 1.45rem);
-  margin-top: 14px;
+  margin-top: 32px;
 }
 
 .skeleton-home-section-title {
@@ -3225,6 +3225,81 @@ html:not(.dark) .movie-card-close {
 .skeleton-paragraph {
   width: min(640px, 100%);
   height: 96px;
+}
+
+.skeleton-movie-copy {
+  display: grid;
+  align-content: start;
+}
+
+.skeleton-movie-meta {
+  margin-bottom: 18px;
+}
+
+.skeleton-movie-year {
+  width: 58px;
+  height: 28px;
+  border-radius: 999px;
+}
+
+.skeleton-movie-director {
+  width: min(210px, 45vw);
+  height: 16px;
+}
+
+.skeleton-movie-heading {
+  display: grid;
+  width: min(560px, 100%);
+  gap: 8px;
+}
+
+.skeleton-movie-heading-line {
+  width: 94%;
+  height: clamp(36px, 4vw, 56px);
+}
+
+.skeleton-movie-heading-line.short {
+  width: 62%;
+}
+
+.skeleton-text {
+  display: grid;
+  width: min(100%, 640px);
+  gap: 8px;
+}
+
+.skeleton-movie-overview {
+  margin-top: 12px;
+}
+
+.skeleton-text-line {
+  width: 100%;
+  height: 14px;
+}
+
+.skeleton-text-line.short {
+  width: 75%;
+}
+
+.skeleton-collection-actions {
+  gap: 9px;
+}
+
+.skeleton-collection-button {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+}
+
+.skeleton-rating-actions {
+  gap: 2px;
+}
+
+.skeleton-movie-star {
+  width: 38px;
+  height: 42px;
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 61% 34%, 98% 35%, 68% 56%, 79% 94%, 50% 72%, 21% 94%, 32% 56%, 2% 35%, 39% 34%);
 }
 
 .skeleton-rating {
@@ -4403,7 +4478,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   border: 1px solid #4a4a4a;
   border-radius: 8px;
   color: #ffffff;
-  background: #222222;
+  background: #101010;
   box-shadow: 0 22px 80px rgba(0, 0, 0, 0.5);
   font-family: "PP Neue Montreal", Arial, sans-serif;
   text-align: center;
@@ -4413,11 +4488,12 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .upgrade-prompt-arc {
   position: absolute;
   z-index: 0;
-  top: 50px;
+  top: 88px;
   width: 630px;
-  height: 310px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 50%;
+  height: 164px;
+  border: 1px solid rgba(76, 76, 76, 0.18);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
 }
 
 .upgrade-prompt-logo,
@@ -4431,7 +4507,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .upgrade-prompt-logo {
   width: 174px;
   height: 92px;
-  margin-top: -9px;
+  margin-top: 5px;
   object-fit: contain;
 }
 
@@ -4439,7 +4515,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   display: grid;
   gap: 14px;
   max-width: 390px;
-  margin-top: 5px;
+  margin-top: 32px;
 }
 
 .upgrade-prompt-copy h2,
@@ -4485,45 +4561,6 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   font: inherit;
   font-size: 16px;
   cursor: pointer;
-}
-
-.upgrade-prompt-cards {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: -22px;
-  left: 0;
-  height: 120px;
-  pointer-events: none;
-}
-
-.upgrade-prompt-card {
-  position: absolute;
-  bottom: -26px;
-  display: block;
-  width: 78px;
-  height: 116px;
-  object-fit: cover;
-  border-radius: 4px;
-  box-shadow: 0 9px 18px rgba(0, 0, 0, 0.36);
-}
-
-.upgrade-prompt-card.first {
-  left: 4px;
-  transform: rotate(14deg);
-}
-
-.upgrade-prompt-card.second {
-  left: 111px;
-  transform: rotate(-7deg);
-}
-
-.upgrade-prompt-card.third {
-  right: -2px;
-  width: 112px;
-  height: 76px;
-  transform: rotate(-13deg);
-  transform-origin: bottom right;
 }
 
 @keyframes upgrade-prompt-fade-in {

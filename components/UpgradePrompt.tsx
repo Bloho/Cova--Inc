@@ -26,8 +26,8 @@ const copy: Record<LimitedFeature, { title: string; body: string }> = {
   }
 };
 
-export function UpgradePrompt() {
-  const [feature, setFeature] = useState<LimitedFeature | null>(null);
+export function UpgradePrompt({ initialFeature = null }: { initialFeature?: LimitedFeature | null }) {
+  const [feature, setFeature] = useState<LimitedFeature | null>(initialFeature);
 
   useEffect(() => {
     const open = (event: Event) => setFeature((event as CustomEvent<LimitedFeature>).detail);
@@ -49,13 +49,8 @@ export function UpgradePrompt() {
           <h2 id="upgrade-prompt-title">{content.title}</h2>
           <p>{content.body}</p>
         </div>
-        <a className="upgrade-prompt-action" href="/billing">Get Cova Pro for Rs99/month</a>
+        <a className="upgrade-prompt-action" href="/billing">Get Cova Pro for ₹99/month</a>
         <button className="upgrade-prompt-dismiss" onClick={() => setFeature(null)} type="button">Maybe later</button>
-        <div className="upgrade-prompt-cards" aria-hidden>
-          <img className="upgrade-prompt-card first" src="/assets/vertical-card-preview.svg" alt="" />
-          <img className="upgrade-prompt-card second" src="/assets/square-card-preview.svg" alt="" />
-          <img className="upgrade-prompt-card third" src="/assets/horizontal-card-preview.svg" alt="" />
-        </div>
       </section>
     </div>
   );

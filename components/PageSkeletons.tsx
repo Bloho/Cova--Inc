@@ -1,6 +1,7 @@
 import { Footer } from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const posterSlots = Array.from({ length: 5 });
 const reviewSlots = Array.from({ length: 3 });
@@ -142,18 +143,28 @@ export function MoviePageSkeleton() {
           <div className="movie-page-poster">
             <Skeleton className="skeleton-movie-poster" />
           </div>
-          <div className="movie-page-copy skeleton-copy-stack">
-            <Skeleton className="skeleton-line short" />
-            <Skeleton className="skeleton-movie-title" />
-            <Skeleton className="skeleton-paragraph" />
-            <div className="movie-log-panel" aria-hidden>
-              <Skeleton className="skeleton-rating" />
-              <Skeleton className="skeleton-button" />
-              <Skeleton className="skeleton-button" />
+          <div className="movie-page-copy skeleton-movie-copy">
+            <div className="movie-page-meta skeleton-movie-meta" aria-hidden>
+              <Skeleton className="skeleton-movie-year" />
+              <Skeleton className="skeleton-movie-director" />
             </div>
-            <div className="movie-average-rating" aria-hidden>
-              <Skeleton className="skeleton-average-ring" />
-              <strong>Average rating by users</strong>
+
+            <div className="skeleton-movie-heading" aria-hidden>
+              <Skeleton className="skeleton-movie-heading-line" />
+              <Skeleton className="skeleton-movie-heading-line short" />
+            </div>
+
+            <SkeletonText className="skeleton-movie-overview" />
+
+            <div className="movie-collection-actions skeleton-collection-actions" aria-hidden>
+              <Skeleton className="skeleton-collection-button" />
+              <Skeleton className="skeleton-collection-button" />
+            </div>
+
+            <div className="movie-page-actions skeleton-rating-actions" aria-hidden>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton className="skeleton-movie-star" key={index} />
+              ))}
             </div>
           </div>
         </section>
@@ -162,6 +173,16 @@ export function MoviePageSkeleton() {
         <Skeleton className="skeleton-footer-copy" />
         <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
       </footer>
+    </div>
+  );
+}
+
+export function SkeletonText({ className }: { className?: string }) {
+  return (
+    <div className={cn("skeleton-text", className)} aria-hidden>
+      <Skeleton className="skeleton-text-line" />
+      <Skeleton className="skeleton-text-line" />
+      <Skeleton className="skeleton-text-line short" />
     </div>
   );
 }
