@@ -410,7 +410,7 @@ function drawRating(ctx: CanvasRenderingContext2D, star: HTMLImageElement, ratin
 }
 
 function drawProfileLink(ctx: CanvasRenderingContext2D, username: string | null | undefined, point: LayoutConfig["link"], width: number) {
-  const profileLink = username ? `cova.quest/${username}` : "cova.quest";
+  const profileLink = username ? `cova.lol/${username}` : "cova.lol";
   ctx.fillStyle = point.color ?? "rgba(0, 0, 0, 0.35)";
   ctx.font = '700 30px "Cova Card", "SF Pro Display", Arial, sans-serif';
   ctx.textBaseline = "alphabetic";

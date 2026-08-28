@@ -4,6 +4,7 @@ import { HomeGreeting } from "@/components/HomeGreeting";
 import { MoviePoster } from "@/components/MoviePoster";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { OnboardingModal } from "@/components/OnboardingModal";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { getHomeMovies } from "@/lib/tmdb";
 
@@ -20,6 +21,7 @@ export default async function Home({
 
   const { trending } = await getHomeMovies();
   const { user, profile } = await getCurrentUserProfile();
+  const hasCovaPro = user ? await hasActiveCovaMembership(user.id).catch(() => false) : false;
   const states = await getUserMovieStates(trending.map((movie) => movie.tmdbId), user?.id);
   const trendingWithState = trending.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
   const needsOnboarding = Boolean(user && profile && (!profile.username || !profile.onboarded_at));
@@ -31,6 +33,7 @@ export default async function Home({
         username={profile?.username ?? null}
         displayName={profile?.display_name ?? user?.email ?? null}
         avatarUrl={profile?.avatar_url ?? null}
+        hasCovaPro={hasCovaPro}
       />
       <main className="site-main">
         <section className="shell hero hero-compact" aria-labelledby="home-title">

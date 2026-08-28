@@ -1,6 +1,6 @@
 # Cova
 
-Minimal film reviewing app for `cova.quest`, built for Vercel with Next.js.
+Minimal film reviewing app for `cova.lol`, built for Vercel with Next.js.
 
 ## Stack
 
@@ -29,16 +29,16 @@ If Google sign-in shows `Unsupported provider: provider is not enabled`, enable 
 2. Add the Google OAuth client ID and client secret
 3. Supabase Dashboard → Authentication → URL Configuration → Redirect URLs:
    - `http://localhost:3000/auth/callback`
-   - `https://cova.quest/auth/callback`
+   - `https://cova.lol/auth/callback`
 
 The app route `/auth/google` already redirects to Supabase with `provider=google`.
 
 If Google returns to `localhost:3000` after granting permission on the deployed site:
 
-1. In Vercel, set `NEXT_PUBLIC_SITE_URL` to your real domain, for example `https://cova.quest`
+1. In Vercel, set `NEXT_PUBLIC_SITE_URL` to your real domain, for example `https://cova.lol`
 2. In Supabase Dashboard → Authentication → URL Configuration:
-   - Set **Site URL** to `https://cova.quest`
-   - Add **Redirect URL** `https://cova.quest/auth/callback`
+   - Set **Site URL** to `https://cova.lol`
+   - Add **Redirect URL** `https://cova.lol/auth/callback`
    - Keep `http://localhost:3000/auth/callback` only for local development
 3. In Google Cloud OAuth client, add Authorized redirect URI:
    - `https://jhpmslnoaarvhvvmxnxg.supabase.co/auth/v1/callback`

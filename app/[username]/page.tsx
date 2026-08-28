@@ -5,6 +5,7 @@ import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import { PaginatedFilms } from "@/components/PaginatedFilms";
 import { Separator } from "@/components/ui/separator";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
@@ -27,6 +28,7 @@ export default async function ProfilePage({
   ]);
   const { user: viewer, profile: viewerProfile } = viewerResult;
   const { data: profile, error: profileError } = profileResult;
+  const hasCovaPro = viewer ? await hasActiveCovaMembership(viewer.id).catch(() => false) : false;
 
   if (profileError || !profile) {
     notFound();
@@ -81,6 +83,7 @@ export default async function ProfilePage({
         username={viewerProfile?.username ?? null}
         displayName={viewerProfile?.display_name ?? null}
         avatarUrl={viewerProfile?.avatar_url ?? null}
+        hasCovaPro={hasCovaPro}
         hidePrimaryActions
       />
       <main className="profile-main">

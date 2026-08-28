@@ -3654,11 +3654,59 @@ html:not(.dark) .movie-card-close {
   align-items: center;
 }
 
+.movie-page-brand-group {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+
 .movie-page-brand-video {
   display: block;
   width: 146px;
   height: 47px;
   object-fit: contain;
+}
+
+.movie-page-brand-static {
+  display: block;
+  width: 146px;
+  height: 47px;
+  object-fit: contain;
+}
+
+.get-cova-pro-button {
+  display: flex;
+  width: 150px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 7px;
+  opacity: 0;
+  filter: blur(9px);
+  transform: translateY(2px);
+  animation: get-cova-pro-reveal 500ms cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
+}
+
+.get-cova-pro-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.get-cova-pro-button:focus-visible {
+  outline: 2px solid var(--movie-page-text);
+  outline-offset: 3px;
+}
+
+@keyframes get-cova-pro-reveal {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
 }
 
 .movie-page-nav {
@@ -5241,6 +5289,20 @@ html:not(.dark) .review-drawer-delete {
   .movie-page-brand-video {
     width: 108px;
     height: 35px;
+  }
+
+  .movie-page-brand-static {
+    width: 108px;
+    height: 35px;
+  }
+
+  .movie-page-brand-group {
+    gap: 8px;
+  }
+
+  .get-cova-pro-button {
+    width: 112px;
+    height: 33px;
   }
 
   .movie-page-nav {

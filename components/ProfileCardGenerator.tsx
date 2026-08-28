@@ -194,7 +194,7 @@ async function renderProfileCard({ username, filmsCount }: { username: string; f
   ctx.textAlign = "left";
   ctx.fillStyle = "#ff6048";
   ctx.font = '700 34px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText(`cova.quest/${username}`, 35, 637, 375);
+  ctx.fillText(`cova.lol/${username}`, 35, 637, 375);
 
   return canvas.toDataURL("image/png");
 }

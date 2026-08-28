@@ -200,7 +200,7 @@ export function OnboardingModal({
             <div className="onboarding-stage onboarding-complete" key="complete">
               <div className="onboarding-stage-body">
                 <h1>Welcome to Cova!</h1>
-                <p>You can share your profile with your friends by sharing <strong>{`cova.quest/${username}`}</strong></p>
+                <p>You can share your profile with your friends by sharing <strong>{`cova.lol/${username}`}</strong></p>
               </div>
               <button className="onboarding-primary" onClick={() => (demo ? setStep(1) : router.refresh())}>Complete</button>
             </div>

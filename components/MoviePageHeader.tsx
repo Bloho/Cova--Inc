@@ -15,12 +15,14 @@ export function MoviePageHeader({
   username,
   displayName,
   avatarUrl,
+  hasCovaPro = false,
   hidePrimaryActions = false
 }: {
   isSignedIn: boolean;
   username: string | null;
   displayName: string | null;
   avatarUrl: string | null;
+  hasCovaPro?: boolean;
   hidePrimaryActions?: boolean;
 }) {
   const router = useRouter();
@@ -45,11 +47,24 @@ export function MoviePageHeader({
 
   return (
     <header className="movie-page-header">
-      <Link href="/" className="movie-page-brand" aria-label="Cova home">
-        <video autoPlay className="movie-page-brand-video" loop muted playsInline preload="auto" aria-label="Cova">
-          <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
-        </video>
-      </Link>
+      <div className="movie-page-brand-group">
+        <Link href="/" className="movie-page-brand" aria-label="Cova home">
+          {hasCovaPro ? (
+            <video autoPlay className="movie-page-brand-video" loop muted playsInline preload="auto" aria-label="Cova">
+              <source src="/assets/Cova-chromatic-animated.webm" type="video/webm" />
+            </video>
+          ) : (
+            <img className="movie-page-brand-static" src="/assets/Cova-logo-white.svg" alt="Cova" />
+          )}
+        </Link>
+        {!hasCovaPro ? (
+          <Link className="get-cova-pro-button" href="/billing" aria-label="Get Cova Pro">
+            <video autoPlay className="get-cova-pro-video" loop muted playsInline preload="auto" aria-hidden>
+              <source src="/assets/get-cova-pro.webm" type="video/webm" />
+            </video>
+          </Link>
+        ) : null}
+      </div>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
         {!hidePrimaryActions ? (
           <>

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { BillingPanel } from "@/components/BillingPanel";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { getRegionalPricing } from "@/lib/billing/pricing";
-import { getActiveMembershipGrant, getLatestSubscription } from "@/lib/billing/subscription";
+import { getActiveMembershipGrant, getLatestSubscription, hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { getCurrentUserProfile } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -55,6 +55,7 @@ export default async function BillingPage() {
         currentPeriodEnd: subscriptionResult.current_period_end
       }
     : null;
+  const hasCovaPro = await hasActiveCovaMembership(user.id).catch(() => false);
 
   return (
     <div className="profile-page billing-page">
@@ -63,6 +64,7 @@ export default async function BillingPage() {
         username={profile?.username ?? null}
         displayName={profile?.display_name ?? user.email ?? null}
         avatarUrl={profile?.avatar_url ?? null}
+        hasCovaPro={hasCovaPro}
         hidePrimaryActions
       />
       <main className="profile-main billing-main">

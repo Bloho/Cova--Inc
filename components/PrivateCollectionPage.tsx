@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { PaginatedFilms } from "@/components/PaginatedFilms";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import type { Movie } from "@/lib/data";
 import { getCurrentUserProfile } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -34,6 +35,8 @@ export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) 
   const { user, profile } = await getCurrentUserProfile();
 
   if (!user) redirect("/login");
+
+  const hasCovaPro = await hasActiveCovaMembership(user.id).catch(() => false);
 
   const supabase = await createSupabaseServerClient();
   const collectionColumn = kind === "wishlist" ? "in_watchlist" : "liked";
@@ -69,6 +72,7 @@ export async function PrivateCollectionPage({ kind }: { kind: CollectionKind }) 
         username={profile?.username ?? null}
         displayName={profile?.display_name ?? user.email ?? null}
         avatarUrl={profile?.avatar_url ?? null}
+        hasCovaPro={hasCovaPro}
         hidePrimaryActions
       />
       <main className="profile-main collection-main">

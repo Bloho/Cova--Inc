@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MovieCollectionActions } from "@/components/MovieCollectionActions";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { MovieLogActions } from "@/components/MovieLogActions";
+import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -34,6 +35,7 @@ export default async function MoviePage({
   const movieState = states.get(movie.tmdbId);
   const movieWithState = applyUserState(movie, movieState);
   const currentReview = reviewResult.data;
+  const hasCovaPro = user ? await hasActiveCovaMembership(user.id).catch(() => false) : false;
 
   return (
     <div className="movie-page">
@@ -42,6 +44,7 @@ export default async function MoviePage({
         username={profile?.username ?? null}
         displayName={profile?.display_name ?? user?.email ?? null}
         avatarUrl={profile?.avatar_url ?? null}
+        hasCovaPro={hasCovaPro}
       />
       <main className="movie-page-main">
         <div className="movie-page-top-space" aria-hidden />
