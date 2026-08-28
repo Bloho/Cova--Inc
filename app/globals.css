@@ -4581,8 +4581,8 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .deletion-sequence-dialog {
   display: grid;
-  width: min(660px, 100%);
-  min-height: 390px;
+  width: min(540px, 100%);
+  min-height: 340px;
   overflow: hidden;
   border: 2px solid #333333;
   border-radius: 34px;
@@ -4595,28 +4595,28 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .deletion-sequence-stage {
   display: grid;
-  min-height: 390px;
+  min-height: 340px;
   align-content: center;
   justify-items: center;
-  padding: 34px 48px;
+  padding: 28px 38px;
   text-align: center;
   animation: deletion-sequence-stage-in 200ms ease-out;
 }
 
 .deletion-sequence-stage h2 {
-  max-width: 520px;
+  max-width: 420px;
   margin: 0;
   color: #ededed;
-  font-size: clamp(2rem, 4vw, 3.3rem);
+  font-size: clamp(1.65rem, 3.6vw, 2.35rem);
   font-weight: 600;
   letter-spacing: 0;
   line-height: 0.98;
 }
 
 .deletion-sequence-trash {
-  width: 126px;
-  height: 126px;
-  margin-bottom: 22px;
+  width: 104px;
+  height: 104px;
+  margin-bottom: 17px;
   object-fit: contain;
 }
 
@@ -4628,13 +4628,13 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .deletion-sequence-actions.split {
   gap: 18px;
-  margin-top: 42px;
+  margin-top: 30px;
 }
 
 .deletion-sequence-actions.stacked {
   display: grid;
   gap: 10px;
-  margin-top: 42px;
+  margin-top: 30px;
 }
 
 .deletion-sequence-secondary,
@@ -4642,7 +4642,7 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 .deletion-sequence-text-button {
   border: 0;
   font-family: inherit;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -4650,9 +4650,9 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .deletion-sequence-secondary,
 .deletion-sequence-danger {
-  min-width: 188px;
-  min-height: 54px;
-  padding: 10px 24px;
+  min-width: 160px;
+  min-height: 48px;
+  padding: 9px 20px;
   border-radius: 999px;
 }
 
@@ -4681,12 +4681,12 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
 
 .deletion-sequence-check {
   display: flex;
-  max-width: 470px;
+  max-width: 405px;
   align-items: center;
   gap: 12px;
-  margin-top: 54px;
+  margin-top: 38px;
   color: #dfdbdc;
-  font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
   line-height: 1.2;
   text-align: left;
   cursor: pointer;
