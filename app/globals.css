@@ -4567,6 +4567,177 @@ html:not(.dark) .movie-collection-button.is-added.favourite {
   cursor: pointer;
 }
 
+.deletion-sequence-backdrop {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(7px);
+  animation: deletion-sequence-fade-in 180ms ease-out;
+}
+
+.deletion-sequence-dialog {
+  display: grid;
+  width: min(660px, 100%);
+  min-height: 390px;
+  overflow: hidden;
+  border: 2px solid #333333;
+  border-radius: 34px;
+  color: #ededed;
+  background: #171717;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  box-shadow: 0 26px 96px rgba(0, 0, 0, 0.54);
+  animation: deletion-sequence-dialog-in 220ms ease-out;
+}
+
+.deletion-sequence-stage {
+  display: grid;
+  min-height: 390px;
+  align-content: center;
+  justify-items: center;
+  padding: 34px 48px;
+  text-align: center;
+  animation: deletion-sequence-stage-in 200ms ease-out;
+}
+
+.deletion-sequence-stage h2 {
+  max-width: 520px;
+  margin: 0;
+  color: #ededed;
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 0.98;
+}
+
+.deletion-sequence-trash {
+  width: 126px;
+  height: 126px;
+  margin-bottom: 22px;
+  object-fit: contain;
+}
+
+.deletion-sequence-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deletion-sequence-actions.split {
+  gap: 18px;
+  margin-top: 42px;
+}
+
+.deletion-sequence-actions.stacked {
+  display: grid;
+  gap: 10px;
+  margin-top: 42px;
+}
+
+.deletion-sequence-secondary,
+.deletion-sequence-danger,
+.deletion-sequence-text-button {
+  border: 0;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.deletion-sequence-secondary,
+.deletion-sequence-danger {
+  min-width: 188px;
+  min-height: 54px;
+  padding: 10px 24px;
+  border-radius: 999px;
+}
+
+.deletion-sequence-secondary {
+  border: 2px solid #575757;
+  color: #ededed;
+  background: #3b3b3b;
+}
+
+.deletion-sequence-danger {
+  border: 2px solid #ff5d5d;
+  color: #ffffff;
+  background: #ec0808;
+}
+
+.deletion-sequence-danger:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.deletion-sequence-text-button {
+  padding: 6px 18px;
+  color: #767676;
+  background: transparent;
+}
+
+.deletion-sequence-check {
+  display: flex;
+  max-width: 470px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 54px;
+  color: #dfdbdc;
+  font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.deletion-sequence-check input {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  margin: 0;
+  accent-color: #ec0808;
+}
+
+.deletion-sequence-error {
+  margin: 18px 0 -22px;
+  color: #ff7676;
+  font-size: 14px;
+}
+
+.deletion-preview-restart {
+  position: fixed;
+  z-index: 1;
+  bottom: 30px;
+  left: 50%;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid #4a4a4a;
+  border-radius: 999px;
+  color: #ededed;
+  background: #171717;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+@keyframes deletion-sequence-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes deletion-sequence-dialog-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes deletion-sequence-stage-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes upgrade-prompt-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }

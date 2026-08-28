@@ -4,17 +4,8 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
+import { ReviewDeletionSequence } from "@/components/ReviewDeletionSequence";
 import { RatingInput } from "@/components/RatingInput";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import type { Movie } from "@/lib/data";
@@ -53,7 +44,7 @@ export function MovieLogActions({
   const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerDeleting, setDrawerDeleting] = useState(false);
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteSequenceOpen, setDeleteSequenceOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [existingReview, setExistingReview] = useState<ExistingReview | null>(initialReview);
   const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview) || initialRating > 0);
@@ -164,35 +155,36 @@ export function MovieLogActions({
 
   async function deleteReview() {
     if (!existingReview || drawerDeleting) {
-      return;
+      throw new Error("This review is no longer available to delete.");
     }
 
     setDrawerDeleting(true);
     setMessage("");
 
-    const response = await fetch("/api/review", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tmdbId: movie.tmdbId })
-    });
+    try {
+      const response = await fetch("/api/review", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tmdbId: movie.tmdbId })
+      });
 
-    if (response.ok) {
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error ?? "Could not delete this review.");
+      }
+
       setExistingReview(null);
       setReview("");
       setReviewed(Boolean(rating));
       router.refresh();
-      window.setTimeout(() => {
-        setDrawerOpen(false);
-      }, 220);
-      window.setTimeout(() => {
-        setDrawerDeleting(false);
-      }, 360);
-      return;
+      setDrawerOpen(false);
+    } catch (requestError) {
+      const error = requestError instanceof Error ? requestError : new Error("Could not delete this review.");
+      setMessage(error.message);
+      throw error;
+    } finally {
+      setDrawerDeleting(false);
     }
-
-    const data = await response.json().catch(() => ({}));
-    setMessage(data.error ?? "Could not delete this review.");
-    setDrawerDeleting(false);
   }
 
   async function removeFromWatchlist() {
@@ -269,7 +261,7 @@ export function MovieLogActions({
           setDrawerOpen(open);
         }
       }}>
-        <DrawerContent className={`review-drawer-content${drawerDeleting ? " deleting" : ""}`}>
+        <DrawerContent className="review-drawer-content">
           <DrawerHeader className="review-drawer-header">
             <DrawerTitle className="review-drawer-title">{movie.title} ({movie.releaseYear})</DrawerTitle>
             <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">
@@ -295,39 +287,14 @@ export function MovieLogActions({
             <button className="review-drawer-close" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
               Close
             </button>
-            <button className="review-drawer-delete" disabled={drawerDeleting} onClick={() => setDeleteConfirmOpen(true)} aria-label="Delete review" type="button">
+            <button className="review-drawer-delete" disabled={drawerDeleting} onClick={() => setDeleteSequenceOpen(true)} aria-label="Delete review" type="button">
               <img src="/utilities/bin.svg" alt="" />
             </button>
           </div>
-          {drawerDeleting ? (
-            <div className="drawer-loading-state" aria-live="polite" aria-label="Deleting review">
-              <span className="log-spinner" />
-            </div>
-          ) : null}
         </DrawerContent>
       </Drawer>
 
-      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent className="review-delete-confirm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete review?</AlertDialogTitle>
-            <AlertDialogDescription>This review will be deleted permanently and cannot be restored.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={drawerDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="review-delete-confirm-action"
-              disabled={drawerDeleting}
-              onClick={() => {
-                setDeleteConfirmOpen(false);
-                void deleteReview();
-              }}
-            >
-              Delete review
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ReviewDeletionSequence open={deleteSequenceOpen} onOpenChange={setDeleteSequenceOpen} onDelete={deleteReview} />
 
       {dialogOpen ? (
         <div className={`modal-backdrop movie-modal-backdrop${dialogState === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => {
