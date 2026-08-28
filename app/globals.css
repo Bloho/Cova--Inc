@@ -970,20 +970,17 @@ html:not(.dark) .cova-account-signout:focus-visible {
   display: grid;
   place-items: center;
   padding: clamp(18px, 4vw, 64px);
-  background: #1b1b1b;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(3px);
 }
 
 .onboarding-demo {
-  display: grid;
-  min-height: 100dvh;
-  place-items: center;
-  padding: clamp(18px, 4vw, 64px);
-  background: #1b1b1b;
+  position: fixed;
 }
 
 .onboarding-panel {
   display: grid;
-  width: min(455px, calc(100vw - 32px));
+  width: min(592px, calc(100vw - 32px));
   aspect-ratio: 455 / 275;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   overflow: hidden;
@@ -1014,7 +1011,7 @@ html:not(.dark) .cova-account-signout:focus-visible {
 .onboarding-content {
   display: grid;
   min-width: 0;
-  padding: 24px;
+  padding: 31px;
   place-items: center;
 }
 
@@ -1028,30 +1025,30 @@ html:not(.dark) .cova-account-signout:focus-visible {
 }
 
 .onboarding-logo {
-  width: min(100%, 220px);
+  width: min(100%, 286px);
   height: auto;
   margin-bottom: auto;
   opacity: 0.13;
 }
 
 .onboarding-description {
-  margin: 16px 0;
+  margin: 21px 0;
   color: #a8a8a8;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.24;
 }
 
 .onboarding-primary {
   width: 100%;
-  min-height: 28px;
+  min-height: 36px;
   margin-top: auto;
   color: #000;
   background: #fff;
   border: 0;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   transition: transform 180ms ease, background 180ms ease, opacity 180ms ease;
 }
@@ -1073,18 +1070,18 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 .onboarding-setup h1,
 .onboarding-complete h1 {
-  margin: 0 0 18px;
+  margin: 0 0 23px;
   color: #f5f5f5;
-  font-size: 25px;
+  font-size: 33px;
   font-weight: 600;
   line-height: 0.95;
   text-align: center;
 }
 
 .onboarding-avatar-placeholder {
-  width: 46px;
+  width: 60px;
   aspect-ratio: 1;
-  margin-bottom: 16px;
+  margin-bottom: 21px;
   border-radius: 50%;
   background: #202020;
 }
@@ -1101,15 +1098,15 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 .onboarding-fields input {
   width: 100%;
-  min-height: 28px;
-  margin-bottom: 7px;
-  padding: 0 13px;
+  min-height: 36px;
+  margin-bottom: 9px;
+  padding: 0 17px;
   color: #f6f6f6;
   background: #171717;
   border: 1px solid transparent;
   border-radius: 7px;
   outline: none;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   transition: border-color 180ms ease, background 180ms ease;
 }
@@ -1126,9 +1123,9 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 .onboarding-handle-status {
   min-height: 1.45em;
-  margin: 0;
+  margin: 0 0 9px;
   color: #8c8c8c;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 600;
   text-align: right;
 }
@@ -1143,9 +1140,9 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 .onboarding-complete p {
   max-width: 100%;
-  margin: auto 0 18px;
+  margin: auto 0 23px;
   color: #fff;
-  font-size: 15px;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1.05;
   text-align: left;
@@ -1169,7 +1166,7 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 @media (max-width: 800px) {
   .onboarding-panel {
-    width: min(455px, calc(100vw - 24px));
+    width: min(592px, calc(100vw - 24px));
     border-radius: 20px;
   }
 

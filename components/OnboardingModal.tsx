@@ -133,7 +133,7 @@ export function OnboardingModal({
   const slide = `/assets/slide-${step}.png`;
 
   return (
-    <div className={demo ? "onboarding-demo" : "onboarding-backdrop"} role="dialog" aria-modal="true" aria-label="Set up your Cova profile">
+    <div className={`onboarding-backdrop${demo ? " onboarding-demo" : ""}`} role="dialog" aria-modal="true" aria-label="Set up your Cova profile">
       <section className={`onboarding-panel onboarding-step-${step}`}>
         <div className="onboarding-art" aria-hidden="true">
           <Image key={slide} src={slide} alt="" fill sizes="(max-width: 800px) 100vw, 50vw" priority className="onboarding-art-image" />
