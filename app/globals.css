@@ -3079,6 +3079,10 @@ html:not(.dark) .movie-card-close {
   height: 1rem;
 }
 
+.skeleton-profile-avatar {
+  border-radius: 999px;
+}
+
 .skeleton-profile-stat-number {
   width: 62px;
   height: clamp(2.1rem, 3.8vw, 2.56rem);
@@ -3088,7 +3092,7 @@ html:not(.dark) .movie-card-close {
 .skeleton-profile-stat-label {
   width: 42px;
   height: 1rem;
-  margin: 0 auto;
+  margin: 6px auto 0;
 }
 
 .skeleton-profile-reviews-heading {

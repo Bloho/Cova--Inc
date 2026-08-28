@@ -86,12 +86,7 @@ export function ProfilePageSkeleton() {
       <main className="profile-main">
         <section className="profile-page-hero" aria-label="Loading profile">
           <div className="profile-page-identity">
-            <Skeleton className="profile-page-avatar" />
-
-            <div className="profile-page-details" aria-hidden>
-              <Skeleton className="skeleton-profile-name" />
-              <Skeleton className="skeleton-profile-handle" />
-            </div>
+            <SkeletonAvatar />
           </div>
 
           <div className="profile-page-actions" aria-label="Loading profile stats">
@@ -129,6 +124,18 @@ export function ProfilePageSkeleton() {
         <Skeleton className="skeleton-footer-copy" />
         <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
       </footer>
+    </div>
+  );
+}
+
+export function SkeletonAvatar() {
+  return (
+    <div className="flex w-fit items-center gap-4" aria-hidden>
+      <Skeleton className="size-10 shrink-0 rounded-full skeleton-profile-avatar" />
+      <div className="grid gap-2">
+        <Skeleton className="h-4 w-[150px]" />
+        <Skeleton className="h-4 w-[100px]" />
+      </div>
     </div>
   );
 }
