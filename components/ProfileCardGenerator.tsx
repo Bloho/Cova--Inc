@@ -159,7 +159,12 @@ export function ProfileCardGenerator({ username, filmsCount, label = "Get your c
 async function renderProfileCard({ username, filmsCount }: { username: string; filmsCount: number }) {
   const variantIndex = Math.floor(Math.random() * PROFILE_VARIANT_COUNT) + 1;
   const variantSrc = `/profile-card-variants/${encodeURIComponent(`Frame ${variantIndex}.svg`)}`;
-  const [background, logo] = await Promise.all([loadImage(variantSrc), loadImage("/assets/Cova-logo-white.svg")]);
+  const [background, moviesMark, logo] = await Promise.all([
+    loadImage(variantSrc),
+    loadImage("/utilities/MOVIES.svg"),
+    loadImage("/assets/Cova-logo-white.svg"),
+    loadCardNumberFont()
+  ]);
 
   const canvas = document.createElement("canvas");
   canvas.width = CARD_WIDTH;
@@ -171,30 +176,29 @@ async function renderProfileCard({ username, filmsCount }: { username: string; f
   }
 
   ctx.drawImage(background, 0, 0, CARD_WIDTH, CARD_HEIGHT);
-  ctx.drawImage(logo, 295, 16, 118, 41);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
-  ctx.font = '700 28px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText(getCinephileTier(filmsCount), CARD_WIDTH / 2, 170);
+  ctx.font = '700 37px "PP Neue Montreal", Arial, sans-serif';
+  ctx.fillText(getCinephileRank(filmsCount), CARD_WIDTH / 2, 91);
 
-  ctx.fillStyle = "#9066ff";
-  ctx.font = '700 104px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText(String(filmsCount), CARD_WIDTH / 2, 352);
+  ctx.fillStyle = "#000000";
+  ctx.font = '900 164px "Cova Card Number", Impact, sans-serif';
+  ctx.fillText(String(filmsCount), CARD_WIDTH / 2, 342);
 
-  ctx.font = '700 30px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText("Films", CARD_WIDTH / 2, 402);
+  const moviesMarkWidth = 153;
+  const moviesMarkHeight = 30;
+  ctx.drawImage(moviesMark, (CARD_WIDTH - moviesMarkWidth) / 2, 382, moviesMarkWidth, moviesMarkHeight);
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
-  ctx.font = '600 21px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText(new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date()), CARD_WIDTH / 2, 438);
+  ctx.font = '700 31px "PP Neue Montreal", Arial, sans-serif';
+  ctx.fillText(`cova.lol/${username}`, CARD_WIDTH / 2, 526);
 
-  ctx.textAlign = "left";
-  ctx.fillStyle = "#ff6048";
-  ctx.font = '700 34px "SF Pro Display", Arial, sans-serif';
-  ctx.fillText(`cova.lol/${username}`, 35, 637, 375);
+  ctx.save();
+  ctx.filter = "invert(1)";
+  ctx.drawImage(logo, 140, 582, 165, 80);
+  ctx.restore();
 
   return canvas.toDataURL("image/png");
 }
@@ -212,22 +216,47 @@ function holdLoadingFrame() {
   return new Promise((resolve) => window.setTimeout(resolve, 850));
 }
 
-function getCinephileTier(filmsCount: number) {
-  if (filmsCount >= 500) {
-    return "Top 0.01% Cinephile";
+let cardNumberFont: Promise<void> | null = null;
+
+function loadCardNumberFont() {
+  if (!cardNumberFont) {
+    cardNumberFont = fetch("/fonts/Card-number.ttf")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Could not load the card number font.");
+        }
+
+        return response.arrayBuffer();
+      })
+      .then((data) => new FontFace("Cova Card Number", data).load())
+      .then((font) => {
+        document.fonts.add(font);
+      });
   }
 
-  if (filmsCount >= 250) {
-    return "Top 1% Cinephile";
+  return cardNumberFont;
+}
+
+function getCinephileRank(filmsCount: number) {
+  if (filmsCount >= 1000) {
+    return "Top 0.001%";
   }
 
   if (filmsCount >= 100) {
-    return "Top 5% Cinephile";
+    return "Top 0.01%";
+  }
+
+  if (filmsCount >= 50) {
+    return "Top 0.1%";
   }
 
   if (filmsCount >= 25) {
-    return "Top 15% Cinephile";
+    return "Top 1%";
   }
 
-  return "Cova Cinephile";
+  if (filmsCount >= 10) {
+    return "Top 5%";
+  }
+
+  return "Top 10%";
 }
