@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
@@ -326,10 +325,6 @@ export function MovieLogActions({
             <div className={`movie-review-dialog movie-review-dialog-${dialogState}`}>
               {dialogState === "review" ? (
                 <>
-                  <button className="text-button log-back movie-dialog-back" onClick={closeDialog} type="button">
-                    <ArrowLeft size={18} />
-                    Back
-                  </button>
                   <div className="movie-review-head">
                     <img src={posterUrl(movie.posterPath, "w185")} alt={`${movie.title} poster`} />
                     <div>

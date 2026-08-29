@@ -2470,12 +2470,6 @@ html:not(.dark) .cova-account-signout:focus-visible {
   min-height: 330px;
 }
 
-.movie-dialog-back {
-  position: absolute;
-  top: 54px;
-  left: 58px;
-}
-
 .movie-review-head {
   display: grid;
   grid-template-columns: 170px minmax(0, 1fr);
@@ -2494,8 +2488,10 @@ html:not(.dark) .cova-account-signout:focus-visible {
   display: block;
   margin-top: 8px;
   color: #f4f4f4;
+  font-family: "PP Nikkei Journal", Georgia, serif;
   font-size: 1.75rem;
-  font-weight: 600;
+  font-weight: 500;
+  letter-spacing: -1px;
   line-height: 1.03;
 }
 
@@ -2520,7 +2516,19 @@ html:not(.dark) .cova-account-signout:focus-visible {
   padding: 22px 26px 42px;
   overflow-y: auto;
   border-radius: 18px;
+  font-family: "PP Neue Montreal", Arial, sans-serif;
   font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.movie-review-box textarea::placeholder {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 600;
+}
+
+.movie-review-dialog .log-complete-button {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+  font-weight: 700;
 }
 
 .movie-review-box .review-limit {
@@ -3834,6 +3842,7 @@ html:not(.dark) .movie-card-close {
 
 .get-cova-pro-button {
   display: flex;
+  flex: none;
   width: 230px;
   height: 64px;
   align-items: center;
@@ -5438,6 +5447,7 @@ html:not(.dark) .review-drawer-delete {
   }
 
   .movie-page-nav {
+    flex-wrap: wrap;
     gap: 8px;
   }
 

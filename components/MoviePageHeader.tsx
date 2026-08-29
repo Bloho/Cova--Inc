@@ -57,6 +57,8 @@ export function MoviePageHeader({
             <img className="movie-page-brand-static" src="/assets/Cova-logo-white.svg" alt="Cova" />
           )}
         </Link>
+      </div>
+      <nav className="movie-page-nav" aria-label="Movie page navigation">
         {!hasCovaPro ? (
           <Link className="get-cova-pro-button" href="/billing" aria-label="Get Cova Pro">
             <video autoPlay className="get-cova-pro-video" loop muted playsInline preload="auto" aria-hidden>
@@ -64,8 +66,6 @@ export function MoviePageHeader({
             </video>
           </Link>
         ) : null}
-      </div>
-      <nav className="movie-page-nav" aria-label="Movie page navigation">
         {!hidePrimaryActions ? (
           <>
             <Button className="movie-log-button" onClick={() => setLogOpen(true)} type="button">
