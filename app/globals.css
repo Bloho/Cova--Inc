@@ -3834,8 +3834,8 @@ html:not(.dark) .movie-card-close {
 
 .get-cova-pro-button {
   display: flex;
-  width: 150px;
-  height: 42px;
+  width: 230px;
+  height: 64px;
   align-items: center;
   justify-content: center;
   overflow: hidden;
@@ -5433,8 +5433,8 @@ html:not(.dark) .review-drawer-delete {
   }
 
   .get-cova-pro-button {
-    width: 112px;
-    height: 33px;
+    width: 158px;
+    height: 46px;
   }
 
   .movie-page-nav {
