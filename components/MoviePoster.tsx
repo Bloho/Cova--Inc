@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
+import { Rating } from "@/components/ui/rating";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type TooltipVariant = "home" | "profile";
@@ -60,17 +61,7 @@ function ProfileFilmTooltip({ movie }: { movie: Movie }) {
   return (
     <div className="profile-film-tooltip-content">
       <p>{review ? `“${review}”` : movie.title}</p>
-      <div className="profile-film-tooltip-stars" aria-label={`${rating} out of 5 stars`}>
-        {Array.from({ length: 5 }, (_, index) => {
-          const fill = Math.max(0, Math.min(1, rating - index)) * 100;
-          return (
-            <span className="profile-film-tooltip-star" key={index} aria-hidden>
-              <span>★</span>
-              <span className="profile-film-tooltip-star-fill" style={{ width: `${fill}%` }}>★</span>
-            </span>
-          );
-        })}
-      </div>
+      <Rating className="profile-film-tooltip-stars" precision={0.5} size={25} value={rating} aria-label={`${rating} out of 5 stars`} />
     </div>
   );
 }

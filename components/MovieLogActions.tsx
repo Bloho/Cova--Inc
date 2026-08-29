@@ -8,6 +8,7 @@ import { ReviewDeletionSequence } from "@/components/ReviewDeletionSequence";
 import { RatingInput } from "@/components/RatingInput";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Rating } from "@/components/ui/rating";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { normalizeRating } from "@/lib/ratings";
@@ -270,18 +271,7 @@ export function MovieLogActions({
           </DrawerHeader>
           <div className="review-drawer-body">
             <p>{existingReview?.body}</p>
-            <div className="review-drawer-stars" aria-label={`Your rating ${drawerRating.toFixed(1)} out of 5`}>
-              {Array.from({ length: 5 }, (_, index) => {
-                const fill = Math.min(100, Math.max(0, (drawerRating - index) * 100));
-
-                return (
-                  <span className="review-drawer-star" key={index}>
-                    <span className="review-drawer-star-fill" style={{ width: `${fill}%` }}>★</span>
-                    ★
-                  </span>
-                );
-              })}
-            </div>
+            <Rating className="review-drawer-stars" precision={0.5} size={48} value={drawerRating} aria-label="Your rating" />
           </div>
           <div className="review-drawer-footer">
             <button className="review-drawer-close" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
