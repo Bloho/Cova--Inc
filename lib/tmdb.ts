@@ -24,12 +24,13 @@ const TMDB_URL = "https://api.themoviedb.org/3";
 const TMDB_REQUEST_TIMEOUT_MS = 8_000;
 
 export async function getHomeMovies() {
-  const trending = await getCachedTmdbList("/trending/movie/day");
-  const hasKey = Boolean(process.env.TMDB_API_KEY);
+  // Do not cache an empty network failure as a home-page result. A later request
+  // can recover as soon as TMDB is reachable again.
+  const trending = await fetchTmdbList("/trending/movie/day");
 
   return {
-    trending: hasKey && trending.length ? trending.slice(0, 5) : seedMovies.slice(0, 5),
-    isLive: hasKey
+    trending: trending.slice(0, 5),
+    isLive: trending.length > 0
   };
 }
 

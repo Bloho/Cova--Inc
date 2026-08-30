@@ -903,6 +903,14 @@ html:not(.dark) .cova-account-signout:focus-visible {
   margin-top: 16px;
 }
 
+.home-movies-unavailable {
+  width: 100%;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .poster-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1358,8 +1366,40 @@ html:not(.dark) .cova-account-signout:focus-visible {
 
 .search-dialog {
   width: min(600px, calc(100vw - 36px));
-  min-height: min(560px, calc(100vh - 40px));
+  height: min(690px, calc(100dvh - 40px));
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  font-family: "PP Neue Montreal", Arial, sans-serif;
   transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.search-dialog .dialog-head strong,
+.search-dialog .log-search-input,
+.search-dialog .log-result,
+.search-dialog .empty-state {
+  font-family: "PP Neue Montreal", Arial, sans-serif;
+}
+
+.search-dialog .log-stage-shell {
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.search-dialog .log-stage-results {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.search-dialog .log-stage-results::-webkit-scrollbar {
+  width: 7px;
+}
+
+.search-dialog .log-stage-results::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
 }
 
 .search-dialog-routing {
@@ -1564,6 +1604,40 @@ html:not(.dark) .cova-account-signout:focus-visible {
   grid-template-columns: 1fr;
   gap: 46px;
   margin-top: 26px;
+}
+
+.search-results {
+  width: min(410px, 100%);
+  gap: 8px;
+  margin: 0 auto;
+  padding: 2px 8px 18px;
+}
+
+.search-dialog .log-result {
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 13px;
+  min-height: 66px;
+  padding: 7px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+
+.search-dialog .log-result:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(0);
+}
+
+.search-dialog .log-result img,
+.search-result-poster-skeleton {
+  width: 44px;
+  height: 52px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.search-result-poster-skeleton {
+  display: block;
 }
 
 .log-result {

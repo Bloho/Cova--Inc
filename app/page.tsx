@@ -19,7 +19,7 @@ export default async function Home({
     redirect(`/auth/callback?code=${encodeURIComponent(params.code)}&next=/`);
   }
 
-  const { trending } = await getHomeMovies();
+  const { trending, isLive } = await getHomeMovies();
   const { user, profile } = await getCurrentUserProfile();
   const hasCovaPro = user ? await hasActiveCovaMembership(user.id).catch(() => false) : false;
   const states = await getUserMovieStates(trending.map((movie) => movie.tmdbId), user?.id);
@@ -50,9 +50,15 @@ export default async function Home({
 
         <section className="shell section" aria-label="Popular films on Cova">
           <div className="poster-row">
-            {trendingWithState.map((movie) => (
-              <MoviePoster key={movie.tmdbId} movie={movie} isSignedIn={Boolean(user)} showYear={false} showTooltip />
-            ))}
+            {trendingWithState.length ? (
+              trendingWithState.map((movie) => (
+                <MoviePoster key={movie.tmdbId} movie={movie} isSignedIn={Boolean(user)} showYear={false} showTooltip />
+              ))
+            ) : (
+              <p className="home-movies-unavailable" role="status">
+                {isLive ? "No films are available right now." : "Movies are temporarily unavailable. Please try again shortly."}
+              </p>
+            )}
           </div>
         </section>
 

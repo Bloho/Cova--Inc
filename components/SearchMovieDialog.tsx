@@ -3,7 +3,7 @@
 import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import type { Movie } from "@/lib/data";
+import { posterUrl, type Movie } from "@/lib/data";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type SearchStatus = "idle" | "closing" | "routing";
@@ -109,10 +109,11 @@ export function SearchMovieDialog({
             </button>
           </form>
           <div className="log-stage log-stage-results">
-            <div className="log-results">
+            <div className="log-results search-results">
               {busy && query.trim()
                 ? Array.from({ length: 4 }).map((_, index) => (
                     <div className="log-result skeleton-log-result" key={index}>
+                      <Skeleton className="search-result-poster-skeleton" />
                       <span>
                         <Skeleton className="skeleton-line medium" />
                         <Skeleton className="skeleton-line short" />
@@ -121,6 +122,7 @@ export function SearchMovieDialog({
                   ))
                 : movies.map((movie) => (
                     <button key={movie.tmdbId} className="log-result" onClick={() => openMovie(movie)} type="button">
+                      <img src={posterUrl(movie.posterPath, "w92")} alt="" />
                       <span>
                         <strong>{movie.title}</strong>
                         <small>{movie.releaseYear}</small>
