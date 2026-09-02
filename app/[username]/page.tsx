@@ -4,6 +4,7 @@ import { ArrowLeft, CalendarDays } from "lucide-react";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileContent, type ProfileTab } from "@/components/ProfileContent";
 import { ProfileEditor } from "@/components/ProfileEditor";
+import { ProfileSidebar } from "@/components/ProfileSidebar";
 import type { Movie } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { PROFILE_MOVIE_PAGE_SIZE, toProfileMovies } from "@/lib/profile-movies";
@@ -99,11 +100,7 @@ export default async function ProfilePage({
   return (
     <div className="profile-page profile-dashboard-page">
       <div className="profile-dashboard">
-        <aside className="profile-rail" aria-label="Profile navigation">
-          <Link className="profile-rail-logo" href="/" aria-label="Cova home">
-            <img src="/assets/Cova-logo-white.svg" alt="Cova" />
-          </Link>
-        </aside>
+        <ProfileSidebar isSignedIn={Boolean(viewer)} />
 
         <main className="profile-dashboard-main">
           <header className="profile-sticky-bar">

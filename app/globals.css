@@ -5114,18 +5114,31 @@ html:not(.dark) .movie-card-close {
   position: sticky;
   top: 0;
   display: flex;
+  flex-direction: column;
   height: 100dvh;
   align-self: start;
-  justify-content: flex-start;
-  padding: 0 20px;
+  justify-content: space-between;
+  padding: 15px 18px 18px;
   border-right: 1px solid #272727;
   background: #000000;
 }
 
+.profile-rail-top {
+  display: grid;
+  gap: 30px;
+}
+
+.profile-rail-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .profile-rail-logo {
   display: flex;
-  width: 64px;
-  height: 62px;
+  width: 138px;
+  height: 50px;
   align-items: center;
 }
 
@@ -5133,6 +5146,67 @@ html:not(.dark) .movie-card-close {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.profile-dashboard-page .profile-rail-log-button {
+  width: 65px;
+  height: 40px;
+  flex: none;
+  padding: 0;
+  border: 1px solid #0048ff;
+  border-radius: 8px;
+  background: #0071ff;
+  box-shadow: none;
+}
+
+.profile-dashboard-page .profile-rail-log-button:hover {
+  background: #0067e6;
+}
+
+.profile-rail-log-button img {
+  display: block;
+  width: 36px;
+  height: auto;
+}
+
+.profile-dashboard-page .profile-rail-search-button {
+  display: flex;
+  width: 246px;
+  height: 40px;
+  justify-content: flex-start;
+  gap: 10px;
+  padding-inline: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid #222222;
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.profile-rail-search-button:hover {
+  color: #f7f7f7;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.profile-rail-search-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.profile-dashboard-page .profile-rail-theme-button {
+  width: 40px;
+  height: 40px;
+  color: #f7f7f7;
+  border-color: #222222;
+  border-radius: 10px;
+  background: transparent;
+}
+
+.profile-rail-theme-button svg {
+  width: 18px;
+  height: 18px;
 }
 
 .profile-dashboard-main {
@@ -5565,16 +5639,65 @@ html:not(.dark) .movie-card-close {
     position: relative;
     display: flex;
     width: 100%;
-    height: 58px;
-    justify-content: flex-start;
-    padding: 0 20px;
+    height: 64px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 16px;
     border-right: 0;
     border-bottom: 1px solid #272727;
   }
 
+  .profile-rail-top {
+    display: contents;
+  }
+
+  .profile-rail-actions {
+    flex: 1;
+  }
+
   .profile-rail-logo {
-    width: 60px;
-    height: 58px;
+    width: 92px;
+    height: 48px;
+  }
+
+  .profile-dashboard-page .profile-rail-log-button {
+    width: 65px;
+    height: 40px;
+    border-radius: 8px;
+  }
+
+  .profile-rail-log-button img {
+    width: 36px;
+  }
+
+  .profile-dashboard-page .profile-rail-search-button {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    justify-content: center;
+    padding: 0;
+    border-radius: 10px;
+  }
+
+  .profile-rail-search-button span {
+    display: none;
+  }
+
+  .profile-rail-search-button svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .profile-dashboard-page .profile-rail-theme-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-rail-theme-button svg {
+    width: 19px;
+    height: 19px;
   }
 
   .profile-dashboard-main {
@@ -6737,153 +6860,6 @@ html:not(.dark) .movie-review-action {
 
 .movie-page-footer a:hover {
   color: var(--movie-page-text);
-}
-
-/* The app shell becomes a fixed left rail on larger screens. The page grid
-   stays intact in the remaining canvas, which keeps film and profile views stable. */
-.movie-page-sidebar-brand {
-  display: none;
-}
-
-@media (min-width: 900px) {
-  .movie-page,
-  .profile-page.collection-page,
-  .profile-page.billing-page {
-    box-sizing: border-box;
-    padding-left: 320px;
-  }
-
-  .movie-page {
-    grid-template-rows: minmax(0, 1fr) auto;
-  }
-
-  .movie-page-main {
-    grid-row: 1;
-  }
-
-  .movie-page-footer {
-    grid-row: 2;
-  }
-
-  .movie-page-header,
-  .profile-page .movie-page-header,
-  .home-page .movie-page-header {
-    position: fixed;
-    inset: 0 auto 0 0;
-    z-index: 30;
-    display: block;
-    width: 320px;
-    min-height: 0;
-    height: 100dvh;
-    margin: 0;
-    padding: 22px 18px 14px;
-    border: 0;
-    border-right: 1px solid #151515;
-    background: #000000;
-  }
-
-  .movie-page-brand-group {
-    display: flex;
-    height: 48px;
-    align-items: center;
-  }
-
-  .movie-page-brand-video,
-  .movie-page-brand-static {
-    display: none;
-  }
-
-  .movie-page-sidebar-brand {
-    display: block;
-    width: 140px;
-    height: 38px;
-    object-fit: contain;
-  }
-
-  .movie-page-nav {
-    display: contents;
-  }
-
-  .movie-log-button {
-    position: absolute;
-    top: 15px;
-    right: 18px;
-    width: 94px;
-    height: 50px;
-    border-radius: 13px;
-  }
-
-  .movie-log-button img {
-    width: 50px;
-  }
-
-  .movie-search-button {
-    position: absolute;
-    top: 100px;
-    right: 18px;
-    left: 18px;
-    width: auto;
-    height: 54px;
-    justify-content: flex-start;
-    gap: 14px;
-    padding-inline: 16px;
-    color: #d9d9d9;
-    border-color: #343434;
-    border-radius: 14px;
-    background: #050505;
-    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.04);
-    font-size: 18px;
-    font-weight: 600;
-  }
-
-  .movie-search-button svg {
-    width: 23px;
-    height: 23px;
-  }
-
-  .get-cova-pro-button {
-    display: none;
-  }
-
-  .movie-theme-button {
-    position: absolute;
-    bottom: 18px;
-    left: 20px;
-    width: 52px;
-    height: 52px;
-    color: #c7c7c7;
-    border-color: #303030;
-    border-radius: 10px;
-    background: #080808;
-  }
-
-  .movie-theme-button svg {
-    width: 23px;
-    height: 23px;
-  }
-
-  .movie-avatar-button,
-  .movie-page-avatar-trigger {
-    display: none;
-  }
-
-  .movie-page-header[data-signed-in="true"] .movie-page-avatar-trigger {
-    position: absolute;
-    right: 18px;
-    bottom: 18px;
-    display: grid;
-  }
-
-  .home-page {
-    width: calc(100% - 320px);
-    margin-right: 0;
-    margin-left: 320px;
-    border-left: 0;
-  }
-
-  .home-page .site-main {
-    height: calc(100dvh - 76px);
-  }
 }
 
 /* Official shadcn Drawer slots, scoped to the saved-review panel. */
