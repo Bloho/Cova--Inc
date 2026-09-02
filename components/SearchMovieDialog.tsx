@@ -2,7 +2,7 @@
 
 import { Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { posterUrl, type Movie } from "@/lib/data";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -21,28 +21,88 @@ export function SearchMovieDialog({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<SearchStatus>("idle");
+  const [resultsQuery, setResultsQuery] = useState("");
+  const debounceTimerRef = useRef<number | null>(null);
+  const searchControllerRef = useRef<AbortController | null>(null);
+  const searchRequestRef = useRef(0);
 
-  if (!open) {
-    return null;
-  }
+  const searchMovies = useCallback(async (searchTerm: string) => {
+    const trimmedQuery = searchTerm.trim();
 
-  async function search(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage("");
-
-    if (!query.trim()) {
+    if (!trimmedQuery) {
+      searchControllerRef.current?.abort();
+      searchRequestRef.current += 1;
       setMovies([]);
+      setResultsQuery("");
+      setBusy(false);
       return;
     }
 
+    searchControllerRef.current?.abort();
+    const controller = new AbortController();
+    const requestId = searchRequestRef.current + 1;
+    searchRequestRef.current = requestId;
+    searchControllerRef.current = controller;
+
     setBusy(true);
-    const response = await fetch(`/api/tmdb/search?q=${encodeURIComponent(query.trim())}`).catch(() => null);
-    const data = response?.ok ? ((await response.json()) as { results: Movie[] }) : { results: [] };
-    setMovies(data.results ?? []);
-    setBusy(false);
-    if (!response?.ok) {
+    setMessage("");
+
+    try {
+      const response = await fetch(`/api/tmdb/search?q=${encodeURIComponent(trimmedQuery)}`, { signal: controller.signal });
+      const data = response.ok ? ((await response.json()) as { results: Movie[] }) : { results: [] };
+
+      if (controller.signal.aborted || requestId !== searchRequestRef.current) return;
+
+      setMovies(data.results ?? []);
+      setResultsQuery(trimmedQuery);
+      if (!response.ok) {
+        setMessage("Could not search movies right now.");
+      }
+    } catch {
+      if (controller.signal.aborted || requestId !== searchRequestRef.current) return;
+
+      setMovies([]);
+      setResultsQuery(trimmedQuery);
       setMessage("Could not search movies right now.");
+    } finally {
+      if (requestId === searchRequestRef.current) {
+        setBusy(false);
+      }
     }
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
+      void searchMovies("");
+      return;
+    }
+
+    debounceTimerRef.current = window.setTimeout(() => {
+      void searchMovies(trimmedQuery);
+    }, 350);
+
+    return () => {
+      if (debounceTimerRef.current !== null) {
+        window.clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [open, query, searchMovies]);
+
+  useEffect(() => () => {
+    searchControllerRef.current?.abort();
+  }, []);
+
+  function search(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (debounceTimerRef.current !== null) {
+      window.clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+    void searchMovies(query);
   }
 
   function closeDialog() {
@@ -51,9 +111,16 @@ export function SearchMovieDialog({
     }
 
     setStatus("closing");
+    searchControllerRef.current?.abort();
+    searchRequestRef.current += 1;
+    if (debounceTimerRef.current !== null) {
+      window.clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
     window.setTimeout(() => {
       setQuery("");
       setMovies([]);
+      setResultsQuery("");
       setMessage("");
       setStatus("idle");
       onClose();
@@ -68,6 +135,10 @@ export function SearchMovieDialog({
       onClose();
       setStatus("idle");
     }, 160);
+  }
+
+  if (!open) {
+    return null;
   }
 
   return (
@@ -97,9 +168,6 @@ export function SearchMovieDialog({
               onChange={(event) => {
                 setQuery(event.target.value);
                 setMessage("");
-                if (!event.target.value.trim()) {
-                  setMovies([]);
-                }
               }}
               placeholder="Search your film here..."
               autoFocus
@@ -120,7 +188,7 @@ export function SearchMovieDialog({
                       </span>
                     </div>
                   ))
-                : movies.map((movie) => (
+                : resultsQuery === query.trim() ? movies.map((movie) => (
                     <button key={movie.tmdbId} className="log-result" onClick={() => openMovie(movie)} type="button">
                       <img src={posterUrl(movie.posterPath, "w92")} alt="" />
                       <span>
@@ -128,8 +196,8 @@ export function SearchMovieDialog({
                         <small>{movie.releaseYear}</small>
                       </span>
                     </button>
-                  ))}
-              {!busy && query.trim() && movies.length === 0 ? (
+                  )) : null}
+              {!busy && query.trim() && resultsQuery === query.trim() && movies.length === 0 ? (
                 <div className="search-empty-state" role="status">
                   <img src="/assets/error.png" alt="" />
                   <p>We couldnt find anything</p>
