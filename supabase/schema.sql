@@ -395,7 +395,7 @@ grant usage, select on sequence public.custom_movie_id_seq to service_role;
 insert into public.admin_roles (user_id, granted_by)
 select users.id, users.id
 from auth.users as users
-where lower(users.email) = 'ayush.lowkey@gmail.com'
+where lower(users.email) in ('ayush.lowkey@gmail.com', 'ayushsamanta904@gmail.com')
 on conflict (user_id) do nothing;
 
 notify pgrst, 'reload schema';

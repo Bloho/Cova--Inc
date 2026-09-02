@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ADMIN_OWNER_EMAIL, AdminAccessError, assertSameOrigin, requireAdmin } from "@/lib/admin";
+import { AdminAccessError, assertSameOrigin, isAdminOwnerEmail, requireAdmin } from "@/lib/admin";
 
 export const runtime = "nodejs";
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Account not found." }, { status: 404 });
     }
 
-    if (target.user.email?.trim().toLowerCase() === ADMIN_OWNER_EMAIL) {
+    if (isAdminOwnerEmail(target.user.email)) {
       return NextResponse.json({ error: "The founder administrator cannot be changed." }, { status: 400 });
     }
 

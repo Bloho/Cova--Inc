@@ -2,7 +2,15 @@ import type { User } from "@supabase/supabase-js";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const ADMIN_OWNER_EMAIL = "ayush.lowkey@gmail.com";
+export const ADMIN_OWNER_EMAILS = [
+  "ayush.lowkey@gmail.com",
+  "ayushsamanta904@gmail.com"
+] as const;
+
+export function isAdminOwnerEmail(email: string | null | undefined) {
+  const normalizedEmail = email?.trim().toLowerCase();
+  return Boolean(normalizedEmail && (ADMIN_OWNER_EMAILS as readonly string[]).includes(normalizedEmail));
+}
 
 export type AdminContext = {
   admin: ReturnType<typeof createSupabaseAdminClient>;
@@ -37,7 +45,7 @@ export async function requireAdmin(options: { founderOnly?: boolean } = {}): Pro
     throw new AdminAccessError("The admin service is not configured.", 503);
   }
 
-  const isFounder = user.email?.trim().toLowerCase() === ADMIN_OWNER_EMAIL;
+  const isFounder = isAdminOwnerEmail(user.email);
   if (options.founderOnly && !isFounder) {
     throw new AdminAccessError("Only the Cova founder can manage administrators.", 403, user.email);
   }

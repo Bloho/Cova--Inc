@@ -1,5 +1,5 @@
 import type { AdminContext } from "@/lib/admin";
-import { ADMIN_OWNER_EMAIL } from "@/lib/admin";
+import { isAdminOwnerEmail } from "@/lib/admin";
 
 export type AdminCatalogMovie = {
   id: number;
@@ -80,7 +80,7 @@ export async function getAdminDashboardData({ admin, user }: AdminContext): Prom
     .map((authUser) => {
       const profile = profilesById.get(authUser.id);
       const email = authUser.email ?? "Unknown email";
-      const isFounder = email.trim().toLowerCase() === ADMIN_OWNER_EMAIL;
+      const isFounder = isAdminOwnerEmail(email);
 
       return {
         id: authUser.id,
