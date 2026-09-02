@@ -6,6 +6,7 @@ import { ProfileContent, type ProfileTab } from "@/components/ProfileContent";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import type { Movie } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
+import { PROFILE_MOVIE_PAGE_SIZE, toProfileMovies } from "@/lib/profile-movies";
 import { PROFILE_REVIEW_PAGE_SIZE, toProfileReviewItem } from "@/lib/profile-reviews";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getHomeMovies } from "@/lib/tmdb";
@@ -43,6 +44,7 @@ export default async function ProfilePage({
     { count: filmsCount },
     { count: reviewsCount },
     { data: reviews },
+    { data: watchedRows },
     { data: favouriteRows },
     { data: wishlistRows },
     { trending }
@@ -60,6 +62,13 @@ export default async function ProfilePage({
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
       .eq("user_id", profile.id)
+      .eq("status", "watched")
+      .order("watched_at", { ascending: false })
+      .limit(PROFILE_MOVIE_PAGE_SIZE + 1),
+    supabase
+      .from("user_movies")
+      .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
+      .eq("user_id", profile.id)
       .eq("liked", true)
       .order("updated_at", { ascending: false }),
     supabase
@@ -71,8 +80,10 @@ export default async function ProfilePage({
     getHomeMovies()
   ]);
 
-  const favouriteMovies = toMovies(favouriteRows ?? []);
-  const wishlistMovies = toMovies(wishlistRows ?? []);
+  const initialMovies = toProfileMovies((watchedRows ?? []).slice(0, PROFILE_MOVIE_PAGE_SIZE));
+  const initialMoviesHaveMore = (watchedRows?.length ?? 0) > PROFILE_MOVIE_PAGE_SIZE;
+  const favouriteMovies = toProfileMovies(favouriteRows ?? []);
+  const wishlistMovies = toProfileMovies(wishlistRows ?? []);
   const isOwnProfile = viewer?.id === profile.id;
   const allMovieIds = [...favouriteMovies, ...wishlistMovies].map((movie) => movie.tmdbId);
   const viewerStates = isOwnProfile ? new Map() : await getUserMovieStates([...new Set(allMovieIds)], viewer?.id);
@@ -111,11 +122,6 @@ export default async function ProfilePage({
               <img className="profile-avatar-shape" src="/profile/profile-picture.svg" alt="" />
               {profile.avatar_url ? <img className="profile-avatar-photo" src={profile.avatar_url} alt={`${profile.display_name}'s profile`} /> : null}
             </div>
-            {isOwnProfile ? (
-              <div className="profile-card-corner">
-                <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} label="CARD" />
-              </div>
-            ) : null}
           </section>
 
           <section className="profile-overview">
@@ -128,6 +134,12 @@ export default async function ProfilePage({
               <p>@{profile.username}</p>
             </div>
 
+            {isOwnProfile ? (
+              <div className="profile-card-corner">
+                <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} label="CARD" />
+              </div>
+            ) : null}
+
             <div className="profile-facts" aria-label="Profile details">
               <span><strong>{filmsCount ?? 0}</strong> movies</span>
               <span><CalendarDays size={18} aria-hidden /> Joined {formatJoinedDate(profile.created_at)}</span>
@@ -137,6 +149,8 @@ export default async function ProfilePage({
           <ProfileContent
             displayName={profile.display_name}
             favouriteMovies={favouriteMovies.map(decorateMovie)}
+            initialMovies={initialMovies}
+            initialMoviesHaveMore={initialMoviesHaveMore}
             initialReviews={initialReviews}
             initialReviewsHaveMore={initialReviewsHaveMore}
             initialTab={activeTab}
@@ -170,31 +184,9 @@ export default async function ProfilePage({
 }
 
 function isProfileTab(value: string | undefined): value is ProfileTab {
-  return value === "reviews" || value === "favourites" || value === "wishlist";
+  return value === "reviews" || value === "favourites" || value === "wishlist" || value === "movies";
 }
 
 function formatJoinedDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
-}
-
-function toMovies(rows: any[]): Movie[] {
-  return rows.map(fromLoggedMovie).filter(Boolean) as Movie[];
-}
-
-function fromLoggedMovie(row: any): Movie | null {
-  const movie = Array.isArray(row.movies) ? row.movies[0] : row.movies;
-  if (!movie) return null;
-
-  return {
-    tmdbId: movie.tmdb_id,
-    title: movie.title,
-    releaseYear: movie.release_date ? String(movie.release_date).slice(0, 4) : "Film",
-    rating: Math.max(0, Math.min(5, Number(row.rating ?? 0))),
-    userRating: Math.max(0, Math.min(5, Number(row.rating ?? 0))),
-    watched: row.status === "watched",
-    reviewed: false,
-    posterPath: movie.poster_path,
-    overview: movie.overview ?? "",
-    reviewCount: 0
-  };
 }

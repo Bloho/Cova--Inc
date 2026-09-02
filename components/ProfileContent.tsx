@@ -2,11 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PaginatedFilms } from "@/components/PaginatedFilms";
+import { MoviePoster } from "@/components/MoviePoster";
 import { ClassicSpinner } from "@/components/ui/classic-spinner";
 import { posterUrl, type Movie } from "@/lib/data";
+import { PROFILE_MOVIE_PAGE_SIZE } from "@/lib/profile-movies";
 import { PROFILE_REVIEW_PAGE_SIZE, type ProfileReviewItem } from "@/lib/profile-reviews";
 
-export type ProfileTab = "reviews" | "favourites" | "wishlist";
+export type ProfileTab = "reviews" | "favourites" | "wishlist" | "movies";
 
 type ProfileContentProps = {
   username: string;
@@ -15,6 +17,8 @@ type ProfileContentProps = {
   initialReviews: ProfileReviewItem[];
   initialReviewsHaveMore: boolean;
   favouriteMovies: Movie[];
+  initialMovies: Movie[];
+  initialMoviesHaveMore: boolean;
   wishlistMovies: Movie[];
   isSignedIn: boolean;
 };
@@ -26,6 +30,8 @@ export function ProfileContent({
   initialReviews,
   initialReviewsHaveMore,
   favouriteMovies,
+  initialMovies,
+  initialMoviesHaveMore,
   wishlistMovies,
   isSignedIn
 }: ProfileContentProps) {
@@ -45,7 +51,7 @@ export function ProfileContent({
   useEffect(() => {
     const handlePopState = () => {
       const tab = new URLSearchParams(window.location.search).get("tab");
-      setActiveTab(tab === "favourites" || tab === "wishlist" ? tab : "reviews");
+      setActiveTab(tab === "favourites" || tab === "wishlist" || tab === "movies" ? tab : "reviews");
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -92,6 +98,7 @@ export function ProfileContent({
         <ProfileTabButton active={activeTab === "reviews"} onClick={() => selectTab("reviews")}>Reviews</ProfileTabButton>
         <ProfileTabButton active={activeTab === "favourites"} onClick={() => selectTab("favourites")}>Favourites</ProfileTabButton>
         <ProfileTabButton active={activeTab === "wishlist"} onClick={() => selectTab("wishlist")}>Wishlist</ProfileTabButton>
+        <ProfileTabButton active={activeTab === "movies"} onClick={() => selectTab("movies")}>Movies</ProfileTabButton>
       </nav>
 
       {activeTab === "reviews" ? (
@@ -105,6 +112,13 @@ export function ProfileContent({
             </div>
           ) : null}
         </section>
+      ) : activeTab === "movies" ? (
+        <InfiniteProfileMovieGrid
+          initialHasMore={initialMoviesHaveMore}
+          initialMovies={initialMovies}
+          isSignedIn={isSignedIn}
+          username={username}
+        />
       ) : (
         <section className="profile-tab-films" aria-label={`${displayName}'s ${activeTab}`} role="tabpanel">
           <PaginatedFilms
@@ -117,6 +131,105 @@ export function ProfileContent({
         </section>
       )}
     </>
+  );
+}
+
+function InfiniteProfileMovieGrid({
+  initialHasMore,
+  initialMovies,
+  isSignedIn,
+  username
+}: {
+  initialHasMore: boolean;
+  initialMovies: Movie[];
+  isSignedIn: boolean;
+  username: string;
+}) {
+  const [movies, setMovies] = useState(initialMovies);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [isLoading, setIsLoading] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const isLoadingRef = useRef(false);
+  const movieCountRef = useRef(initialMovies.length);
+
+  const loadMore = useCallback(async () => {
+    if (isLoadingRef.current || !hasMore) return;
+
+    isLoadingRef.current = true;
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `/api/profile/${encodeURIComponent(username)}/movies?offset=${movieCountRef.current}&limit=${PROFILE_MOVIE_PAGE_SIZE}`,
+        { cache: "no-store" }
+      );
+
+      if (!response.ok) return;
+
+      const payload = await response.json() as { movies?: Movie[]; hasMore?: boolean };
+      const nextMovies = payload.movies ?? [];
+      movieCountRef.current += nextMovies.length;
+      setMovies((current) => [...current, ...nextMovies]);
+      setHasMore(Boolean(payload.hasMore));
+    } finally {
+      isLoadingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [hasMore, username]);
+
+  useEffect(() => {
+    let animationFrame: number | null = null;
+    let lastScrollY = window.scrollY;
+    let lastScrollTime = performance.now();
+
+    function onScroll() {
+      if (animationFrame !== null) return;
+
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = null;
+        const now = performance.now();
+        const currentScrollY = window.scrollY;
+        const distanceScrolled = currentScrollY - lastScrollY;
+        const elapsed = Math.max(now - lastScrollTime, 1);
+        lastScrollY = currentScrollY;
+        lastScrollTime = now;
+
+        if (distanceScrolled <= 0 || !sentinelRef.current || isLoadingRef.current || !hasMore) return;
+
+        // Faster downward motion starts the next small batch earlier, but never chains requests while idle.
+        const scrollSpeed = distanceScrolled / elapsed;
+        const prefetchDistance = Math.min(900, Math.max(260, 260 + scrollSpeed * 720));
+        const distanceToSentinel = sentinelRef.current.getBoundingClientRect().top - window.innerHeight;
+
+        if (distanceToSentinel <= prefetchDistance) {
+          void loadMore();
+        }
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+    };
+  }, [hasMore, loadMore]);
+
+  return (
+    <section className="profile-tab-films profile-movies-feed" aria-label="Movies" role="tabpanel">
+      {movies.length ? (
+        <div className="poster-grid">
+          {movies.map((movie, index) => (
+            <MoviePoster dense isSignedIn={isSignedIn} key={`${movie.tmdbId}-${index}`} movie={movie} showTooltip={false} showYear={false} />
+          ))}
+        </div>
+      ) : <div className="profile-tab-empty">No films logged yet.</div>}
+
+      {hasMore || isLoading ? (
+        <div className="profile-movies-loader" ref={sentinelRef} aria-live="polite">
+          {isLoading ? <ClassicSpinner theme="dark" /> : null}
+        </div>
+      ) : null}
+    </section>
   );
 }
 

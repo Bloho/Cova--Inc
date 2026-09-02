@@ -4542,12 +4542,13 @@ html:not(.dark) .movie-card-close {
 
 .profile-card-corner {
   position: absolute;
-  top: 14px;
-  left: 14px;
+  top: 70px;
+  right: 32px;
   z-index: 1;
 }
 
 .profile-overview {
+  position: relative;
   display: grid;
   min-height: 170px;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -4632,7 +4633,7 @@ html:not(.dark) .movie-card-close {
 
 .profile-tabs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   min-height: 62px;
   border-bottom: 1px solid #272727;
 }
@@ -4902,8 +4903,9 @@ html:not(.dark) .movie-card-close {
   }
 
   .profile-card-corner {
-    top: 10px;
-    left: 10px;
+    top: 24px;
+    right: 22px;
+    left: auto;
   }
 
   .profile-overview {
@@ -4970,6 +4972,12 @@ html:not(.dark) .movie-card-close {
 .profile-review-loader {
   display: grid;
   min-height: 96px;
+  place-items: center;
+}
+
+.profile-movies-loader {
+  display: grid;
+  min-height: 120px;
   place-items: center;
 }
 
