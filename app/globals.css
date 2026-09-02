@@ -4408,16 +4408,17 @@ html:not(.dark) .movie-card-close {
   display: flex;
   height: 100dvh;
   align-self: start;
-  justify-content: center;
-  padding: 26px 24px;
+  justify-content: flex-start;
+  padding: 0 20px;
   border-right: 1px solid #272727;
   background: #000000;
 }
 
 .profile-rail-logo {
-  display: block;
-  width: 126px;
-  height: fit-content;
+  display: flex;
+  width: 64px;
+  height: 62px;
+  align-items: center;
 }
 
 .profile-rail-logo img {
@@ -4541,11 +4542,11 @@ html:not(.dark) .movie-card-close {
 
 .profile-overview {
   display: grid;
-  min-height: 268px;
+  min-height: 170px;
   grid-template-columns: minmax(0, 1fr) auto;
   align-content: space-between;
   gap: 24px;
-  padding: 94px 32px 28px;
+  padding: 94px 32px 16px;
 }
 
 .profile-identity-copy h1 {
@@ -4576,7 +4577,7 @@ html:not(.dark) .movie-card-close {
 .profile-identity-copy p {
   margin: 7px 0 0;
   color: #6b6b6b;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 1;
 }
@@ -4848,15 +4849,16 @@ html:not(.dark) .movie-card-close {
     position: relative;
     display: flex;
     width: 100%;
-    height: 66px;
+    height: 58px;
     justify-content: flex-start;
-    padding: 15px 20px;
+    padding: 0 20px;
     border-right: 0;
     border-bottom: 1px solid #272727;
   }
 
   .profile-rail-logo {
-    width: 86px;
+    width: 60px;
+    height: 58px;
   }
 
   .profile-dashboard-main {
