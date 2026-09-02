@@ -4540,6 +4540,13 @@ html:not(.dark) .movie-card-close {
   object-fit: cover;
 }
 
+.profile-card-corner {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+}
+
 .profile-overview {
   display: grid;
   min-height: 170px;
@@ -4892,6 +4899,11 @@ html:not(.dark) .movie-card-close {
     inset: 4px;
     width: calc(100% - 8px);
     height: calc(100% - 8px);
+  }
+
+  .profile-card-corner {
+    top: 10px;
+    left: 10px;
   }
 
   .profile-overview {

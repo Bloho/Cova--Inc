@@ -111,6 +111,11 @@ export default async function ProfilePage({
               <img className="profile-avatar-shape" src="/profile/profile-picture.svg" alt="" />
               {profile.avatar_url ? <img className="profile-avatar-photo" src={profile.avatar_url} alt={`${profile.display_name}'s profile`} /> : null}
             </div>
+            {isOwnProfile ? (
+              <div className="profile-card-corner">
+                <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} label="CARD" />
+              </div>
+            ) : null}
           </section>
 
           <section className="profile-overview">
@@ -126,9 +131,6 @@ export default async function ProfilePage({
             <div className="profile-facts" aria-label="Profile details">
               <span><strong>{filmsCount ?? 0}</strong> movies</span>
               <span><CalendarDays size={18} aria-hidden /> Joined {formatJoinedDate(profile.created_at)}</span>
-              {isOwnProfile ? (
-                <ProfileCardGenerator filmsCount={filmsCount ?? 0} username={profile.username} label="CARD" />
-              ) : null}
             </div>
           </section>
 
