@@ -2,15 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays } from "lucide-react";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
+import { ProfileContent, type ProfileTab } from "@/components/ProfileContent";
 import { ProfileEditor } from "@/components/ProfileEditor";
-import { PaginatedFilms } from "@/components/PaginatedFilms";
 import type { Movie } from "@/lib/data";
-import { posterUrl } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
+import { PROFILE_REVIEW_PAGE_SIZE, toProfileReviewItem } from "@/lib/profile-reviews";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getHomeMovies } from "@/lib/tmdb";
-
-type ProfileTab = "reviews" | "favourites" | "wishlist";
 
 export default async function ProfilePage({
   params,
@@ -44,9 +42,7 @@ export default async function ProfilePage({
   const [
     { count: filmsCount },
     { count: reviewsCount },
-    { data: logs },
     { data: reviews },
-    { data: filmReviews },
     { data: favouriteRows },
     { data: wishlistRows },
     { trending }
@@ -54,23 +50,12 @@ export default async function ProfilePage({
     supabase.from("user_movies").select("tmdb_id", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("user_id", profile.id).eq("is_public", true),
     supabase
-      .from("user_movies")
-      .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
-      .eq("user_id", profile.id)
-      .eq("status", "watched")
-      .order("watched_at", { ascending: false }),
-    supabase
       .from("reviews")
       .select("id, body, rating, created_at, movies(tmdb_id, title, poster_path, overview, release_date)")
       .eq("user_id", profile.id)
       .eq("is_public", true)
       .order("created_at", { ascending: false })
-      .limit(12),
-    supabase
-      .from("reviews")
-      .select("tmdb_id, body, rating")
-      .eq("user_id", profile.id)
-      .eq("is_public", true),
+      .limit(PROFILE_REVIEW_PAGE_SIZE + 1),
     supabase
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
@@ -86,29 +71,18 @@ export default async function ProfilePage({
     getHomeMovies()
   ]);
 
-  const watchedMovies = toMovies(logs ?? []);
   const favouriteMovies = toMovies(favouriteRows ?? []);
   const wishlistMovies = toMovies(wishlistRows ?? []);
-  const reviewByMovie = new Map((filmReviews ?? []).map((review) => [
-    Number(review.tmdb_id),
-    { body: review.body, rating: Number(review.rating ?? 0) }
-  ]));
   const isOwnProfile = viewer?.id === profile.id;
-  const allMovieIds = [...watchedMovies, ...favouriteMovies, ...wishlistMovies].map((movie) => movie.tmdbId);
+  const allMovieIds = [...favouriteMovies, ...wishlistMovies].map((movie) => movie.tmdbId);
   const viewerStates = isOwnProfile ? new Map() : await getUserMovieStates([...new Set(allMovieIds)], viewer?.id);
   const decorateMovie = (movie: Movie) => {
-    const resolvedMovie = isOwnProfile
+    return isOwnProfile
       ? { ...movie, watched: movie.watched }
       : applyUserState(movie, viewerStates.get(movie.tmdbId));
-    const review = reviewByMovie.get(movie.tmdbId);
-
-    return review
-      ? { ...resolvedMovie, reviewed: true, reviewBody: review.body ?? undefined, userRating: review.rating }
-      : resolvedMovie;
   };
-  const tabMovies = activeTab === "favourites"
-    ? favouriteMovies.map(decorateMovie)
-    : wishlistMovies.map(decorateMovie);
+  const initialReviews = (reviews ?? []).slice(0, PROFILE_REVIEW_PAGE_SIZE).map(toProfileReviewItem);
+  const initialReviewsHaveMore = (reviews?.length ?? 0) > PROFILE_REVIEW_PAGE_SIZE;
   const reviewCount = reviewsCount ?? 0;
 
   return (
@@ -158,40 +132,16 @@ export default async function ProfilePage({
             </div>
           </section>
 
-          <nav className="profile-tabs" aria-label="Profile collections">
-            <ProfileTabLink activeTab={activeTab} href={`/${profile.username}`} tab="reviews">Reviews</ProfileTabLink>
-            <ProfileTabLink activeTab={activeTab} href={`/${profile.username}?tab=favourites`} tab="favourites">Favourites</ProfileTabLink>
-            <ProfileTabLink activeTab={activeTab} href={`/${profile.username}?tab=wishlist`} tab="wishlist">Wishlist</ProfileTabLink>
-          </nav>
-
-          {activeTab === "reviews" ? (
-            <section className="profile-review-feed" aria-label={`${profile.display_name}'s reviews`}>
-              {(reviews ?? []).length ? (reviews ?? []).map((review) => {
-                const movie = fromReviewMovie(review);
-                return (
-                  <article className="profile-review-row" key={review.id}>
-                    {movie ? <img className="profile-review-poster" src={posterUrl(movie.posterPath, "w342")} alt={`${movie.title} poster`} /> : <div className="profile-review-poster" aria-hidden />}
-                    <div className="profile-review-copy">
-                      <p className="profile-review-meta">
-                        <strong>{profile.display_name}</strong><span>@{profile.username}</span><span>{movie?.title ?? "Film"}</span><time dateTime={review.created_at}>{formatReviewDate(review.created_at)}</time>
-                      </p>
-                      <p className="profile-review-quote">{formatReviewQuote(review.body)}</p>
-                    </div>
-                  </article>
-                );
-              }) : <div className="profile-tab-empty">No public reviews yet.</div>}
-            </section>
-          ) : (
-            <section className="profile-tab-films" aria-label={`${profile.display_name}'s ${activeTab}`}>
-              <PaginatedFilms
-                movies={tabMovies}
-                isSignedIn={Boolean(viewer)}
-                itemsPerPage={24}
-                showYears={false}
-                showReviewTooltip
-              />
-            </section>
-          )}
+          <ProfileContent
+            displayName={profile.display_name}
+            favouriteMovies={favouriteMovies.map(decorateMovie)}
+            initialReviews={initialReviews}
+            initialReviewsHaveMore={initialReviewsHaveMore}
+            initialTab={activeTab}
+            isSignedIn={Boolean(viewer)}
+            username={profile.username}
+            wishlistMovies={wishlistMovies.map(decorateMovie)}
+          />
         </main>
 
         <aside className="profile-trends" aria-label="Trending films">
@@ -217,35 +167,12 @@ export default async function ProfilePage({
   );
 }
 
-function ProfileTabLink({
-  activeTab,
-  href,
-  tab,
-  children
-}: {
-  activeTab: ProfileTab;
-  href: string;
-  tab: ProfileTab;
-  children: React.ReactNode;
-}) {
-  return <Link className={activeTab === tab ? "active" : undefined} href={href}>{children}</Link>;
-}
-
 function isProfileTab(value: string | undefined): value is ProfileTab {
   return value === "reviews" || value === "favourites" || value === "wishlist";
 }
 
 function formatJoinedDate(value: string) {
   return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date(value));
-}
-
-function formatReviewDate(value: string) {
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short" }).format(new Date(value));
-}
-
-function formatReviewQuote(body: string | null) {
-  const text = (body ?? "").trim();
-  return text || "No written review.";
 }
 
 function toMovies(rows: any[]): Movie[] {
@@ -264,24 +191,6 @@ function fromLoggedMovie(row: any): Movie | null {
     userRating: Math.max(0, Math.min(5, Number(row.rating ?? 0))),
     watched: row.status === "watched",
     reviewed: false,
-    posterPath: movie.poster_path,
-    overview: movie.overview ?? "",
-    reviewCount: 0
-  };
-}
-
-function fromReviewMovie(row: any): Movie | null {
-  const movie = Array.isArray(row.movies) ? row.movies[0] : row.movies;
-  if (!movie) return null;
-
-  return {
-    tmdbId: movie.tmdb_id,
-    title: movie.title,
-    releaseYear: movie.release_date ? String(movie.release_date).slice(0, 4) : "Film",
-    rating: Math.max(0, Math.min(5, Number(row.rating ?? 0))),
-    userRating: Math.max(0, Math.min(5, Number(row.rating ?? 0))),
-    watched: false,
-    reviewed: true,
     posterPath: movie.poster_path,
     overview: movie.overview ?? "",
     reviewCount: 0

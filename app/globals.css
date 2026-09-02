@@ -4398,7 +4398,7 @@ html:not(.dark) .movie-card-close {
 
 .profile-dashboard {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(0, 1024px) minmax(312px, 1fr);
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 666px) minmax(312px, 1fr);
   min-height: 100dvh;
 }
 
@@ -4437,10 +4437,10 @@ html:not(.dark) .movie-card-close {
   top: 0;
   z-index: 20;
   display: flex;
-  height: 86px;
+  height: 62px;
   align-items: center;
-  gap: 22px;
-  padding: 0 26px;
+  gap: 14px;
+  padding: 0 20px;
   overflow: hidden;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(18, 18, 18, 0.78);
@@ -4465,8 +4465,8 @@ html:not(.dark) .movie-card-close {
 
 .profile-back-link {
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   place-items: center;
   flex: none;
   color: #f4f4f4;
@@ -4479,19 +4479,19 @@ html:not(.dark) .movie-card-close {
 
 .profile-sticky-bar div {
   display: grid;
-  gap: 5px;
+  gap: 3px;
 }
 
 .profile-sticky-bar strong {
   color: #ffffff;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 800;
   line-height: 1;
 }
 
 .profile-sticky-bar span {
   color: #6b6b6b;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1;
 }
@@ -4513,7 +4513,7 @@ html:not(.dark) .movie-card-close {
 .profile-avatar-lockup {
   position: absolute;
   bottom: -53px;
-  left: clamp(28px, 6vw, 66px);
+  left: 32px;
   width: 106px;
   height: 106px;
   padding: 5px;
@@ -4541,11 +4541,11 @@ html:not(.dark) .movie-card-close {
 
 .profile-overview {
   display: grid;
-  min-height: 318px;
+  min-height: 268px;
   grid-template-columns: minmax(0, 1fr) auto;
   align-content: space-between;
-  gap: 28px;
-  padding: 124px 68px 32px;
+  gap: 24px;
+  padding: 94px 32px 28px;
 }
 
 .profile-identity-copy h1 {
@@ -4625,26 +4625,32 @@ html:not(.dark) .movie-card-close {
 .profile-tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  min-height: 78px;
+  min-height: 62px;
   border-bottom: 1px solid #272727;
 }
 
-.profile-tabs a {
+.profile-tabs a,
+.profile-tabs button {
   display: grid;
+  padding: 0;
   place-items: center;
   color: #6b6b6b;
+  border: 0;
   border-bottom: 2px solid transparent;
-  font-size: 19px;
+  background: transparent;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
 }
 
-.profile-tabs a:hover {
-  color: #bdbdbd;
-  background: rgba(255, 255, 255, 0.025);
+.profile-tabs a:hover,
+.profile-tabs button:hover {
+  color: #6b6b6b;
+  background: transparent;
 }
 
-.profile-tabs a.active {
+.profile-tabs a.active,
+.profile-tabs button.active {
   color: #ffffff;
   border-bottom-color: #ffffff;
 }
@@ -4655,16 +4661,16 @@ html:not(.dark) .movie-card-close {
 
 .profile-review-row {
   display: grid;
-  grid-template-columns: 101px minmax(0, 1fr);
-  gap: 22px;
-  min-height: 174px;
-  padding: 23px 66px;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 16px;
+  min-height: 153px;
+  padding: 20px 32px;
   border-bottom: 1px solid #272727;
 }
 
 .profile-dashboard-page .profile-review-poster {
-  width: 101px;
-  height: 144px;
+  width: 86px;
+  height: 122px;
   overflow: hidden;
   border-radius: 3px;
   object-fit: cover;
@@ -4673,7 +4679,7 @@ html:not(.dark) .movie-card-close {
 
 .profile-dashboard-page .profile-review-copy {
   min-width: 0;
-  padding-top: 14px;
+  padding-top: 8px;
 }
 
 .profile-review-meta {
@@ -4717,12 +4723,12 @@ html:not(.dark) .movie-card-close {
 
 .profile-tab-films {
   min-height: 520px;
-  padding: 24px 24px 58px;
+  padding: 20px 20px 48px;
 }
 
 .profile-tab-films .poster-grid {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .profile-tab-films .poster-card {
@@ -4823,9 +4829,9 @@ html:not(.dark) .movie-card-close {
   color: #ffffff;
 }
 
-@media (max-width: 1320px) {
+@media (max-width: 1180px) {
   .profile-dashboard {
-    grid-template-columns: minmax(132px, 1fr) minmax(0, 860px);
+    grid-template-columns: minmax(132px, 1fr) minmax(0, 666px);
   }
 
   .profile-trends {
@@ -4858,17 +4864,17 @@ html:not(.dark) .movie-card-close {
   }
 
   .profile-sticky-bar {
-    height: 72px;
+    height: 58px;
     gap: 14px;
     padding-inline: 16px;
   }
 
   .profile-sticky-bar strong {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .profile-cover {
-    aspect-ratio: 666 / 220;
+    aspect-ratio: 666 / 155;
   }
 
   .profile-avatar-lockup {
@@ -4889,8 +4895,8 @@ html:not(.dark) .movie-card-close {
   .profile-overview {
     min-height: 0;
     grid-template-columns: 1fr;
-    gap: 34px;
-    padding: 73px 22px 26px;
+    gap: 30px;
+    padding: 70px 22px 24px;
   }
 
   .profile-facts {
@@ -4899,7 +4905,7 @@ html:not(.dark) .movie-card-close {
   }
 
   .profile-tabs {
-    min-height: 64px;
+    min-height: 58px;
   }
 
   .profile-tabs a {
@@ -4944,6 +4950,173 @@ html:not(.dark) .movie-card-close {
   .profile-tab-films .poster-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
+  }
+}
+
+.profile-review-loader {
+  display: grid;
+  min-height: 96px;
+  place-items: center;
+}
+
+.classic-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  animation: classic-spinner-spin 700ms linear infinite;
+}
+
+.classic-spinner-dark {
+  border-color: rgba(255, 255, 255, 0.18);
+  border-top-color: #ffffff;
+}
+
+.classic-spinner-light {
+  border-color: rgba(0, 0, 0, 0.16);
+  border-top-color: #151515;
+}
+
+@keyframes classic-spinner-spin {
+  to { transform: rotate(360deg); }
+}
+
+.profile-dashboard-skeleton .profile-rail,
+.profile-dashboard-skeleton .profile-dashboard-main,
+.profile-dashboard-skeleton .profile-trends-card {
+  background: #000000;
+}
+
+.profile-dashboard-skeleton [data-slot="skeleton"] {
+  background: #282828;
+}
+
+.profile-skeleton-logo {
+  width: 118px;
+  height: 46px;
+}
+
+.profile-skeleton-back {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+}
+
+.profile-skeleton-header-copy {
+  gap: 5px !important;
+}
+
+.profile-skeleton-header-name {
+  width: 76px;
+  height: 13px;
+}
+
+.profile-skeleton-header-count {
+  width: 54px;
+  height: 10px;
+}
+
+.profile-skeleton-cover {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  background: #303030 !important;
+}
+
+.profile-skeleton-avatar {
+  position: absolute;
+  bottom: -53px;
+  left: 32px;
+  width: 106px;
+  height: 106px;
+  border: 5px solid #000000;
+  border-radius: 50%;
+  background: #3a3a3a !important;
+}
+
+.profile-skeleton-identity {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+}
+
+.profile-skeleton-name {
+  width: 104px;
+  height: 24px;
+}
+
+.profile-skeleton-handle {
+  width: 70px;
+  height: 13px;
+}
+
+.profile-skeleton-facts {
+  display: grid;
+  justify-items: end;
+  align-content: end;
+  gap: 8px;
+}
+
+.profile-skeleton-facts > *:first-child {
+  width: 82px;
+  height: 14px;
+}
+
+.profile-skeleton-facts > *:last-child {
+  width: 132px;
+  height: 14px;
+}
+
+.profile-tabs .profile-skeleton-tab {
+  width: 76px;
+  height: 14px;
+  place-self: center;
+}
+
+.profile-skeleton-review-copy {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.profile-skeleton-review-meta {
+  width: 238px;
+  height: 13px;
+}
+
+.profile-skeleton-review-line {
+  width: 100%;
+  max-width: 360px;
+  height: 14px;
+}
+
+.profile-skeleton-review-line.short {
+  width: 66%;
+}
+
+.profile-skeleton-trends-title {
+  width: 174px;
+  height: 28px;
+}
+
+.profile-skeleton-trend {
+  width: 100%;
+  height: 14px;
+}
+
+@media (max-width: 760px) {
+  .profile-skeleton-avatar {
+    bottom: -43px;
+    left: 22px;
+    width: 86px;
+    height: 86px;
+    border-width: 4px;
+  }
+
+  .profile-skeleton-review-meta {
+    width: 172px;
   }
 }
 
