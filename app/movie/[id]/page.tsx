@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { MovieCollectionActions } from "@/components/MovieCollectionActions";
 import { MoviePageHeader } from "@/components/MoviePageHeader";
 import { MovieLogActions } from "@/components/MovieLogActions";
@@ -18,6 +19,11 @@ export default async function MoviePage({
     getMovie(Number(id)),
     getCurrentUserProfile()
   ]);
+
+  if (!movie) {
+    notFound();
+  }
+
   const supabase = await createSupabaseServerClient();
   const [states, reviewResult] = await Promise.all([
     getUserMovieStates([movie.tmdbId], user?.id),

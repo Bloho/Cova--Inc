@@ -33,11 +33,14 @@ export async function POST(request: Request) {
     (body.collection !== "wishlist" && body.collection !== "favourite") ||
     typeof body.active !== "boolean" ||
     !movie ||
+    typeof movie.tmdbId !== "number" ||
     !Number.isInteger(movie.tmdbId) ||
     !movie.title?.trim()
   ) {
     return NextResponse.json({ error: "Invalid collection request." }, { status: 400 });
   }
+
+  const tmdbId = movie.tmdbId;
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -54,27 +57,29 @@ export async function POST(request: Request) {
   }
 
   const releaseDate = /^\d{4}$/.test(movie.releaseYear ?? "") ? `${movie.releaseYear}-01-01` : null;
-  const { error: movieError } = await supabase.from("movies").upsert(
-    {
-      tmdb_id: movie.tmdbId,
-      title: movie.title.trim(),
-      poster_path: movie.posterPath || null,
-      release_date: releaseDate,
-      overview: movie.overview || null,
-      cached_at: new Date().toISOString()
-    },
-    { onConflict: "tmdb_id" }
-  );
+  const movieResult = tmdbId > 0
+    ? await supabase.from("movies").upsert(
+        {
+          tmdb_id: tmdbId,
+          title: movie.title.trim(),
+          poster_path: movie.posterPath || null,
+          release_date: releaseDate,
+          overview: movie.overview || null,
+          cached_at: new Date().toISOString()
+        },
+        { onConflict: "tmdb_id" }
+      )
+    : { error: null };
 
-  if (movieError) {
-    return NextResponse.json({ error: collectionDatabaseError(movieError.message) }, { status: 500 });
+  if (movieResult.error) {
+    return NextResponse.json({ error: collectionDatabaseError(movieResult.error.message) }, { status: 500 });
   }
 
   const { data: existing, error: existingError } = await supabase
     .from("user_movies")
     .select("tmdb_id, in_watchlist, liked")
     .eq("user_id", user.id)
-    .eq("tmdb_id", movie.tmdbId)
+    .eq("tmdb_id", tmdbId)
     .maybeSingle();
 
   if (existingError) {
@@ -105,11 +110,11 @@ export async function POST(request: Request) {
         .from("user_movies")
         .update(update)
         .eq("user_id", user.id)
-        .eq("tmdb_id", movie.tmdbId)
+        .eq("tmdb_id", tmdbId)
     : body.active
       ? await supabase.from("user_movies").insert({
           user_id: user.id,
-          tmdb_id: movie.tmdbId,
+          tmdb_id: tmdbId,
           status: "watchlist",
           rating: null,
           liked: body.collection === "favourite",

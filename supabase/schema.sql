@@ -342,3 +342,60 @@ drop policy if exists "users read own subscriptions" on public.subscriptions;
 create policy "users read own subscriptions" on public.subscriptions for select using (auth.uid() = user_id);
 
 notify pgrst, 'reload schema';
+
+-- Admin dashboard: founder-governed roles and an isolated custom-film range.
+-- Keep this aligned with supabase/20260902_admin_dashboard.sql for existing projects.
+create sequence if not exists public.custom_movie_id_seq
+  minvalue -2147483648
+  maxvalue -1
+  start with -1
+  increment by -1;
+
+alter table public.movies
+  add column if not exists is_custom boolean not null default false,
+  add column if not exists created_by uuid references public.profiles(id) on delete set null;
+
+alter table public.movies
+  alter column tmdb_id set default nextval('public.custom_movie_id_seq'::regclass);
+
+alter table public.movies
+  drop constraint if exists movies_tmdb_id_source_check;
+
+alter table public.movies
+  add constraint movies_tmdb_id_source_check
+  check (
+    (is_custom and tmdb_id < 0 and created_by is not null)
+    or
+    (not is_custom and tmdb_id > 0 and created_by is null)
+  ) not valid;
+
+drop policy if exists "authenticated users can cache movies" on public.movies;
+drop policy if exists "authenticated users can update cached movies" on public.movies;
+
+create policy "authenticated users can cache TMDB movies"
+  on public.movies for insert to authenticated
+  with check (tmdb_id > 0 and is_custom = false and created_by is null);
+
+create policy "authenticated users can update TMDB movies"
+  on public.movies for update to authenticated
+  using (tmdb_id > 0 and is_custom = false and created_by is null)
+  with check (tmdb_id > 0 and is_custom = false and created_by is null);
+
+create table if not exists public.admin_roles (
+  user_id uuid primary key references public.profiles(id) on delete cascade,
+  granted_by uuid references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.admin_roles enable row level security;
+revoke all on table public.admin_roles from anon, authenticated;
+grant all on table public.admin_roles to service_role;
+grant usage, select on sequence public.custom_movie_id_seq to service_role;
+
+insert into public.admin_roles (user_id, granted_by)
+select users.id, users.id
+from auth.users as users
+where lower(users.email) = 'ayush.lowkey@gmail.com'
+on conflict (user_id) do nothing;
+
+notify pgrst, 'reload schema';

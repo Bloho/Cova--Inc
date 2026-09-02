@@ -34,23 +34,25 @@ export async function POST(request: Request) {
   }
 
   const movie = body.movie;
-  const [profile, { error: movieError }] = await Promise.all([
+  const [profile, movieResult] = await Promise.all([
     ensureProfile(supabase, user),
-    supabase.from("movies").upsert({
-      tmdb_id: movie.tmdbId,
-      title: movie.title,
-      poster_path: movie.posterPath,
-      overview: movie.overview,
-      release_date: movie.releaseYear && /^\d{4}$/.test(movie.releaseYear) ? `${movie.releaseYear}-01-01` : null
-    })
+    movie.tmdbId > 0
+      ? supabase.from("movies").upsert({
+          tmdb_id: movie.tmdbId,
+          title: movie.title,
+          poster_path: movie.posterPath,
+          overview: movie.overview,
+          release_date: movie.releaseYear && /^\d{4}$/.test(movie.releaseYear) ? `${movie.releaseYear}-01-01` : null
+        })
+      : Promise.resolve({ error: null })
   ]);
 
   if (profile.error) {
     return NextResponse.json({ error: databaseErrorMessage(profile.error.message) }, { status: 500 });
   }
 
-  if (movieError) {
-    return NextResponse.json({ error: databaseErrorMessage(movieError.message) }, { status: 500 });
+  if (movieResult.error) {
+    return NextResponse.json({ error: databaseErrorMessage(movieResult.error.message) }, { status: 500 });
   }
 
   if (review) {

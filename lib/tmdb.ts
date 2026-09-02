@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { seedMovies, type Movie } from "@/lib/data";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type TmdbMovie = {
   id: number;
@@ -35,6 +36,10 @@ export async function getHomeMovies() {
 }
 
 export async function getMovie(tmdbId: number) {
+  if (tmdbId < 0) {
+    return getCustomMovie(tmdbId);
+  }
+
   const live = await getCachedTmdbMovie(tmdbId);
   return live ?? seedMovies.find((movie) => movie.tmdbId === tmdbId) ?? seedMovies[0];
 }
@@ -50,6 +55,22 @@ export async function searchMovies(query: string) {
   }
 
   return seedMovies.filter((movie) => movie.title.toLowerCase().includes(query.toLowerCase()));
+}
+
+export async function searchCustomMovies(query: string) {
+  const normalizedQuery = query.trim().slice(0, 120);
+  if (!normalizedQuery) return [];
+
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("movies")
+    .select("tmdb_id, title, poster_path, release_date, overview")
+    .eq("is_custom", true)
+    .ilike("title", `%${normalizedQuery}%`)
+    .order("cached_at", { ascending: false })
+    .limit(8);
+
+  return (data ?? []).map(fromStoredMovie);
 }
 
 const getCachedTmdbList = unstable_cache(
@@ -129,6 +150,18 @@ async function fetchTmdbMovieWithCredits(tmdbId: number): Promise<Movie | null> 
   return fromTmdb((await response.json()) as TmdbMovie);
 }
 
+async function getCustomMovie(movieId: number): Promise<Movie | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase
+    .from("movies")
+    .select("tmdb_id, title, poster_path, release_date, overview")
+    .eq("tmdb_id", movieId)
+    .eq("is_custom", true)
+    .maybeSingle();
+
+  return data ? fromStoredMovie(data) : null;
+}
+
 function tmdbRequest(url: string, token: string) {
   const requestUrl = new URL(url);
   const headers: Record<string, string> = {
@@ -173,5 +206,24 @@ function fromTmdb(movie: TmdbMovie): Movie {
     director: movie.credits?.crew?.find((member) => member.job === "Director")?.name,
     overview: movie.overview ?? "",
     reviewCount: Math.floor(((movie.vote_average ?? 7) * 13) % 40) + 4
+  };
+}
+
+function fromStoredMovie(movie: {
+  tmdb_id: number;
+  title: string;
+  poster_path?: string | null;
+  release_date?: string | null;
+  overview?: string | null;
+}): Movie {
+  return {
+    tmdbId: Number(movie.tmdb_id),
+    title: movie.title,
+    releaseYear: movie.release_date ? String(movie.release_date).slice(0, 4) : "Film",
+    rating: 0,
+    watched: false,
+    posterPath: movie.poster_path ?? "",
+    overview: movie.overview ?? "",
+    reviewCount: 0
   };
 }
