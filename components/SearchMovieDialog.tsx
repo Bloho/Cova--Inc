@@ -129,7 +129,12 @@ export function SearchMovieDialog({
                       </span>
                     </button>
                   ))}
-              {!busy && query.trim() && movies.length === 0 ? <div className="empty-state">No movies found.</div> : null}
+              {!busy && query.trim() && movies.length === 0 ? (
+                <div className="search-empty-state" role="status">
+                  <img src="/assets/error.png" alt="" />
+                  <p>We couldnt find anything</p>
+                </div>
+              ) : null}
             </div>
           </div>
           {message ? <p className="form-message">{message}</p> : null}

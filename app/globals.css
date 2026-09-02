@@ -1376,7 +1376,7 @@ html:not(.dark) .cova-account-signout:focus-visible {
 .search-dialog .dialog-head strong,
 .search-dialog .log-search-input,
 .search-dialog .log-result,
-.search-dialog .empty-state {
+.search-dialog .search-empty-state {
   font-family: "PP Neue Montreal", Arial, sans-serif;
 }
 
@@ -1626,6 +1626,31 @@ html:not(.dark) .cova-account-signout:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.1);
   transform: translateX(0);
+}
+
+.search-empty-state {
+  display: grid;
+  min-height: 360px;
+  place-content: start center;
+  justify-items: center;
+  gap: 18px;
+  padding-top: 68px;
+  color: #ffffff;
+  text-align: center;
+}
+
+.search-empty-state img {
+  display: block;
+  width: min(220px, 72%);
+  height: auto;
+  object-fit: contain;
+}
+
+.search-empty-state p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.1;
 }
 
 .search-dialog .log-result img,
