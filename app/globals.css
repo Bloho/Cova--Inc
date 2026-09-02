@@ -5137,8 +5137,8 @@ html:not(.dark) .movie-card-close {
 
 .profile-rail-logo {
   display: flex;
-  width: 138px;
-  height: 50px;
+  width: 108px;
+  height: 40px;
   align-items: center;
 }
 
@@ -5146,6 +5146,13 @@ html:not(.dark) .movie-card-close {
   display: block;
   width: 100%;
   height: auto;
+}
+
+.profile-rail-search-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
 }
 
 .profile-dashboard-page .profile-rail-log-button {
@@ -5171,8 +5178,10 @@ html:not(.dark) .movie-card-close {
 
 .profile-dashboard-page .profile-rail-search-button {
   display: flex;
-  width: 246px;
+  width: auto;
   height: 40px;
+  min-width: 0;
+  flex: 1;
   justify-content: flex-start;
   gap: 10px;
   padding-inline: 14px;
@@ -5486,7 +5495,12 @@ html:not(.dark) .movie-card-close {
 
 .profile-review-meta strong {
   color: #ffffff;
+  font-size: 16px;
   font-weight: 800;
+}
+
+.profile-review-meta span {
+  font-size: 16px;
 }
 
 .profile-review-meta span::before,
@@ -5662,6 +5676,10 @@ html:not(.dark) .movie-card-close {
     height: 48px;
   }
 
+  .profile-rail-search-row {
+    display: contents;
+  }
+
   .profile-dashboard-page .profile-rail-log-button {
     width: 65px;
     height: 40px;
@@ -5778,6 +5796,11 @@ html:not(.dark) .movie-card-close {
   .profile-review-meta {
     gap: 3px 6px;
     font-size: 12px;
+  }
+
+  .profile-review-meta strong,
+  .profile-review-meta span {
+    font-size: 14px;
   }
 
   .profile-review-meta span::before,

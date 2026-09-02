@@ -23,14 +23,16 @@ export function ProfileSidebar({ isSignedIn }: { isSignedIn: boolean }) {
           <Link className="profile-rail-logo" href="/" aria-label="Cova home">
             <img src="/assets/Cova-logo-white.svg" alt="Cova" />
           </Link>
+        </div>
+        <div className="profile-rail-search-row">
           <Button className="profile-rail-log-button" onClick={() => setLogOpen(true)} type="button">
             <img src="/utilities/LOG.svg" alt="Log a film" />
           </Button>
+          <Button className="profile-rail-search-button" onClick={() => setSearchOpen(true)} type="button">
+            <SearchIcon aria-hidden />
+            <span>Search for movies</span>
+          </Button>
         </div>
-        <Button className="profile-rail-search-button" onClick={() => setSearchOpen(true)} type="button">
-          <SearchIcon aria-hidden />
-          <span>Search for movies</span>
-        </Button>
       </div>
       <Button
         variant="outline"
