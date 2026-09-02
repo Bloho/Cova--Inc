@@ -195,9 +195,11 @@ async function renderProfileCard({ username, filmsCount }: { username: string; f
   ctx.font = '700 31px "PP Neue Montreal", Arial, sans-serif';
   ctx.fillText(`cova.lol/${username}`, CARD_WIDTH / 2, 526);
 
+  const logoWidth = 165;
+  const logoHeight = logoWidth * (logo.naturalHeight / logo.naturalWidth);
   ctx.save();
   ctx.filter = "invert(1)";
-  ctx.drawImage(logo, 140, 582, 165, 80);
+  ctx.drawImage(logo, (CARD_WIDTH - logoWidth) / 2, 582 + (80 - logoHeight) / 2, logoWidth, logoHeight);
   ctx.restore();
 
   return canvas.toDataURL("image/png");
