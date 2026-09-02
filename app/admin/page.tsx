@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AdminDashboard } from "@/components/AdminDashboard";
 import { AdminAccessError, requireAdmin } from "@/lib/admin";
 import { getAdminDashboardData } from "@/lib/admin-dashboard";
@@ -16,7 +16,7 @@ export default async function AdminPage() {
     }
 
     if (error instanceof AdminAccessError && error.status === 403) {
-      notFound();
+      return <AdminAccessDenied email={error.userEmail} />;
     }
 
     return <AdminSetupNotice />;
@@ -28,6 +28,15 @@ export default async function AdminPage() {
   } catch {
     return <AdminSetupNotice />;
   }
+}
+
+function AdminAccessDenied({ email }: { email?: string | null }) {
+  return (
+    <main className="admin-setup-notice">
+      <p>Administrator access is required.</p>
+      <span>Authenticated as {email ?? "an unknown account"}. This account is not authorized for the Cova console.</span>
+    </main>
+  );
 }
 
 function AdminSetupNotice() {

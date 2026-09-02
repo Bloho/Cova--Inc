@@ -11,7 +11,11 @@ export type AdminContext = {
 };
 
 export class AdminAccessError extends Error {
-  constructor(message: string, public readonly status: 401 | 403 | 503) {
+  constructor(
+    message: string,
+    public readonly status: 401 | 403 | 503,
+    public readonly userEmail?: string | null
+  ) {
     super(message);
   }
 }
@@ -35,7 +39,7 @@ export async function requireAdmin(options: { founderOnly?: boolean } = {}): Pro
 
   const isFounder = user.email?.trim().toLowerCase() === ADMIN_OWNER_EMAIL;
   if (options.founderOnly && !isFounder) {
-    throw new AdminAccessError("Only the Cova founder can manage administrators.", 403);
+    throw new AdminAccessError("Only the Cova founder can manage administrators.", 403, user.email);
   }
 
   if (!isFounder) {
@@ -50,7 +54,7 @@ export async function requireAdmin(options: { founderOnly?: boolean } = {}): Pro
     }
 
     if (!role) {
-      throw new AdminAccessError("You do not have access to Cova administration.", 403);
+      throw new AdminAccessError("You do not have access to Cova administration.", 403, user.email);
     }
   }
 
