@@ -6739,6 +6739,153 @@ html:not(.dark) .movie-review-action {
   color: var(--movie-page-text);
 }
 
+/* The app shell becomes a fixed left rail on larger screens. The page grid
+   stays intact in the remaining canvas, which keeps film and profile views stable. */
+.movie-page-sidebar-brand {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .movie-page,
+  .profile-page.collection-page,
+  .profile-page.billing-page {
+    box-sizing: border-box;
+    padding-left: 320px;
+  }
+
+  .movie-page {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .movie-page-main {
+    grid-row: 1;
+  }
+
+  .movie-page-footer {
+    grid-row: 2;
+  }
+
+  .movie-page-header,
+  .profile-page .movie-page-header,
+  .home-page .movie-page-header {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 30;
+    display: block;
+    width: 320px;
+    min-height: 0;
+    height: 100dvh;
+    margin: 0;
+    padding: 22px 18px 14px;
+    border: 0;
+    border-right: 1px solid #151515;
+    background: #000000;
+  }
+
+  .movie-page-brand-group {
+    display: flex;
+    height: 48px;
+    align-items: center;
+  }
+
+  .movie-page-brand-video,
+  .movie-page-brand-static {
+    display: none;
+  }
+
+  .movie-page-sidebar-brand {
+    display: block;
+    width: 140px;
+    height: 38px;
+    object-fit: contain;
+  }
+
+  .movie-page-nav {
+    display: contents;
+  }
+
+  .movie-log-button {
+    position: absolute;
+    top: 15px;
+    right: 18px;
+    width: 94px;
+    height: 50px;
+    border-radius: 13px;
+  }
+
+  .movie-log-button img {
+    width: 50px;
+  }
+
+  .movie-search-button {
+    position: absolute;
+    top: 100px;
+    right: 18px;
+    left: 18px;
+    width: auto;
+    height: 54px;
+    justify-content: flex-start;
+    gap: 14px;
+    padding-inline: 16px;
+    color: #d9d9d9;
+    border-color: #343434;
+    border-radius: 14px;
+    background: #050505;
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.04);
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .movie-search-button svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .get-cova-pro-button {
+    display: none;
+  }
+
+  .movie-theme-button {
+    position: absolute;
+    bottom: 18px;
+    left: 20px;
+    width: 52px;
+    height: 52px;
+    color: #c7c7c7;
+    border-color: #303030;
+    border-radius: 10px;
+    background: #080808;
+  }
+
+  .movie-theme-button svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .movie-avatar-button,
+  .movie-page-avatar-trigger {
+    display: none;
+  }
+
+  .movie-page-header[data-signed-in="true"] .movie-page-avatar-trigger {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    display: grid;
+  }
+
+  .home-page {
+    width: calc(100% - 320px);
+    margin-right: 0;
+    margin-left: 320px;
+    border-left: 0;
+  }
+
+  .home-page .site-main {
+    height: calc(100dvh - 76px);
+  }
+}
+
 /* Official shadcn Drawer slots, scoped to the saved-review panel. */
 .review-drawer-content {
   display: grid;

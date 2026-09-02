@@ -46,7 +46,7 @@ export function MoviePageHeader({
   }
 
   return (
-    <header className="movie-page-header">
+    <header className="movie-page-header" data-signed-in={isSignedIn}>
       <div className="movie-page-brand-group">
         <Link href="/" className="movie-page-brand" aria-label="Cova home">
           {hasCovaPro ? (
@@ -56,6 +56,7 @@ export function MoviePageHeader({
           ) : (
             <img className="movie-page-brand-static" src="/assets/Cova-logo-white.svg" alt="Cova" />
           )}
+          <img className="movie-page-sidebar-brand" src="/assets/Cova-logo-white.svg" alt="Cova" />
         </Link>
       </div>
       <nav className="movie-page-nav" aria-label="Movie page navigation">
