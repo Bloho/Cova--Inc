@@ -1,10 +1,8 @@
-import { Footer } from "@/components/Footer";
+import { ProfileDashboardSkeleton } from "@/components/ProfileDashboardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
 const posterSlots = Array.from({ length: 5 });
-const reviewSlots = Array.from({ length: 3 });
 
 export function HeaderSkeleton({ moviePage = false, hidePrimaryActions = false }: { moviePage?: boolean; hidePrimaryActions?: boolean } = {}) {
   if (moviePage) {
@@ -79,65 +77,7 @@ export function HomePageSkeleton() {
 }
 
 export function ProfilePageSkeleton() {
-  return (
-    <div className="profile-page">
-      <HeaderSkeleton moviePage hidePrimaryActions />
-
-      <main className="profile-main">
-        <section className="profile-page-hero" aria-label="Loading profile">
-          <div className="profile-page-identity">
-            <SkeletonAvatar />
-          </div>
-
-          <div className="profile-page-actions" aria-label="Loading profile stats">
-            <div className="profile-page-stat" aria-hidden>
-              <Skeleton className="skeleton-profile-stat-number" />
-              <Skeleton className="skeleton-profile-stat-label" />
-            </div>
-
-            <div id="cards" aria-hidden>
-              <Skeleton className="skeleton-button profile-card-trigger" />
-            </div>
-          </div>
-        </section>
-
-        <section id="profile" className="profile-reviews" aria-label="Loading recent reviews">
-          <div className="profile-reviews-heading" role="heading" aria-level={2} aria-hidden>
-            <Skeleton className="skeleton-profile-reviews-heading" />
-          </div>
-
-          <ProfileReviewsSkeleton />
-        </section>
-
-        <section id="films" className="section profile-films" aria-label="Loading films">
-          <div className="section-head" aria-hidden>
-            <Skeleton className="skeleton-profile-section-title wide" />
-          </div>
-
-          <Separator />
-
-          <PosterGridSkeleton />
-        </section>
-      </main>
-
-      <footer className="movie-page-footer home-page-footer" aria-label="Loading footer">
-        <Skeleton className="skeleton-footer-copy" />
-        <div><Skeleton className="skeleton-footer-copy short" /><Skeleton className="skeleton-footer-copy short" /></div>
-      </footer>
-    </div>
-  );
-}
-
-export function SkeletonAvatar() {
-  return (
-    <div className="flex w-fit items-center gap-4" aria-hidden>
-      <Skeleton className="size-10 shrink-0 rounded-full skeleton-profile-avatar" />
-      <div className="grid gap-2">
-        <Skeleton className="h-4 w-[150px]" />
-        <Skeleton className="h-4 w-[100px]" />
-      </div>
-    </div>
-  );
+  return <ProfileDashboardSkeleton />;
 }
 
 export function MoviePageSkeleton() {
@@ -204,43 +144,6 @@ function PosterRowSkeleton() {
           </a>
           <div className="poster-meta">
             <Skeleton className="skeleton-home-poster-meta" />
-          </div>
-        </article>
-      ))}
-    </div>
-  );
-}
-
-function PosterGridSkeleton() {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "48px" }} aria-hidden>
-      <div className="poster-grid">
-        {Array.from({ length: 14 }).map((_, index) => (
-          <article className="poster-card" key={index}>
-            <a className="poster-link" tabIndex={-1}>
-              <Skeleton className="poster-image" />
-            </a>
-            <div className="poster-meta">
-              <Skeleton className="skeleton-home-poster-meta" />
-            </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ProfileReviewsSkeleton() {
-  return (
-    <div className="profile-reviews-list" aria-hidden>
-      {reviewSlots.map((_, index) => (
-        <article className="profile-review" key={index}>
-          <Skeleton className="profile-review-poster" />
-
-          <div className="profile-review-copy">
-            <Skeleton className="skeleton-profile-review-date" />
-            <Skeleton className="skeleton-profile-review-quote" />
-            <Skeleton className="skeleton-profile-review-movie" />
           </div>
         </article>
       ))}

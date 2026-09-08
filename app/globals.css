@@ -5868,9 +5868,40 @@ html:not(.dark) .movie-card-close {
   background: #282828;
 }
 
+.profile-skeleton-rail-top {
+  display: grid;
+  gap: 30px;
+}
+
 .profile-skeleton-logo {
-  width: 118px;
-  height: 46px;
+  width: 108px;
+  height: 40px;
+}
+
+.profile-skeleton-rail-actions {
+  display: flex;
+  min-width: 0;
+  gap: 10px;
+}
+
+.profile-skeleton-log {
+  width: 65px;
+  height: 40px;
+  flex: none;
+  border-radius: 8px;
+}
+
+.profile-skeleton-search {
+  height: 40px;
+  min-width: 0;
+  flex: 1;
+  border-radius: 10px;
+}
+
+.profile-skeleton-theme {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
 }
 
 .profile-skeleton-back {
@@ -5944,6 +5975,12 @@ html:not(.dark) .movie-card-close {
   height: 14px;
 }
 
+.profile-skeleton-card {
+  width: 58px;
+  height: 28px;
+  border-radius: 999px;
+}
+
 .profile-tabs .profile-skeleton-tab {
   width: 76px;
   height: 14px;
@@ -5958,8 +5995,30 @@ html:not(.dark) .movie-card-close {
 }
 
 .profile-skeleton-review-meta {
-  width: 238px;
-  height: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-skeleton-review-author {
+  width: 54px;
+  height: 16px;
+}
+
+.profile-skeleton-review-handle {
+  width: 58px;
+  height: 16px;
+}
+
+.profile-skeleton-review-film {
+  width: 154px;
+  height: 16px;
+}
+
+.profile-skeleton-review-date {
+  width: 48px;
+  height: 16px;
 }
 
 .profile-skeleton-review-line {
@@ -5978,11 +6037,62 @@ html:not(.dark) .movie-card-close {
 }
 
 .profile-skeleton-trend {
-  width: 100%;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+}
+
+.profile-skeleton-trend-label {
+  width: 54px;
   height: 14px;
 }
 
+.profile-skeleton-trend-title {
+  width: 100%;
+  height: 16px;
+}
+
+.profile-skeleton-trends-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 13px 25px;
+  padding: 28px 4px;
+}
+
+.profile-skeleton-trends-footer [data-slot="skeleton"] {
+  width: 46px;
+  height: 13px;
+}
+
+.profile-skeleton-trends-footer [data-slot="skeleton"]:last-child {
+  flex-basis: 110px;
+}
+
 @media (max-width: 760px) {
+  .profile-skeleton-rail-top {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .profile-skeleton-logo {
+    width: 92px;
+    height: 40px;
+    flex: none;
+  }
+
+  .profile-skeleton-rail-actions {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .profile-skeleton-search {
+    display: none;
+  }
+
   .profile-skeleton-avatar {
     bottom: -43px;
     left: 22px;
@@ -5992,7 +6102,11 @@ html:not(.dark) .movie-card-close {
   }
 
   .profile-skeleton-review-meta {
-    width: 172px;
+    gap: 6px;
+  }
+
+  .profile-skeleton-review-film {
+    width: 108px;
   }
 }
 
