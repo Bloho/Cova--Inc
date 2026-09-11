@@ -9,7 +9,11 @@
 .more { margin-left: auto; border: 0; background: transparent; color: #888; display: grid; place-items: center; width: 32px; height: 36px; flex-shrink: 0; cursor: pointer; }
 .rating { display: flex; justify-content: center; align-items: center; gap: 8px; flex-shrink: 0; font-size: 23px; }
 .body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; white-space: pre-wrap; overflow-wrap: anywhere; color: #aaa; font-size: 20px; line-height: 1.35; }
-.menu { z-index: 105; border-radius: 18px; padding: 30px 36px; display: flex; flex-direction: column; gap: 20px; }
+.menu { z-index: 105; border-radius: 18px; padding: 28px; width: 320px; max-width: calc(100vw - 32px); height: 200px; box-sizing: border-box; transform-origin: var(--radix-popover-content-transform-origin); }
+.panel { height: 100%; animation: panelIn 220ms ease-out both; }
+.options { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
+.panel h2 { font-size: 18px; line-height: 1.3; margin: 0 0 12px; }
+.panel p { color: #6b6b6b; font-size: 14px; margin: 0 0 20px; }
 .pill { border: 0; border-radius: 999px; background: #1b1b1b; color: #eee; padding: 7px 23px; text-align: center; font: inherit; font-size: 14px; cursor: pointer; }
 .pill:focus-visible, .more:focus-visible, .body:focus-visible { outline: 2px solid #aaa; outline-offset: 3px; }
 .danger { background: #ff3154; color: white; }
@@ -23,6 +27,22 @@
 .statusIcon img { width: 32px; height: 32px; object-fit: contain; }
 .dismiss { position: absolute; top: 4px; right: 4px; border: 0; background: transparent; color: white; }
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.overlay[data-state="open"] { animation: fadeIn 220ms ease-out both; }
+.overlay[data-state="closed"] { animation: fadeOut 180ms ease-in both; }
+.dialog[data-state="open"] { animation: dialogIn 260ms cubic-bezier(.2,.8,.2,1) both; }
+.dialog[data-state="closed"] { animation: dialogOut 180ms ease-in both; }
+.menu[data-state="open"] { animation: panelIn 220ms cubic-bezier(.2,.8,.2,1) both; }
+.menu[data-state="closed"] { animation: fadeOut 160ms ease-in both; }
+.toast { animation: panelIn 240ms ease-out both; }
+.statusIcon { animation: fadeIn 220ms ease-out both; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes panelIn { from { opacity: 0; filter: blur(3px); translate: 0 5px; } to { opacity: 1; filter: blur(0); translate: 0 0; } }
+@keyframes dialogIn { from { opacity: 0; filter: blur(4px); transform: translate(-50%, calc(-50% + 8px)) scale(.98); } to { opacity: 1; filter: blur(0); transform: translate(-50%, -50%) scale(1); } }
+@keyframes dialogOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, calc(-50% + 4px)) scale(.99); } }
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .dialog, .menu, .panel, .toast, .statusIcon { animation: none !important; }
+}
 @media (max-width: 600px), (max-height: 500px) {
   .content { padding: 24px; gap: 20px; }
   .header { font-size: 14px; gap: 8px; }
