@@ -5,6 +5,7 @@ import { TopProgressBar } from "@/components/TopProgressBar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { UpgradePrompt } from "@/components/UpgradePrompt";
+import { ActionAlerts } from "@/components/ActionAlerts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function RootLayout({
             <TopProgressBar />
             {children}
             <UpgradePrompt />
+            <ActionAlerts />
             <Analytics />
             <SpeedInsights />
           </TooltipProvider>

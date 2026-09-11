@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchWithAlert } from "@/lib/action-alert";
+
 import { ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -100,7 +102,7 @@ export function LogFilmDialog({
     }
 
     setStatus("saving");
-    const response = await fetch("/api/log", {
+    const response = await fetchWithAlert("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -108,6 +110,10 @@ export function LogFilmDialog({
         rating,
         review: review.trim()
       })
+    }, {
+      loading: review.trim() ? "Saving your review" : "Logging your movie",
+      success: review.trim() ? "Review has been saved" : "Movie has been logged",
+      error: "Could not save. Please try again."
     });
 
     if (response.ok) {

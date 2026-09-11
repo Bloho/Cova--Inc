@@ -1,5 +1,7 @@
 "use client";
 
+import { fetchWithAlert } from "@/lib/action-alert";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
@@ -110,10 +112,14 @@ export function MovieLogActions({
     setMessage("");
     setDialogState("saving");
     const savedRating = normalizeRating(rating);
-    const response = await fetch("/api/log", {
+    const response = await fetchWithAlert("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ movie, rating: savedRating, review: review.trim() })
+    }, {
+      loading: "Saving your review",
+      success: "Review has been saved",
+      error: "Could not save review. Try again."
     });
 
     if (response.ok) {
@@ -194,10 +200,14 @@ export function MovieLogActions({
 
     setMessage("");
     setDialogState("watchRemoving");
-    const response = await fetch("/api/watchlist", {
+    const response = await fetchWithAlert("/api/watchlist", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ tmdbId: movie.tmdbId })
+    }, {
+      loading: "Removing your movie",
+      success: "Movie has been removed",
+      error: "Could not remove movie. Try again."
     });
 
     if (response.ok) {

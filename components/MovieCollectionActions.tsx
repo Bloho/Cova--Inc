@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { fetchWithAlert } from "@/lib/action-alert";
 import type { Movie } from "@/lib/data";
 import { isLimitResponse, openUpgradePrompt } from "@/lib/upgrade-prompt";
 
@@ -40,7 +41,7 @@ export function MovieCollectionActions({
     setError("");
 
     try {
-      const response = await fetch("/api/collections", {
+      const response = await fetchWithAlert("/api/collections", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -54,6 +55,10 @@ export function MovieCollectionActions({
             overview: movie.overview
           }
         })
+      }, {
+        loading: `${active ? "Removing from" : "Adding to"} ${collection === "wishlist" ? "wishlist" : "favourites"}`,
+        success: `${active ? "Removed from" : "Added to"} ${collection === "wishlist" ? "wishlist" : "favourites"}`,
+        error: "Could not update collection. Try again."
       });
       const payload = await response.json().catch(() => null);
 
