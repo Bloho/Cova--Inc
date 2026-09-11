@@ -1,0 +1,32 @@
+.overlay, .confirmOverlay { position: fixed; inset: 0; background: rgb(0 0 0 / 45%); z-index: 100; }
+.dialog, .confirm, .menu, .toast { background: #000; color: #eee; border: 1px solid #303030; font-family: "PP Neue Montreal", Arial, sans-serif; font-weight: 600; letter-spacing: 0; }
+.dialog { position: fixed; z-index: 101; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(700px, calc(100% - 32px)); max-height: calc(100dvh - 48px); border-radius: 30px; display: flex; flex-direction: column; overflow: hidden; }
+.topStrip { height: 54px; flex-shrink: 0; border-bottom: 1px solid #303030; }
+.content { display: flex; flex-direction: column; min-height: 0; padding: 48px 64px 64px; gap: 26px; }
+.header { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-size: 18px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.date { color: #6b6b6b; }
+.more { margin-left: auto; border: 0; background: transparent; color: #888; display: grid; place-items: center; width: 32px; height: 36px; flex-shrink: 0; cursor: pointer; }
+.rating { display: flex; justify-content: center; align-items: center; gap: 8px; flex-shrink: 0; font-size: 23px; }
+.body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; white-space: pre-wrap; overflow-wrap: anywhere; color: #aaa; font-size: 20px; line-height: 1.35; }
+.menu { z-index: 105; border-radius: 18px; padding: 30px 36px; display: flex; flex-direction: column; gap: 20px; }
+.pill { border: 0; border-radius: 999px; background: #1b1b1b; color: #eee; padding: 7px 23px; text-align: center; font: inherit; font-size: 14px; cursor: pointer; }
+.pill:focus-visible, .more:focus-visible, .body:focus-visible { outline: 2px solid #aaa; outline-offset: 3px; }
+.danger { background: #ff3154; color: white; }
+.confirmOverlay { z-index: 106; background: transparent; }
+.confirm { position: fixed; z-index: 107; top: max(24px, calc(50% - 150px)); left: min(calc(50% + 240px), calc(100% - 336px)); width: 320px; max-width: calc(100% - 32px); padding: 28px; border-radius: 18px; }
+.confirm h2 { font-size: 18px; line-height: 1.3; margin: 0 0 12px; }
+.confirm p { color: #6b6b6b; font-size: 14px; margin: 0 0 20px; }
+.actions { display: flex; justify-content: center; gap: 12px; }
+.toast { position: fixed; right: 20px; bottom: 20px; z-index: 120; width: 344px; max-width: calc(100% - 32px); height: 84px; border-radius: 12px; display: flex; align-items: center; gap: 18px; padding: 18px 24px; font-size: 16px; }
+.statusIcon { width: 32px; height: 32px; flex-shrink: 0; display: grid; place-items: center; }
+.statusIcon img { width: 32px; height: 32px; object-fit: contain; }
+.dismiss { position: absolute; top: 4px; right: 4px; border: 0; background: transparent; color: white; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 600px), (max-height: 500px) {
+  .content { padding: 24px; gap: 20px; }
+  .header { font-size: 14px; gap: 8px; }
+  .body { font-size: 18px; }
+  .topStrip { height: 32px; }
+  .confirm { left: 50%; transform: translateX(-50%); }
+}

@@ -6,7 +6,7 @@ export type RegionalPricing = {
   amount: number;
   amountInSubunits: number;
   formattedPrice: string;
-  razorpayPlanId: string;
+  dodoProductId: string;
   source: "verified_account" | "deployment_header" | "user_selection" | "default";
 };
 
@@ -29,10 +29,10 @@ export function getRegionalPricing({ verifiedCountry, selectedCountry, headers }
         ? "user_selection"
         : "default";
   const isIndia = country === "IN";
-  const planId = isIndia ? process.env.RAZORPAY_PLAN_INR : process.env.RAZORPAY_PLAN_USD;
+  const productId = isIndia ? process.env.DODO_PAYMENTS_PRODUCT_INR : process.env.DODO_PAYMENTS_PRODUCT_USD;
 
-  if (!planId) {
-    throw new Error("Billing plans are not configured on this server.");
+  if (!productId || !/^pdt_[A-Za-z0-9]+$/.test(productId)) {
+    throw new Error("Dodo Payments products are not configured on this server.");
   }
 
   return isIndia
@@ -42,7 +42,7 @@ export function getRegionalPricing({ verifiedCountry, selectedCountry, headers }
         amount: 99,
         amountInSubunits: 9900,
         formattedPrice: "₹99",
-        razorpayPlanId: planId,
+        dodoProductId: productId,
         source
       }
     : {
@@ -51,7 +51,7 @@ export function getRegionalPricing({ verifiedCountry, selectedCountry, headers }
         amount: 1.99,
         amountInSubunits: 199,
         formattedPrice: "$1.99",
-        razorpayPlanId: planId,
+        dodoProductId: productId,
         source
       };
 }

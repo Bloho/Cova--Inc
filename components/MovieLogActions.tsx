@@ -3,11 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MovieCardGenerator } from "@/components/MovieCardGenerator";
-import { ReviewDeletionSequence } from "@/components/ReviewDeletionSequence";
+import { ExistingReviewDialog } from "@/components/ExistingReviewDialog";
 import { RatingInput } from "@/components/RatingInput";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { Rating } from "@/components/ui/rating";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { normalizeRating } from "@/lib/ratings";
@@ -29,7 +27,8 @@ export function MovieLogActions({
   initialRating = 0,
   initialReviewed = false,
   initialReview = null,
-  username
+  username,
+  avatarUrl
 }: {
   movie: Movie;
   isSignedIn: boolean;
@@ -37,6 +36,7 @@ export function MovieLogActions({
   initialReviewed?: boolean;
   initialReview?: ExistingReview | null;
   username?: string | null;
+  avatarUrl?: string | null;
 }) {
   const router = useRouter();
   const [rating, setRating] = useState(normalizeRating(initialRating));
@@ -44,7 +44,6 @@ export function MovieLogActions({
   const [dialogState, setDialogState] = useState<MovieDialogState>("closed");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerDeleting, setDrawerDeleting] = useState(false);
-  const [deleteSequenceOpen, setDeleteSequenceOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [existingReview, setExistingReview] = useState<ExistingReview | null>(initialReview);
   const [reviewed, setReviewed] = useState(initialReviewed || Boolean(initialReview) || initialRating > 0);
@@ -256,34 +255,16 @@ export function MovieLogActions({
         ) : null}
       </div>
 
-      <Drawer direction="right" open={drawerOpen} onOpenChange={(open) => {
-        if (!drawerDeleting) {
-          setDrawerOpen(open);
-        }
-      }}>
-        <DrawerContent className="review-drawer-content">
-          <DrawerHeader className="review-drawer-header">
-            <DrawerTitle className="review-drawer-title">{movie.title} ({movie.releaseYear})</DrawerTitle>
-            <button className="drawer-edit-button" disabled={drawerDeleting} onClick={editReview} type="button">
-              Edit
-            </button>
-          </DrawerHeader>
-          <div className="review-drawer-body">
-            <p>{existingReview?.body}</p>
-            <Rating className="review-drawer-stars" precision={0.5} size={48} value={drawerRating} aria-label="Your rating" />
-          </div>
-          <div className="review-drawer-footer">
-            <button className="review-drawer-close" disabled={drawerDeleting} onClick={() => setDrawerOpen(false)} type="button">
-              Close
-            </button>
-            <button className="review-drawer-delete" disabled={drawerDeleting} onClick={() => setDeleteSequenceOpen(true)} aria-label="Delete review" type="button">
-              <img src="/utilities/bin.svg" alt="" />
-            </button>
-          </div>
-        </DrawerContent>
-      </Drawer>
-
-      <ReviewDeletionSequence open={deleteSequenceOpen} onOpenChange={setDeleteSequenceOpen} onDelete={deleteReview} />
+      <ExistingReviewDialog
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        onEdit={editReview}
+        onDelete={deleteReview}
+        body={existingReview?.body ?? ""}
+        rating={drawerRating}
+        createdAt={existingReview?.created_at}
+        avatarUrl={avatarUrl}
+      />
 
       {dialogOpen ? (
         <div className={`modal-backdrop movie-modal-backdrop${dialogState === "closing" ? " closing" : ""}`} role="dialog" aria-modal="true" onMouseDown={(event) => {

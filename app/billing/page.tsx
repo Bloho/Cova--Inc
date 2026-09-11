@@ -49,7 +49,7 @@ export default async function BillingPage() {
 
   const subscription = subscriptionResult
     ? {
-        subscriptionId: subscriptionResult.razorpay_subscription_id,
+        subscriptionId: subscriptionResult.provider_subscription_id,
         status: subscriptionResult.subscription_status,
         currency: subscriptionResult.subscription_currency,
         currentPeriodEnd: subscriptionResult.current_period_end

@@ -92,18 +92,18 @@ create table if not exists public.card_presets (
 create table if not exists public.subscriptions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references public.profiles(id) on delete cascade,
-  razorpay_customer_id text,
-  razorpay_subscription_id text not null unique,
-  razorpay_plan_id text not null,
+  payment_provider text not null check (payment_provider in ('dodo', 'legacy')),
+  provider_customer_id text,
+  provider_subscription_id text not null unique,
+  provider_product_id text not null,
   subscription_status text not null,
   subscription_region text not null check (subscription_region in ('IN', 'GLOBAL')),
   subscription_currency text not null check (subscription_currency in ('INR', 'USD')),
   current_period_end timestamptz,
   cancel_at_period_end boolean not null default false,
   cancelled_at timestamptz,
-  razorpay_event_created_at bigint,
+  provider_event_at timestamptz,
   promotion_code text,
-  razorpay_offer_id text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -127,9 +127,10 @@ create table if not exists public.usage_events (
   created_at timestamptz not null default now()
 );
 
-create table if not exists public.razorpay_webhook_events (
+create table if not exists public.billing_webhook_events (
   event_id text primary key,
   event_name text not null,
+  payment_provider text not null check (payment_provider in ('dodo', 'legacy')),
   received_at timestamptz not null default now()
 );
 
@@ -190,7 +191,7 @@ alter table public.reviews enable row level security;
 alter table public.review_likes enable row level security;
 alter table public.card_presets enable row level security;
 alter table public.subscriptions enable row level security;
-alter table public.razorpay_webhook_events enable row level security;
+alter table public.billing_webhook_events enable row level security;
 alter table public.membership_grants enable row level security;
 alter table public.usage_events enable row level security;
 

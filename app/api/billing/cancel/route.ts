@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cancelRazorpaySubscription, isRazorpaySubscriptionId, RazorpayRequestError } from "@/lib/billing/razorpay";
+import { getDodoPaymentsClient, isDodoSubscriptionId } from "@/lib/billing/dodo";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -16,48 +16,44 @@ export async function POST() {
     const admin = createSupabaseAdminClient();
     const { data: subscription, error } = await admin
       .from("subscriptions")
-      .select("id, razorpay_subscription_id, subscription_status")
+      .select("id, payment_provider, provider_subscription_id, subscription_status")
       .eq("user_id", user.id)
       .order("updated_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
-    if (error || !subscription || !isRazorpaySubscriptionId(subscription.razorpay_subscription_id)) {
-      return NextResponse.json({ error: "No cancellable subscription was found." }, { status: 404 });
+    if (error || !subscription || subscription.payment_provider !== "dodo" || !isDodoSubscriptionId(subscription.provider_subscription_id)) {
+      return NextResponse.json({ error: "No Dodo subscription was found to cancel." }, { status: 404 });
     }
-
-    if (["cancelled", "completed", "expired"].includes(subscription.subscription_status)) {
+    if (["cancelled", "expired", "failed"].includes(subscription.subscription_status)) {
       return NextResponse.json({ error: "This subscription has already ended." }, { status: 400 });
     }
 
-    const remote = await cancelRazorpaySubscription(subscription.razorpay_subscription_id);
+    const remote = await getDodoPaymentsClient().subscriptions.update(subscription.provider_subscription_id, {
+      cancel_at_next_billing_date: true
+    });
     const { error: updateError } = await admin
       .from("subscriptions")
       .update({
         subscription_status: remote.status,
-        current_period_end: unixToIso(remote.current_end),
-        cancel_at_period_end: true,
+        current_period_end: toIso(remote.next_billing_date),
+        cancel_at_period_end: remote.cancel_at_next_billing_date,
         updated_at: new Date().toISOString()
       })
       .eq("id", subscription.id);
 
     if (updateError) {
-      console.error("Billing cancellation persistence failed", updateError.message);
+      console.error("Dodo cancellation persistence failed", updateError.message);
       return NextResponse.json({ error: "Cancellation was requested, but we could not save the status yet." }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true, message: "Your subscription will end after the current billing period." });
   } catch (error) {
-    if (error instanceof RazorpayRequestError) {
-      console.error("Razorpay cancellation failed", error.status);
-      return NextResponse.json({ error: "Razorpay could not cancel this subscription. Please try again." }, { status: 502 });
-    }
-
-    console.error("Billing cancellation failed", error instanceof Error ? error.message : "unknown error");
-    return NextResponse.json({ error: "Billing is not configured yet. Please try again later." }, { status: 503 });
+    console.error("Dodo cancellation failed", error instanceof Error ? error.message : "unknown error");
+    return NextResponse.json({ error: "Your subscription could not be cancelled. Please try again later." }, { status: 502 });
   }
 }
 
-function unixToIso(value?: number | null) {
-  return value ? new Date(value * 1000).toISOString() : null;
+function toIso(value: string | null | undefined) {
+  return value ? new Date(value).toISOString() : null;
 }

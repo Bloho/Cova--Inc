@@ -78,6 +78,7 @@ export default async function MoviePage({
               initialReviewed={Boolean(movieWithState.reviewed)}
               initialReview={currentReview}
               username={profile?.username}
+              avatarUrl={profile?.avatar_url}
             />
           </div>
         </section>

@@ -24,6 +24,11 @@ type TmdbListResponse = {
 const TMDB_URL = "https://api.themoviedb.org/3";
 const TMDB_REQUEST_TIMEOUT_MS = 8_000;
 
+export async function getPopularTableMovies() {
+  const pages = await Promise.all([fetchTmdbList("/movie/popular"), fetchTmdbList("/movie/popular", 2)]);
+  return [...new Map(pages.flat().map(movie => [movie.tmdbId, movie])).values()];
+}
+
 export async function getHomeMovies() {
   // Do not cache an empty network failure as a home-page result. A later request
   // can recover as soon as TMDB is reachable again.
@@ -91,14 +96,14 @@ const getCachedTmdbSearch = unstable_cache(
   { revalidate: 60 * 10 }
 );
 
-async function fetchTmdbList(path: string): Promise<Movie[]> {
+async function fetchTmdbList(path: string, page = 1): Promise<Movie[]> {
   const token = process.env.TMDB_API_KEY;
   if (!token) {
     return [];
   }
 
   const separator = path.includes("?") ? "&" : "?";
-  const request = tmdbRequest(`${TMDB_URL}${path}${separator}language=en-US&page=1`, token);
+  const request = tmdbRequest(`${TMDB_URL}${path}${separator}language=en-US&page=${page}`, token);
   const response = await fetchTmdb(request.url, {
     headers: request.headers,
     next: { revalidate: 60 * 30 }

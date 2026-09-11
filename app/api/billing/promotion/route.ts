@@ -6,6 +6,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 
 const FREE_MONTH_CODE = "HOTCHICKSDONTPAY100";
+const WELCOME_PROMOTION_CODE = "WELCOME50";
 const ENTITLED_STATUSES = ["authenticated", "active"];
 
 export async function POST(request: Request) {
@@ -25,6 +26,10 @@ export async function POST(request: Request) {
 
   const payload = await request.json().catch(() => null) as { code?: unknown } | null;
   const code = typeof payload?.code === "string" ? payload.code.trim().toUpperCase() : "";
+
+  if (code === WELCOME_PROMOTION_CODE) {
+    return NextResponse.json({ message: "WELCOME50 will be applied when you continue to checkout." });
+  }
 
   if (code !== FREE_MONTH_CODE) {
     return NextResponse.json({ error: "That code is not valid." }, { status: 404 });
