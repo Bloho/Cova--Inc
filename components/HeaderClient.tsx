@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogFilmDialog } from "@/components/LogFilmDialog";
-import { SearchMovieDialog } from "@/components/SearchMovieDialog";
+import { LogFilmDialog, SearchMovieDialog } from "@/components/LazyMovieDialogs";
 import { AccountDropdown } from "@/components/AccountDropdown";
 
 export function HeaderClient({

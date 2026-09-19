@@ -43,6 +43,9 @@ export function ProfileDashboardSkeleton() {
             </div>
           </section>
 
+          <div style={{ display: "flex", gap: 16, padding: "4px 24px 16px", minHeight: 56 }} aria-label="Loading connections">
+            <Skeleton style={{ width: 100, height: 24 }} /><Skeleton style={{ width: 100, height: 24 }} />
+          </div>
           <nav className="profile-tabs" aria-label="Loading profile collections">
             {Array.from({ length: 4 }).map((_, index) => <Skeleton className="profile-skeleton-tab" key={index} />)}
           </nav>

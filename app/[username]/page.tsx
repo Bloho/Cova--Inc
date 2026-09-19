@@ -5,6 +5,8 @@ import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileContent, type ProfileTab } from "@/components/ProfileContent";
 import { ProfileEditor } from "@/components/ProfileEditor";
 import { ProfileSidebar } from "@/components/ProfileSidebar";
+import { ProfileConnections } from "@/components/ProfileConnections";
+import { Suspense } from "react";
 import type { Movie } from "@/lib/data";
 import { applyUserState, getCurrentUserProfile, getUserMovieStates } from "@/lib/library";
 import { PROFILE_MOVIE_PAGE_SIZE, toProfileMovies } from "@/lib/profile-movies";
@@ -47,8 +49,7 @@ export default async function ProfilePage({
     { data: reviews },
     { data: watchedRows },
     { data: favouriteRows },
-    { data: wishlistRows },
-    { trending }
+    { data: wishlistRows }
   ] = await Promise.all([
     supabase.from("user_movies").select("tmdb_id", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("user_id", profile.id).eq("is_public", true),
@@ -58,6 +59,7 @@ export default async function ProfilePage({
       .eq("user_id", profile.id)
       .eq("is_public", true)
       .order("created_at", { ascending: false })
+      .order("id")
       .limit(PROFILE_REVIEW_PAGE_SIZE + 1),
     supabase
       .from("user_movies")
@@ -65,26 +67,28 @@ export default async function ProfilePage({
       .eq("user_id", profile.id)
       .eq("status", "watched")
       .order("watched_at", { ascending: false })
+      .order("tmdb_id")
       .limit(PROFILE_MOVIE_PAGE_SIZE + 1),
     supabase
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
       .eq("user_id", profile.id)
       .eq("liked", true)
-      .order("updated_at", { ascending: false }),
+      .order("updated_at", { ascending: false }).order("tmdb_id")
+      .limit(PROFILE_MOVIE_PAGE_SIZE + 1),
     supabase
       .from("user_movies")
       .select("tmdb_id, rating, status, watched_at, movies(tmdb_id, title, poster_path, overview, release_date)")
       .eq("user_id", profile.id)
       .eq("in_watchlist", true)
-      .order("updated_at", { ascending: false }),
-    getHomeMovies()
+      .order("updated_at", { ascending: false }).order("tmdb_id")
+      .limit(PROFILE_MOVIE_PAGE_SIZE + 1)
   ]);
 
   const initialMovies = toProfileMovies((watchedRows ?? []).slice(0, PROFILE_MOVIE_PAGE_SIZE));
   const initialMoviesHaveMore = (watchedRows?.length ?? 0) > PROFILE_MOVIE_PAGE_SIZE;
-  const favouriteMovies = toProfileMovies(favouriteRows ?? []);
-  const wishlistMovies = toProfileMovies(wishlistRows ?? []);
+  const favouriteMovies = toProfileMovies((favouriteRows ?? []).slice(0, PROFILE_MOVIE_PAGE_SIZE));
+  const wishlistMovies = toProfileMovies((wishlistRows ?? []).slice(0, PROFILE_MOVIE_PAGE_SIZE));
   const isOwnProfile = viewer?.id === profile.id;
   const allMovieIds = [...favouriteMovies, ...wishlistMovies].map((movie) => movie.tmdbId);
   const viewerStates = isOwnProfile ? new Map() : await getUserMovieStates([...new Set(allMovieIds)], viewer?.id);
@@ -143,9 +147,13 @@ export default async function ProfilePage({
             </div>
           </section>
 
+          <ProfileConnections key={profile.id} profileId={profile.id} isOwnProfile={isOwnProfile} isSignedIn={Boolean(viewer)} />
           <ProfileContent
+            key={profile.id}
             displayName={profile.display_name}
             favouriteMovies={favouriteMovies.map(decorateMovie)}
+            favouritesHaveMore={(favouriteRows?.length ?? 0) > PROFILE_MOVIE_PAGE_SIZE}
+            wishlistHasMore={(wishlistRows?.length ?? 0) > PROFILE_MOVIE_PAGE_SIZE}
             initialMovies={initialMovies}
             initialMoviesHaveMore={initialMoviesHaveMore}
             initialReviews={initialReviews}
@@ -158,16 +166,9 @@ export default async function ProfilePage({
         </main>
 
         <aside className="profile-trends" aria-label="Trending films">
-          <section className="profile-trends-card">
-            <h2>What&apos;s happening</h2>
-            {trending.slice(0, 3).map((movie) => (
-              <Link className="profile-trend" href={`/movie/${movie.tmdbId}`} key={movie.tmdbId}>
-                <span>Trending</span>
-                <strong>{movie.title}</strong>
-              </Link>
-            ))}
-            {!trending.length ? <p>Cova is quiet right now.</p> : null}
-          </section>
+          <Suspense fallback={<section className="profile-trends-card" aria-busy="true"><h2>What&apos;s happening</h2></section>}>
+            <ProfileTrends />
+          </Suspense>
           <footer className="profile-trends-footer">
             <Link href="/company/legal">Terms</Link>
             <Link href="/company/legal">Privacy</Link>
@@ -178,6 +179,15 @@ export default async function ProfilePage({
       </div>
     </div>
   );
+}
+
+async function ProfileTrends() {
+  const { trending } = await getHomeMovies();
+  return <section className="profile-trends-card">
+    <h2>What&apos;s happening</h2>
+    {trending.slice(0, 3).map(movie => <Link className="profile-trend" href={`/movie/${movie.tmdbId}`} key={movie.tmdbId} prefetch={false}><span>Trending</span><strong>{movie.title}</strong></Link>)}
+    {!trending.length ? <p>Cova is quiet right now.</p> : null}
+  </section>;
 }
 
 function isProfileTab(value: string | undefined): value is ProfileTab {

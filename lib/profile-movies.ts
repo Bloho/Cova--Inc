@@ -18,7 +18,7 @@ function toProfileMovie(row: any): Movie | null {
     releaseYear: movie.release_date ? String(movie.release_date).slice(0, 4) : "Film",
     rating,
     userRating: rating,
-    watched: true,
+    watched: row.status === "watched",
     reviewed: false,
     posterPath: movie.poster_path ?? "",
     overview: movie.overview ?? "",

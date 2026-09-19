@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { MoonIcon, SearchIcon, SunIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { LogFilmDialog } from "@/components/LogFilmDialog";
-import { SearchMovieDialog } from "@/components/SearchMovieDialog";
+import { LogFilmDialog, SearchMovieDialog } from "@/components/LazyMovieDialogs";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 

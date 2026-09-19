@@ -5,8 +5,7 @@ import { MoonIcon, SearchIcon, SunIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { LogFilmDialog } from "@/components/LogFilmDialog";
-import { SearchMovieDialog } from "@/components/SearchMovieDialog";
+import { LogFilmDialog, SearchMovieDialog } from "@/components/LazyMovieDialogs";
 import { AccountDropdown } from "@/components/AccountDropdown";
 import { Button } from "@/components/ui/button";
 

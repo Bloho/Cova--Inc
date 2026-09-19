@@ -309,8 +309,17 @@ grant execute on function public.consume_free_usage(text, text) to authenticated
 
 drop policy if exists "follows are readable" on public.follows;
 drop policy if exists "users manage own follows" on public.follows;
-create policy "follows are readable" on public.follows for select using (true);
-create policy "users manage own follows" on public.follows for all using (auth.uid() = follower_id) with check (auth.uid() = follower_id);
+drop policy if exists follows_public_read on public.follows;
+drop policy if exists follows_own_insert on public.follows;
+drop policy if exists follows_own_delete on public.follows;
+revoke all on public.follows from anon, authenticated;
+grant select on public.follows to anon, authenticated;
+grant insert (follower_id, following_id), delete on public.follows to authenticated;
+create policy follows_public_read on public.follows for select using (true);
+create policy follows_own_insert on public.follows for insert to authenticated with check ((select auth.uid()) = follower_id);
+create policy follows_own_delete on public.follows for delete to authenticated using ((select auth.uid()) = follower_id);
+create index if not exists follows_followers_page_idx on public.follows (following_id, created_at desc, follower_id);
+create index if not exists follows_following_page_idx on public.follows (follower_id, created_at desc, following_id);
 
 drop policy if exists "movies are readable" on public.movies;
 drop policy if exists "authenticated users can cache movies" on public.movies;

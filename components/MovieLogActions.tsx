@@ -4,7 +4,7 @@ import { fetchWithAlert } from "@/lib/action-alert";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MovieCardGenerator } from "@/components/MovieCardGenerator";
+import dynamic from "next/dynamic";
 import { ExistingReviewDialog } from "@/components/ExistingReviewDialog";
 import { RatingInput } from "@/components/RatingInput";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
 import { isLimitResponse, openUpgradePrompt } from "@/lib/upgrade-prompt";
 
 type MovieDialogState = "closed" | "review" | "saving" | "success" | "share" | "watchConfirm" | "watchRemoving" | "closing";
+const MovieCardGenerator = dynamic(() => import("@/components/MovieCardGenerator").then(module => module.MovieCardGenerator));
 type ExistingReview = {
   id: string;
   body: string;

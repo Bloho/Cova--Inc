@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
 import type { Movie } from "@/lib/data";
 import { posterUrl } from "@/lib/data";
 import { Rating } from "@/components/ui/rating";
@@ -24,11 +26,18 @@ export function MoviePoster({
   tooltipVariant?: TooltipVariant;
 }) {
   const watched = Boolean(movie.watched);
+  const router = useRouter();
+  const prefetched = useRef(false);
+  function prefetchOnIntent() {
+    if (prefetched.current) return;
+    prefetched.current = true;
+    router.prefetch(`/movie/${movie.tmdbId}`);
+  }
 
   const card = (
     <article className={`poster-card${watched ? " watched" : ""}`} style={{ minHeight: dense ? 188 : undefined }}>
-      <Link className="poster-link" href={`/movie/${movie.tmdbId}`} aria-label={`${movie.title} details`} prefetch>
-        <img className="poster-image" src={posterUrl(movie.posterPath)} alt={`${movie.title} poster`} loading="lazy" />
+      <Link className="poster-link" href={`/movie/${movie.tmdbId}`} aria-label={`${movie.title} details`} prefetch={false} onMouseEnter={prefetchOnIntent} onFocus={prefetchOnIntent}>
+        <img className="poster-image" src={posterUrl(movie.posterPath, dense ? "w342" : "w500")} alt={`${movie.title} poster`} loading="lazy" decoding="async" width={dense ? 342 : 500} height={dense ? 513 : 750} />
       </Link>
       {showYear ? (
         <div className="poster-meta">

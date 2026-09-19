@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PaginatedFilms } from "@/components/PaginatedFilms";
 import { MoviePoster } from "@/components/MoviePoster";
 import { ClassicSpinner } from "@/components/ui/classic-spinner";
 import { posterUrl, type Movie } from "@/lib/data";
@@ -17,6 +16,8 @@ type ProfileContentProps = {
   initialReviews: ProfileReviewItem[];
   initialReviewsHaveMore: boolean;
   favouriteMovies: Movie[];
+  favouritesHaveMore?: boolean;
+  wishlistHasMore?: boolean;
   initialMovies: Movie[];
   initialMoviesHaveMore: boolean;
   wishlistMovies: Movie[];
@@ -30,15 +31,20 @@ export function ProfileContent({
   initialReviews,
   initialReviewsHaveMore,
   favouriteMovies,
+  favouritesHaveMore = false,
+  wishlistHasMore = false,
   initialMovies,
   initialMoviesHaveMore,
   wishlistMovies,
   isSignedIn
 }: ProfileContentProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>(initialTab);
+  const [visited, setVisited] = useState<ProfileTab[]>([initialTab]);
+  useEffect(() => { setVisited(current => current.includes(activeTab) ? current : [...current, activeTab]); }, [activeTab]);
   const [reviews, setReviews] = useState(initialReviews);
   const [hasMoreReviews, setHasMoreReviews] = useState(initialReviewsHaveMore);
   const [isLoadingReviews, setIsLoadingReviews] = useState(false);
+  const [reviewsError, setReviewsError] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
 
@@ -63,6 +69,7 @@ export function ProfileContent({
 
     isLoadingRef.current = true;
     setIsLoadingReviews(true);
+    setReviewsError(false);
 
     try {
       const response = await fetch(
@@ -70,11 +77,13 @@ export function ProfileContent({
         { cache: "no-store" }
       );
 
-      if (!response.ok) return;
+      if (!response.ok) throw new Error("Could not load reviews");
 
       const payload = await response.json() as { reviews?: ProfileReviewItem[]; hasMore?: boolean };
       setReviews((current) => [...current, ...(payload.reviews ?? [])]);
       setHasMoreReviews(Boolean(payload.hasMore));
+    } catch {
+      setReviewsError(true);
     } finally {
       isLoadingRef.current = false;
       setIsLoadingReviews(false);
@@ -82,7 +91,7 @@ export function ProfileContent({
   }, [hasMoreReviews, reviews.length, username]);
 
   useEffect(() => {
-    if (activeTab !== "reviews" || !hasMoreReviews || !loaderRef.current) return;
+    if (activeTab !== "reviews" || reviewsError || !hasMoreReviews || !loaderRef.current) return;
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0]?.isIntersecting) void loadMoreReviews();
@@ -90,7 +99,7 @@ export function ProfileContent({
 
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [activeTab, hasMoreReviews, loadMoreReviews]);
+  }, [activeTab, reviewsError, hasMoreReviews, loadMoreReviews]);
 
   return (
     <>
@@ -109,37 +118,37 @@ export function ProfileContent({
           {hasMoreReviews || isLoadingReviews ? (
             <div className="profile-review-loader" ref={loaderRef} aria-live="polite">
               {isLoadingReviews ? <ClassicSpinner theme="dark" /> : null}
+              {reviewsError ? <button className="profile-load-more" onClick={() => void loadMoreReviews()}>Could not load reviews. Retry</button> : null}
             </div>
           ) : null}
         </section>
-      ) : activeTab === "movies" ? (
-        <InfiniteProfileMovieGrid
-          initialHasMore={initialMoviesHaveMore}
-          initialMovies={initialMovies}
-          isSignedIn={isSignedIn}
-          username={username}
-        />
-      ) : (
-        <section className="profile-tab-films" aria-label={`${displayName}'s ${activeTab}`} role="tabpanel">
-          <PaginatedFilms
+      ) : null}
+      {(["movies", "favourites", "wishlist"] as const).map(tab => visited.includes(tab) || activeTab === tab ? (
+        <div key={tab} hidden={activeTab !== tab}>
+          <InfiniteProfileMovieGrid
+            active={activeTab === tab}
+            collection={tab}
+            initialHasMore={tab === "movies" ? initialMoviesHaveMore : tab === "favourites" ? favouritesHaveMore : wishlistHasMore}
+            initialMovies={tab === "movies" ? initialMovies : tab === "favourites" ? favouriteMovies : wishlistMovies}
             isSignedIn={isSignedIn}
-            itemsPerPage={24}
-            movies={activeTab === "favourites" ? favouriteMovies : wishlistMovies}
-            showReviewTooltip={false}
-            showYears={false}
+            username={username}
           />
-        </section>
-      )}
+        </div>
+      ) : null)}
     </>
   );
 }
 
 function InfiniteProfileMovieGrid({
+  active,
+  collection,
   initialHasMore,
   initialMovies,
   isSignedIn,
   username
 }: {
+  active: boolean;
+  collection: "movies" | "favourites" | "wishlist";
   initialHasMore: boolean;
   initialMovies: Movie[];
   isSignedIn: boolean;
@@ -148,36 +157,41 @@ function InfiniteProfileMovieGrid({
   const [movies, setMovies] = useState(initialMovies);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
-  const movieCountRef = useRef(initialMovies.length);
+  const movieCountRef = useRef(initialHasMore ? PROFILE_MOVIE_PAGE_SIZE : initialMovies.length);
 
   const loadMore = useCallback(async () => {
     if (isLoadingRef.current || !hasMore) return;
 
     isLoadingRef.current = true;
     setIsLoading(true);
+    setError(false);
 
     try {
       const response = await fetch(
-        `/api/profile/${encodeURIComponent(username)}/movies?offset=${movieCountRef.current}&limit=${PROFILE_MOVIE_PAGE_SIZE}`,
+        `/api/profile/${encodeURIComponent(username)}/movies?collection=${collection}&offset=${movieCountRef.current}&limit=${PROFILE_MOVIE_PAGE_SIZE}`,
         { cache: "no-store" }
       );
 
-      if (!response.ok) return;
+      if (!response.ok) throw new Error("Could not load movies");
 
-      const payload = await response.json() as { movies?: Movie[]; hasMore?: boolean };
+      const payload = await response.json() as { movies?: Movie[]; hasMore?: boolean; nextOffset?: number };
       const nextMovies = payload.movies ?? [];
-      movieCountRef.current += nextMovies.length;
-      setMovies((current) => [...current, ...nextMovies]);
+      movieCountRef.current = payload.nextOffset ?? movieCountRef.current + nextMovies.length;
+      setMovies((current) => [...new Map([...current, ...nextMovies].map(movie => [movie.tmdbId, movie])).values()]);
       setHasMore(Boolean(payload.hasMore));
+    } catch {
+      setError(true);
     } finally {
       isLoadingRef.current = false;
       setIsLoading(false);
     }
-  }, [hasMore, username]);
+  }, [hasMore, username, collection]);
 
   useEffect(() => {
+    if (!active || error) return;
     let animationFrame: number | null = null;
     let lastScrollY = window.scrollY;
     let lastScrollTime = performance.now();
@@ -212,21 +226,22 @@ function InfiniteProfileMovieGrid({
       window.removeEventListener("scroll", onScroll);
       if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
     };
-  }, [hasMore, loadMore]);
+  }, [active, error, hasMore, loadMore]);
 
   return (
-    <section className="profile-tab-films profile-movies-feed" aria-label="Movies" role="tabpanel">
+    <section className="profile-tab-films profile-movies-feed" aria-label={collection} role="tabpanel">
       {movies.length ? (
         <div className="poster-grid">
           {movies.map((movie, index) => (
             <MoviePoster dense isSignedIn={isSignedIn} key={`${movie.tmdbId}-${index}`} movie={movie} showTooltip={false} showYear={false} />
           ))}
         </div>
-      ) : <div className="profile-tab-empty">No films logged yet.</div>}
+      ) : <div className="profile-tab-empty">{collection === "movies" ? "No films logged yet." : collection === "favourites" ? "No favourites yet." : "Your wishlist is empty."}</div>}
 
       {hasMore || isLoading ? (
         <div className="profile-movies-loader" ref={sentinelRef} aria-live="polite">
           {isLoading ? <ClassicSpinner theme="dark" /> : null}
+          {!isLoading ? <button className="profile-load-more" onClick={() => void loadMore()} type="button">{error ? "Could not load. Retry" : "Load more"}</button> : null}
         </div>
       ) : null}
     </section>
@@ -244,7 +259,7 @@ function ProfileTabButton({ active, children, onClick }: { active: boolean; chil
 function ProfileReviewRow({ displayName, review, username }: { displayName: string; review: ProfileReviewItem; username: string }) {
   return (
     <article className="profile-review-row">
-      {review.movie?.posterPath ? <img className="profile-review-poster" src={posterUrl(review.movie.posterPath, "w342")} alt={`${review.movie.title} poster`} /> : <div className="profile-review-poster" aria-hidden />}
+      {review.movie?.posterPath ? <img className="profile-review-poster" src={posterUrl(review.movie.posterPath, "w185")} alt={`${review.movie.title} poster`} loading="lazy" decoding="async" /> : <div className="profile-review-poster" aria-hidden />}
       <div className="profile-review-copy">
         <p className="profile-review-meta">
           <strong>{displayName}</strong><span>@{username}</span><span>{review.movie?.title ?? "Film"}</span><time dateTime={review.createdAt}>{formatReviewDate(review.createdAt)}</time>

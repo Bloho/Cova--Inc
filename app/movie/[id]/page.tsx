@@ -25,8 +25,8 @@ export default async function MoviePage({
   }
 
   const supabase = await createSupabaseServerClient();
-  const [states, reviewResult] = await Promise.all([
-    getUserMovieStates([movie.tmdbId], user?.id),
+  const [states, reviewResult, hasCovaPro] = await Promise.all([
+    getUserMovieStates([movie.tmdbId], user?.id ?? null),
     user
       ? supabase
           .from("reviews")
@@ -36,12 +36,12 @@ export default async function MoviePage({
           .order("updated_at", { ascending: false })
           .limit(1)
           .maybeSingle()
-      : Promise.resolve({ data: null })
+      : Promise.resolve({ data: null }),
+    user ? hasActiveCovaMembership(user.id).catch(() => false) : Promise.resolve(false)
   ]);
   const movieState = states.get(movie.tmdbId);
   const movieWithState = applyUserState(movie, movieState);
   const currentReview = reviewResult.data;
-  const hasCovaPro = user ? await hasActiveCovaMembership(user.id).catch(() => false) : false;
 
   return (
     <div className="movie-page">

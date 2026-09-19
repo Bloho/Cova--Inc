@@ -19,10 +19,11 @@ export default async function Home({
     redirect(`/auth/callback?code=${encodeURIComponent(params.code)}&next=/`);
   }
 
-  const { trending, isLive } = await getHomeMovies();
-  const { user, profile } = await getCurrentUserProfile();
-  const hasCovaPro = user ? await hasActiveCovaMembership(user.id).catch(() => false) : false;
-  const states = await getUserMovieStates(trending.map((movie) => movie.tmdbId), user?.id);
+  const [{ trending, isLive }, { user, profile }] = await Promise.all([getHomeMovies(), getCurrentUserProfile()]);
+  const [hasCovaPro, states] = await Promise.all([
+    user ? hasActiveCovaMembership(user.id).catch(() => false) : Promise.resolve(false),
+    getUserMovieStates(trending.map((movie) => movie.tmdbId), user?.id ?? null)
+  ]);
   const trendingWithState = trending.map((movie) => applyUserState(movie, states.get(movie.tmdbId)));
   const needsOnboarding = Boolean(user && profile && (!profile.username || !profile.onboarded_at));
 

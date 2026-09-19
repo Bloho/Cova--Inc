@@ -5290,6 +5290,8 @@ html:not(.dark) .movie-card-close {
 
 .profile-cover {
   position: relative;
+  width: 100%;
+  min-width: 0;
   aspect-ratio: 666 / 155;
   min-height: 155px;
   background: #252525;
@@ -5833,6 +5835,21 @@ html:not(.dark) .movie-card-close {
   display: grid;
   min-height: 120px;
   place-items: center;
+}
+
+.profile-load-more {
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.profile-review-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 180px;
 }
 
 .classic-spinner {

@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { SearchIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LogFilmDialog } from "@/components/LogFilmDialog";
-import { SearchMovieDialog } from "@/components/SearchMovieDialog";
+import { LogFilmDialog, SearchMovieDialog } from "@/components/LazyMovieDialogs";
 import styles from "./table.module.css";
 
 export function BetaActions({ isSignedIn }: { isSignedIn: boolean }) {

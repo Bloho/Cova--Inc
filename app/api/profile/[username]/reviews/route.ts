@@ -21,6 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
     .eq("user_id", profile.id)
     .eq("is_public", true)
     .order("created_at", { ascending: false })
+    .order("id")
     .range(offset, offset + limit);
 
   if (error) {
