@@ -5304,6 +5304,9 @@ html:not(.dark) .movie-card-close {
   object-fit: fill;
 }
 
+.profile-cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.profile-settings-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 14px; color: #999; }
+
 .profile-avatar-lockup {
   position: absolute;
   bottom: -53px;

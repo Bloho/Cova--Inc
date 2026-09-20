@@ -9,7 +9,9 @@
 .more { margin-left: auto; border: 0; background: transparent; color: #888; display: grid; place-items: center; width: 32px; height: 36px; flex-shrink: 0; cursor: pointer; }
 .rating { display: flex; justify-content: center; align-items: center; gap: 8px; flex-shrink: 0; font-size: 23px; }
 .body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; white-space: pre-wrap; overflow-wrap: anywhere; color: #aaa; font-size: 20px; line-height: 1.35; }
-.menu { z-index: 105; border-radius: 18px; padding: 28px; width: 320px; max-width: calc(100vw - 32px); height: 200px; box-sizing: border-box; transform-origin: var(--radix-popover-content-transform-origin); }
+.menu { z-index: 105; border-radius: 18px; padding: 24px; width: 320px; max-width: calc(100vw - 32px); height: 280px; max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; transform-origin: var(--radix-popover-content-transform-origin); }
+.keepWatched { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 14px; cursor: pointer; }
+.keepWatched input { width: 16px; height: 16px; flex-shrink: 0; }
 .panel { height: 100%; animation: panelIn 220ms ease-out both; }
 .options { height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
 .panel h2 { font-size: 18px; line-height: 1.3; margin: 0 0 12px; }

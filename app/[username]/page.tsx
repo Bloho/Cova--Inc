@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays } from "lucide-react";
+import { ArrowLeft, CalendarDays, Settings } from "lucide-react";
 import { ProfileCardGenerator } from "@/components/ProfileCardGenerator";
 import { ProfileContent, type ProfileTab } from "@/components/ProfileContent";
-import { ProfileEditor } from "@/components/ProfileEditor";
 import { ProfileSidebar } from "@/components/ProfileSidebar";
 import { ProfileConnections } from "@/components/ProfileConnections";
 import { Suspense } from "react";
@@ -49,7 +48,8 @@ export default async function ProfilePage({
     { data: reviews },
     { data: watchedRows },
     { data: favouriteRows },
-    { data: wishlistRows }
+    { data: wishlistRows },
+    { data: bannerProfile }
   ] = await Promise.all([
     supabase.from("user_movies").select("tmdb_id", { count: "exact", head: true }).eq("user_id", profile.id).eq("status", "watched"),
     supabase.from("reviews").select("id", { count: "exact", head: true }).eq("user_id", profile.id).eq("is_public", true),
@@ -82,7 +82,8 @@ export default async function ProfilePage({
       .eq("user_id", profile.id)
       .eq("in_watchlist", true)
       .order("updated_at", { ascending: false }).order("tmdb_id")
-      .limit(PROFILE_MOVIE_PAGE_SIZE + 1)
+      .limit(PROFILE_MOVIE_PAGE_SIZE + 1),
+    supabase.from("profiles").select("banner_url").eq("id", profile.id).maybeSingle()
   ]);
 
   const initialMovies = toProfileMovies((watchedRows ?? []).slice(0, PROFILE_MOVIE_PAGE_SIZE));
@@ -119,6 +120,7 @@ export default async function ProfilePage({
 
           <section className="profile-cover" aria-label={`${profile.display_name}'s profile header`}>
             <img className="profile-cover-art" src="/profile/profile-banner.svg" alt="" />
+            {bannerProfile?.banner_url ? <img className="profile-cover-photo" src={bannerProfile.banner_url} alt={`${profile.display_name}'s banner`} /> : null}
             <div className="profile-avatar-lockup">
               <img className="profile-avatar-shape" src="/profile/profile-picture.svg" alt="" />
               {profile.avatar_url ? <img className="profile-avatar-photo" src={profile.avatar_url} alt={`${profile.display_name}'s profile`} /> : null}
@@ -128,11 +130,12 @@ export default async function ProfilePage({
           <section className="profile-overview">
             <div className="profile-identity-copy">
               {isOwnProfile ? (
-                <ProfileEditor displayName={profile.display_name} username={profile.username} avatarUrl={profile.avatar_url} />
+                <h1><Link className="profile-name-edit" href="/settings/profile">{profile.display_name}</Link></h1>
               ) : (
                 <h1>{profile.display_name}</h1>
               )}
               <p>@{profile.username}</p>
+              {isOwnProfile ? <Link className="profile-settings-link" href="/settings/profile"><Settings size={16} />Edit profile</Link> : null}
             </div>
 
             {isOwnProfile ? (

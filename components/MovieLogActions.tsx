@@ -99,6 +99,7 @@ export function MovieLogActions({
   }
 
   async function save() {
+    if (busy) return;
     if (!isSignedIn) {
       router.push("/login");
       return;
@@ -111,7 +112,7 @@ export function MovieLogActions({
 
     setBusy(true);
     setMessage("");
-    setDialogState("saving");
+    setDialogState("closed");
     const savedRating = normalizeRating(rating);
     const response = await fetchWithAlert("/api/log", {
       method: "POST",
@@ -137,13 +138,9 @@ export function MovieLogActions({
         });
       }
       router.refresh();
-      window.setTimeout(() => setDialogState("success"), 120);
-      window.setTimeout(() => setDialogState("closing"), 520);
-      window.setTimeout(() => {
-        setDialogState("closed");
-        setBusy(false);
-        setReview("");
-      }, 760);
+      setDialogState("closed");
+      setBusy(false);
+      setReview("");
       return;
     }
 
@@ -159,7 +156,7 @@ export function MovieLogActions({
     setBusy(false);
   }
 
-  async function deleteReview() {
+  async function deleteReview(keepWatched: boolean) {
     if (!existingReview || drawerDeleting) {
       throw new Error("This review is no longer available to delete.");
     }
@@ -171,7 +168,7 @@ export function MovieLogActions({
       const response = await fetch("/api/review", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tmdbId: movie.tmdbId })
+        body: JSON.stringify({ tmdbId: movie.tmdbId, keepWatched })
       });
 
       if (!response.ok) {
@@ -181,7 +178,8 @@ export function MovieLogActions({
 
       setExistingReview(null);
       setReview("");
-      setReviewed(Boolean(rating));
+      setReviewed(keepWatched);
+      if (!keepWatched) setRating(0);
       router.refresh();
       setDrawerOpen(false);
     } catch (requestError) {

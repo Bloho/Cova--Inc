@@ -41,10 +41,6 @@ export function AccountDropdown({
     setHighlightedItem(getActiveItem(pathname, profilePath));
   }, [pathname, profilePath]);
 
-  function keepFutureItemClosed(event: Event) {
-    event.preventDefault();
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -88,7 +84,7 @@ export function AccountDropdown({
         </DropdownMenuGroup>
         <DropdownMenuSeparator className="cova-account-separator" />
         <DropdownMenuGroup className="cova-account-group">
-          <DropdownMenuItem onFocus={() => setHighlightedItem("settings")} onPointerMove={() => setHighlightedItem("settings")} onSelect={keepFutureItemClosed} className={`cova-account-item${highlightedItem === "settings" ? " is-highlighted" : ""}`} data-future="true">
+          <DropdownMenuItem onFocus={() => setHighlightedItem("settings")} onPointerMove={() => setHighlightedItem("settings")} onSelect={() => onNavigate("/settings/profile")} className={`cova-account-item${highlightedItem === "settings" ? " is-highlighted" : ""}`}>
             <span className="cova-account-icon" style={{ "--cova-icon": 'url("/icons/settings.svg")' } as CSSProperties} aria-hidden />
             <span>Settings</span>
           </DropdownMenuItem>
@@ -109,6 +105,7 @@ function getActiveItem(pathname: string, profilePath: string): AccountMenuItem {
   if (pathname === "/wishlist") return "wishlist";
   if (pathname === profilePath) return "profile";
   if (pathname === "/favourites") return "favourites";
+  if (pathname.startsWith("/settings/")) return "settings";
   return null;
 }
 

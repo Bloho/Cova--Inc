@@ -10,7 +10,7 @@ type Props = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEdit: () => void;
-  onDelete: () => Promise<void>;
+  onDelete: (keepWatched: boolean) => Promise<void>;
   body: string;
   rating: number;
   createdAt?: string;
@@ -19,6 +19,7 @@ type Props = {
 
 export function ExistingReviewDialog({ open, onOpenChange, onEdit, onDelete, body, rating, createdAt, avatarUrl }: Props) {
   const [confirm, setConfirm] = useState(false);
+  const [keepWatched, setKeepWatched] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
   const cancelRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -40,7 +41,7 @@ export function ExistingReviewDialog({ open, onOpenChange, onEdit, onDelete, bod
     onOpenChange(false);
     setStage("deleting");
     try {
-      await onDelete();
+      await onDelete(keepWatched);
       setStage("complete");
     } catch {
       setStage("error");
@@ -71,14 +72,18 @@ export function ExistingReviewDialog({ open, onOpenChange, onEdit, onDelete, bod
                     <div key={confirm ? "confirm" : "options"} className={styles.panel}>
                       {confirm ? <>
                         <h2>Are you sure you want to delete this review?</h2>
-                        <p>This action cannot be reversed</p>
+                        <p>The review will be deleted permanently. This movie will also leave Watched unless you keep it below.</p>
+                        <label className={styles.keepWatched}>
+                          <input type="checkbox" checked={keepWatched} onChange={event => setKeepWatched(event.target.checked)} />
+                          Keep this movie in Watched
+                        </label>
                         <div className={styles.actions}>
                           <button ref={cancelRef} className={styles.pill} onClick={() => setConfirm(false)}>Cancel</button>
                           <button className={`${styles.pill} ${styles.danger}`} onClick={() => void remove()}>Proceed</button>
                         </div>
                       </> : <div className={styles.options}>
                         <button className={styles.pill} onClick={() => { setOptionsOpen(false); onEdit(); }}>Edit</button>
-                        <button className={`${styles.pill} ${styles.danger}`} onClick={() => setConfirm(true)}>Delete</button>
+                        <button className={`${styles.pill} ${styles.danger}`} onClick={() => { setKeepWatched(false); setConfirm(true); }}>Delete</button>
                       </div>}
                     </div>
                   </Popover.Content>

@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function DELETE(request: Request) {
+  const origin = request.headers.get("origin");
+  if (origin && origin !== new URL(request.url).origin) {
+    return NextResponse.json({ error: "Invalid origin." }, { status: 403 });
+  }
   const supabase = await createSupabaseServerClient();
   const {
     data: { user }
@@ -11,29 +15,20 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Sign in before deleting reviews." }, { status: 401 });
   }
 
-  const body = (await request.json().catch(() => ({}))) as { tmdbId?: number };
+  const body = (await request.json().catch(() => null)) as { tmdbId?: number; keepWatched?: boolean } | null;
 
-  if (!body.tmdbId) {
-    return NextResponse.json({ error: "Missing movie." }, { status: 400 });
+  if (!body || !Number.isSafeInteger(body.tmdbId) || !body.tmdbId || Math.abs(body.tmdbId) > 2147483647 || (body.keepWatched !== undefined && typeof body.keepWatched !== "boolean")) {
+    return NextResponse.json({ error: "Invalid movie or Watched preference." }, { status: 400 });
   }
 
-  const { error } = await supabase
-    .from("reviews")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("tmdb_id", body.tmdbId);
+  const { error } = await supabase.rpc("delete_own_review", {
+    movie_id: body.tmdbId,
+    keep_watched: body.keepWatched ?? false
+  });
 
   if (error) {
-    return NextResponse.json({ error: databaseErrorMessage(error.message) }, { status: 500 });
+    return NextResponse.json({ error: "Could not delete your review. Please try again later." }, { status: 503 });
   }
 
-  return NextResponse.json({ ok: true });
-}
-
-function databaseErrorMessage(message: string) {
-  if (message.includes("schema cache") || message.includes("public.reviews")) {
-    return "Database is not set up yet. Run supabase/schema.sql in the Supabase SQL Editor for the project connected to this deployment.";
-  }
-
-  return message;
+  return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
 }

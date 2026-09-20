@@ -21,6 +21,7 @@ alter table public.profiles alter column username drop not null;
 alter table public.profiles add column if not exists onboarded_at timestamptz;
 alter table public.profiles add column if not exists verified_country text;
 alter table public.profiles add column if not exists billing_country text;
+alter table public.profiles add column if not exists banner_url text;
 alter table public.profiles drop constraint if exists profiles_username_check;
 alter table public.profiles drop constraint if exists profiles_username_format;
 alter table public.profiles

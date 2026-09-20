@@ -14,7 +14,7 @@ import { RatingInput } from "@/components/RatingInput";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type LogStep = "search" | "results" | "review";
-type LogStatus = "idle" | "saving" | "success" | "closing";
+type LogStatus = "idle" | "saving" | "closing";
 
 export function LogFilmDialog({
   open,
@@ -40,7 +40,7 @@ export function LogFilmDialog({
   const reviewWordCount = countReviewWords(review);
   const reviewTooLong = reviewWordCount > MAX_REVIEW_WORDS;
 
-  if (!open) {
+  if (!open || status === "saving") {
     return null;
   }
 
@@ -83,6 +83,7 @@ export function LogFilmDialog({
   }
 
   async function save() {
+    if (busy) return;
     if (!selected) {
       return;
     }
@@ -118,16 +119,8 @@ export function LogFilmDialog({
 
     if (response.ok) {
       router.refresh();
-      window.setTimeout(() => {
-        setStatus("success");
-      }, 120);
-      window.setTimeout(() => {
-        setStatus("closing");
-      }, 520);
-      window.setTimeout(() => {
-        resetDialog();
-        onClose();
-      }, 760);
+      resetDialog();
+      onClose();
     } else {
       const data = await response.json().catch(() => ({}));
       setMessage(data.error ?? "Could not log this film.");
@@ -160,9 +153,9 @@ export function LogFilmDialog({
         }
       }}
     >
-      <div className={`log-dialog log-dialog-${status === "saving" || status === "success" ? status : step}`}>
+      <div className={`log-dialog log-dialog-${step}`}>
         <div className="dialog-head">
-          {status === "saving" || status === "success" || step === "review" ? null : (
+          {step === "review" ? null : (
             <strong>{step === "results" ? query.trim().toUpperCase() : "Add your film!"}</strong>
           )}
         </div>
@@ -206,20 +199,6 @@ export function LogFilmDialog({
             ) : null}
 
             <div className={`log-stage log-stage-${status === "idle" ? step : status}`}>
-              {status === "saving" ? (
-                <div className="log-feedback">
-                  <h2>Your movie is being added</h2>
-                  <span className="log-spinner" aria-label="Adding movie" />
-                </div>
-              ) : null}
-
-              {status === "success" ? (
-                <div className="log-feedback">
-                  <h2>Your movie has been added!</h2>
-                  <img className="log-success-mark" src="/utilities/Checkmark.png" alt="" />
-                </div>
-              ) : null}
-
               {status === "idle" && step === "results" ? (
                 <div className="log-results">
                   {busy && query.trim()
