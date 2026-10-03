@@ -1,4 +1,5 @@
 import "server-only";
+import { isAdminOwnerEmail } from "@/lib/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type BillingSubscription = {
@@ -76,6 +77,10 @@ export async function getActiveMembershipGrant(userId: string) {
 }
 
 export async function hasActiveCovaMembership(userId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user?.id === userId && isAdminOwnerEmail(user.email)) return true;
+
   const [hasSubscription, membershipGrant] = await Promise.all([
     hasActiveSubscription(userId),
     getActiveMembershipGrant(userId)
