@@ -219,6 +219,11 @@ security definer
 set search_path = public
 as $$
   select exists (
+    select 1
+    from auth.users
+    where id = member_user_id
+      and lower(email) in ('ayush.lowkey@gmail.com', 'ayushsamanta904@gmail.com')
+  ) or exists (
     select 1 from public.subscriptions
     where user_id = member_user_id
       and subscription_status in ('authenticated', 'active')

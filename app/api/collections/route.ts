@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ensureProfile } from "@/lib/profile";
+import { isAdminOwnerEmail } from "@/lib/admin";
 import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -87,7 +88,8 @@ export async function POST(request: Request) {
   }
 
   const wasActive = body.collection === "wishlist" ? Boolean(existing?.in_watchlist) : Boolean(existing?.liked);
-  if (body.active && !wasActive && !await hasActiveCovaMembership(user.id)) {
+  const hasCovaPro = isAdminOwnerEmail(user.email) || await hasActiveCovaMembership(user.id);
+  if (body.active && !wasActive && !hasCovaPro) {
     const column = body.collection === "wishlist" ? "in_watchlist" : "liked";
     const { count, error: countError } = await supabase
       .from("user_movies")

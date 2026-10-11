@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAdminOwnerEmail } from "@/lib/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type UsageFeature = "movie_share_card" | "profile_card_export";
@@ -19,6 +20,18 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Please sign in first." }, { status: 401 });
+  }
+
+  if (isAdminOwnerEmail(user.email)) {
+    return NextResponse.json({ ok: true, used: 0 });
+  }
+
   const targetKey = feature === "movie_share_card" ? `movie:${body?.tmdbId}` : "profile";
   const { data, error } = await supabase.rpc("consume_free_usage", {
     p_feature: feature,

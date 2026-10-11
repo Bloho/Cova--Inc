@@ -3,6 +3,7 @@ import type { Movie } from "@/lib/data";
 import { ensureProfile } from "@/lib/profile";
 import { normalizeRating } from "@/lib/ratings";
 import { countReviewWords, MAX_REVIEW_WORDS } from "@/lib/reviews";
+import { isAdminOwnerEmail } from "@/lib/admin";
 import { hasActiveCovaMembership } from "@/lib/billing/subscription";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -56,10 +57,11 @@ export async function POST(request: Request) {
   }
 
   if (review) {
-    const [{ data: existingReview, error: existingReviewError }, isMember] = await Promise.all([
+    const [{ data: existingReview, error: existingReviewError }, hasCovaPro] = await Promise.all([
       supabase.from("reviews").select("id").eq("user_id", user.id).eq("tmdb_id", movie.tmdbId).maybeSingle(),
       hasActiveCovaMembership(user.id)
     ]);
+    const isMember = isAdminOwnerEmail(user.email) || hasCovaPro;
 
     if (existingReviewError) {
       return NextResponse.json({ error: databaseErrorMessage(existingReviewError.message) }, { status: 500 });
