@@ -3,6 +3,7 @@ export const PROFILE_REVIEW_PAGE_SIZE = 8;
 export type ProfileReviewItem = {
   id: string;
   body: string | null;
+  rating: number | null;
   createdAt: string;
   movie: {
     tmdbId: number;
@@ -17,6 +18,7 @@ export function toProfileReviewItem(row: any): ProfileReviewItem {
   return {
     id: row.id,
     body: row.body ?? null,
+    rating: row.rating === null || row.rating === undefined ? null : Number(row.rating),
     createdAt: row.created_at,
     movie: movie ? {
       tmdbId: Number(movie.tmdb_id),

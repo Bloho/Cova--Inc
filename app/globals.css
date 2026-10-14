@@ -5487,8 +5487,18 @@ html:not(.dark) .movie-card-close {
   padding-top: 8px;
 }
 
+.profile-review-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .profile-review-meta {
   display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
   flex-wrap: wrap;
   gap: 0 8px;
   margin: 0;
@@ -5510,13 +5520,38 @@ html:not(.dark) .movie-card-close {
 
 .profile-review-meta span::before,
 .profile-review-meta time::before {
-  margin-right: 8px;
-  color: #565656;
-  content: "•";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 0 8px 2px 0;
+  border-radius: 999px;
+  background: #565656;
+  content: "";
+  vertical-align: middle;
 }
 
 .profile-review-meta time {
   color: #666666;
+}
+
+.profile-review-rating {
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-top: 1px;
+}
+
+.profile-review-rating .star-shell {
+  font-size: 15px;
+}
+
+.profile-review-rating .star-empty {
+  color: #4c4c4c;
+}
+
+.profile-review-rating .star-fill {
+  color: #f4f4f4;
 }
 
 .profile-dashboard-page .profile-review-quote {
@@ -5810,7 +5845,21 @@ html:not(.dark) .movie-card-close {
 
   .profile-review-meta span::before,
   .profile-review-meta time::before {
+    width: 3px;
+    height: 3px;
     margin-right: 6px;
+  }
+
+  .profile-review-heading {
+    gap: 8px;
+  }
+
+  .profile-review-rating {
+    gap: 1px;
+  }
+
+  .profile-review-rating .star-shell {
+    font-size: 13px;
   }
 
   .profile-dashboard-page .profile-review-quote {
@@ -6014,8 +6063,18 @@ html:not(.dark) .movie-card-close {
   padding-top: 8px;
 }
 
+.profile-skeleton-review-heading {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .profile-skeleton-review-meta {
   display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
@@ -6039,6 +6098,12 @@ html:not(.dark) .movie-card-close {
 .profile-skeleton-review-date {
   width: 48px;
   height: 16px;
+}
+
+.profile-skeleton-review-rating {
+  width: 76px;
+  height: 15px;
+  flex: 0 0 auto;
 }
 
 .profile-skeleton-review-line {
@@ -6123,6 +6188,15 @@ html:not(.dark) .movie-card-close {
 
   .profile-skeleton-review-meta {
     gap: 6px;
+  }
+
+  .profile-skeleton-review-heading {
+    gap: 8px;
+  }
+
+  .profile-skeleton-review-rating {
+    width: 64px;
+    height: 14px;
   }
 
   .profile-skeleton-review-film {

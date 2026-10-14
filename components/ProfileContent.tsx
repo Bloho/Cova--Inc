@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MoviePoster } from "@/components/MoviePoster";
 import { ClassicSpinner } from "@/components/ui/classic-spinner";
+import { Rating } from "@/components/ui/rating";
 import { posterUrl, type Movie } from "@/lib/data";
 import { PROFILE_MOVIE_PAGE_SIZE } from "@/lib/profile-movies";
 import { PROFILE_REVIEW_PAGE_SIZE, type ProfileReviewItem } from "@/lib/profile-reviews";
@@ -261,12 +262,35 @@ function ProfileReviewRow({ displayName, review, username }: { displayName: stri
     <article className="profile-review-row">
       {review.movie?.posterPath ? <img className="profile-review-poster" src={posterUrl(review.movie.posterPath, "w185")} alt={`${review.movie.title} poster`} loading="lazy" decoding="async" /> : <div className="profile-review-poster" aria-hidden />}
       <div className="profile-review-copy">
-        <p className="profile-review-meta">
-          <strong>{displayName}</strong><span>@{username}</span><span>{review.movie?.title ?? "Film"}</span><time dateTime={review.createdAt}>{formatReviewDate(review.createdAt)}</time>
-        </p>
+        <div className="profile-review-heading">
+          <p className="profile-review-meta">
+            <strong>{displayName}</strong><span>@{username}</span><span>{review.movie?.title ?? "Film"}</span><time dateTime={review.createdAt}>{formatReviewDate(review.createdAt)}</time>
+          </p>
+          <ProfileReviewRating rating={review.rating} />
+        </div>
         <p className="profile-review-quote">{formatReviewQuote(review.body)}</p>
       </div>
     </article>
+  );
+}
+
+function ProfileReviewRating({ rating }: { rating: number | null }) {
+  const rawRating = Number(rating ?? 0);
+
+  if (!Number.isFinite(rawRating) || rawRating <= 0) {
+    return null;
+  }
+
+  const value = Math.min(rawRating, 5);
+
+  return (
+    <Rating
+      className="profile-review-rating"
+      precision={0.5}
+      size={15}
+      value={value}
+      aria-label={`${value} out of 5 stars`}
+    />
   );
 }
 

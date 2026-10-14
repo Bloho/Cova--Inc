@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
 
   const { data, error } = await supabase
     .from("reviews")
-    .select("id, body, created_at, movies(tmdb_id, title, poster_path)")
+    .select("id, body, rating, created_at, movies(tmdb_id, title, poster_path)")
     .eq("user_id", profile.id)
     .eq("is_public", true)
     .order("created_at", { ascending: false })

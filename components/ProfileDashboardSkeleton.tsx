@@ -55,11 +55,14 @@ export function ProfileDashboardSkeleton() {
               <article className="profile-review-row" key={index}>
                 <Skeleton className="profile-review-poster" />
                 <div className="profile-skeleton-review-copy">
-                  <div className="profile-skeleton-review-meta">
-                    <Skeleton className="profile-skeleton-review-author" />
-                    <Skeleton className="profile-skeleton-review-handle" />
-                    <Skeleton className="profile-skeleton-review-film" />
-                    <Skeleton className="profile-skeleton-review-date" />
+                  <div className="profile-skeleton-review-heading">
+                    <div className="profile-skeleton-review-meta">
+                      <Skeleton className="profile-skeleton-review-author" />
+                      <Skeleton className="profile-skeleton-review-handle" />
+                      <Skeleton className="profile-skeleton-review-film" />
+                      <Skeleton className="profile-skeleton-review-date" />
+                    </div>
+                    <Skeleton className="profile-skeleton-review-rating" />
                   </div>
                   <Skeleton className="profile-skeleton-review-line" />
                   <Skeleton className="profile-skeleton-review-line short" />
